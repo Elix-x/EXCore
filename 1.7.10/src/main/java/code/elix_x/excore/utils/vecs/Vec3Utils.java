@@ -54,7 +54,6 @@ public class Vec3Utils {
 		double maxY = SpecialArrayUtils.max(ys);
 		double minZ = SpecialArrayUtils.min(zs);
 		double maxZ = SpecialArrayUtils.max(zs);
-//		RandomUtils.nextDouble(startInclusive, endInclusive)
  		return Vec3.createVectorHelper(AdvancedRandomUtils.nextDouble(random, minX, maxX), AdvancedRandomUtils.nextDouble(random, minY, maxY), AdvancedRandomUtils.nextDouble(random, minZ, maxZ));
 	}
 	

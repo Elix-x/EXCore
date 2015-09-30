@@ -6,7 +6,7 @@ public class AdvancedMathUtils {
 		for(double dd : ds){
 			d += dd;
 		}
-		return d / ds.length + 1;
+		return d / (ds.length + 1);
 	}
 	
 }

@@ -46,25 +46,19 @@ public class RGBA {
 	public Color getColor(){
 		return new Color(r, g, b, a);
 	}
-
+	
+	@Deprecated
 	public int getHex(){
-		//return toHex(getColor());
-		String as = pad(Integer.toHexString(a));
-		String rs = pad(Integer.toHexString(r));
-		String gs = pad(Integer.toHexString(g));
-		String bs = pad(Integer.toHexString(b));
-		String hex = /*"0x" + */as + rs + gs + bs;
-		return Integer.parseInt(hex, 16);
+		return argb();
 	}
-
-	/*public static int toHex(Color col) {
-	    String as = pad(Integer.toHexString(col.getAlpha()));
-	    String rs = pad(Integer.toHexString(col.getRed()));
-	    String gs = pad(Integer.toHexString(col.getGreen()));
-	    String bs = pad(Integer.toHexString(col.getBlue()));
-	    String hex = as + rs + gs + bs;
-	    return Integer.parseInt(hex, 16);
-	}*/
+	
+	public int argb(){
+		return a << 24 | r << 16 | g << 8 | b;
+	}
+	
+	public int rgba(){
+		return r << 24 | g << 16 | b << 8 | a;
+	}
 
 	private static final String pad(String s) {
 		return (s.length() == 1) ? "0" + s : s;
