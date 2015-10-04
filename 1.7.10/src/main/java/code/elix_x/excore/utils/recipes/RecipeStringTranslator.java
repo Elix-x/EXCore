@@ -50,13 +50,13 @@ public class RecipeStringTranslator {
 		}
 	}
 
-	public static boolean isShapedAdvanced(Map<String, Object> map, String... recipe) {
+	public static boolean isShaped(Map<String, Object> map, String... recipe) {
 		return !(map.containsKey(recipe[0]) || ItemStackStringTranslator.isValidItemstackAdvanced(recipe[0]));
 	}
 
-	public static Object[] fromStringAdvanced(Map<String, Object> map, String... srecipe){
+	public static Object[] fromString(Map<String, Object> map, String... srecipe){
 		Object[] recipe = new Object[srecipe.length];
-		if(isShapedAdvanced(map, srecipe)){
+		if(isShaped(map, srecipe)){
 			int i;
 			for(i = 0; i < srecipe.length; i++){
 				if(srecipe[i].length() == 1 && (map.containsKey(srecipe[i + 1]) || ItemStackStringTranslator.isValidItemstackAdvanced(srecipe[i + 1]))) break;
@@ -85,11 +85,11 @@ public class RecipeStringTranslator {
 		return recipe;
 	}
 
-	public static IRecipe fromStringAdvanced(ItemStack result, Map<String, Object> map, String... srecipe){
-		if(isShapedAdvanced(map, srecipe)){
-			return new ShapedOreRecipe(result, fromStringAdvanced(map, srecipe));
+	public static IRecipe fromString(ItemStack result, Map<String, Object> map, String... srecipe){
+		if(isShaped(map, srecipe)){
+			return new ShapedOreRecipe(result, fromString(map, srecipe));
 		} else {
-			return new ShapelessOreRecipe(result, fromStringAdvanced(map, srecipe));
+			return new ShapelessOreRecipe(result, fromString(map, srecipe));
 		}
 	}
 	
@@ -127,12 +127,8 @@ public class RecipeStringTranslator {
 			return toString(((ShapedOreRecipe) recipe).getInput());
 		} else if(recipe instanceof ShapelessOreRecipe){
 			return toString(((ShapelessOreRecipe) recipe).getInput().toArray());
-		}/* else if(recipe instanceof ShapedRecipes){
-			return toString(recipe.)
-		} else if(recipe instanceof ShapelessRecipes){
-			
-		}*/ else {
-			throw new IllegalArgumentException("Recipe must either be ShapedOreRecipe or ShapelessOreRecipe or ShapedRecipes or ShapelessRecipes");
+		} else {
+			throw new IllegalArgumentException("Recipe must either be ShapedOreRecipe or ShapelessOreRecipe");
 		}
 	}
 	
@@ -176,12 +172,8 @@ public class RecipeStringTranslator {
 			return toString(map, ((ShapedOreRecipe) recipe).getInput());
 		} else if(recipe instanceof ShapelessOreRecipe){
 			return toString(map, ((ShapelessOreRecipe) recipe).getInput().toArray());
-		}/* else if(recipe instanceof ShapedRecipes){
-			return toString(recipe.)
-		} else if(recipe instanceof ShapelessRecipes){
-			
-		}*/ else {
-			throw new IllegalArgumentException("Recipe must either be ShapedOreRecipe or ShapelessOreRecipe or ShapedRecipes or ShapelessRecipes");
+		} else {
+			throw new IllegalArgumentException("Recipe must either be ShapedOreRecipe or ShapelessOreRecipe");
 		}
 	}
 	
