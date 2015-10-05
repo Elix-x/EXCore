@@ -167,7 +167,7 @@ public class RecipeStringTranslator {
 		return srecipe;
 	}
 	
-	public static String[] toString(IRecipe recipe, Map<Object, String> map){
+	public static String[] toString(IRecipe recipe, Map<?, String> map){
 		if(recipe instanceof ShapedOreRecipe){
 			return toString(map, ((ShapedOreRecipe) recipe).getInput());
 		} else if(recipe instanceof ShapelessOreRecipe){
