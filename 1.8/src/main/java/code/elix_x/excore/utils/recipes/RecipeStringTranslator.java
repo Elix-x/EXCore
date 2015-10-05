@@ -147,7 +147,7 @@ public class RecipeStringTranslator {
 				if(recipe[j] instanceof Character){
 					srecipe[j] = "" + recipe[j];
 				} else if(map.containsKey(recipe[j])){
-					srecipe[j] = map.get(srecipe[j]);
+					srecipe[j] = map.get(recipe[j]);
 				} else {
 					srecipe[j] = ItemStackStringTranslator.toStringAdvanced(recipe[j]);
 				}
@@ -155,7 +155,7 @@ public class RecipeStringTranslator {
 		} else {
 			for(int i = 0; i < recipe.length; i++){
 				if(map.containsKey(recipe[i])){
-					srecipe[i] = map.get(srecipe[i]);
+					srecipe[i] = map.get(recipe[i]);
 				} else {
 					srecipe[i] = ItemStackStringTranslator.toStringAdvanced(recipe[i]);
 				}
