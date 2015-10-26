@@ -2,6 +2,8 @@ package code.elix_x.excore.utils.recipes;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import code.elix_x.excore.utils.items.ItemStackStringTranslator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -9,18 +11,31 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class RecipeStringTranslator {
+	
+	public static String[] validateFromConfig(String... recipe){
+		recipe = ArrayUtils.clone(recipe);
+		for(int i = 0; i < getDefinitionsBegining(recipe); i++){
+			recipe[i] = recipe[i].replace('_', ' ');
+		}
+		return recipe;
+	}
 
 	public static boolean isShaped(String... recipe) {
 		return !ItemStackStringTranslator.isValidItemstackAdvanced(recipe[0]);
+	}
+	
+	public static int getDefinitionsBegining(String... recipe){
+		int i;
+		for(i = 0; i < recipe.length; i++){
+			if(recipe[i].length() == 1 && ItemStackStringTranslator.isValidItemstackAdvanced(recipe[i + 1])) break;
+		}
+		return i;
 	}
 
 	public static Object[] fromString(String... srecipe){
 		Object[] recipe = new Object[srecipe.length];
 		if(isShaped(srecipe)){
-			int i;
-			for(i = 0; i < srecipe.length; i++){
-				if(srecipe[i].length() == 1 && ItemStackStringTranslator.isValidItemstackAdvanced(srecipe[i + 1])) break;
-			}
+			int i = getDefinitionsBegining(srecipe);
 			for(int j = 0; j < i; j++){
 				recipe[j] = srecipe[j];
 			}
@@ -50,14 +65,19 @@ public class RecipeStringTranslator {
 	public static boolean isShaped(Map<String, ?> map, String... recipe) {
 		return !(map.containsKey(recipe[0]) || ItemStackStringTranslator.isValidItemstackAdvanced(recipe[0]));
 	}
+	
+	public static int getDefinitionsBegining(Map<String, ?> map, String... recipe){
+		int i;
+		for(i = 0; i < recipe.length; i++){
+			if(recipe[i].length() == 1 && (map.containsKey(recipe[i + 1]) || ItemStackStringTranslator.isValidItemstackAdvanced(recipe[i + 1]))) break;
+		}
+		return i;
+	}
 
 	public static Object[] fromString(Map<String, ?> map, String... srecipe){
 		Object[] recipe = new Object[srecipe.length];
 		if(isShaped(map, srecipe)){
-			int i;
-			for(i = 0; i < srecipe.length; i++){
-				if(srecipe[i].length() == 1 && (map.containsKey(srecipe[i + 1]) || ItemStackStringTranslator.isValidItemstackAdvanced(srecipe[i + 1]))) break;
-			}
+			int i = getDefinitionsBegining(map, srecipe);
 			for(int j = 0; j < i; j++){
 				recipe[j] = srecipe[j];
 			}

@@ -9,7 +9,7 @@ import net.minecraftforge.oredict.OreDictionary;
 public class ItemStackStringTranslator {
 
 	public static final String NULL = "NULL";
-	public static final String OREDICT = "oreDict:";
+	public static final String OREDICT = "oreDict";
 
 	public static String toString(ItemStack itemstack){
 		return itemstack == null ? NULL : (Item.itemRegistry.getNameForObject(itemstack.getItem())) + (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE ? "" : "/" + itemstack.getItemDamage());
@@ -26,7 +26,7 @@ public class ItemStackStringTranslator {
 				String[] modidId = string.split(":");
 				String modid = modidId[0];
 				String id = modidId[1];
-				String[] idMeta = id.split("//");
+				String[] idMeta = id.split("/");
 				int meta = OreDictionary.WILDCARD_VALUE;
 				if(idMeta.length == 2){
 					id = idMeta[0];
@@ -38,7 +38,7 @@ public class ItemStackStringTranslator {
 				}
 				throw new IllegalArgumentException("Could not initalize item stack. Invalid argument was given: " + string);
 			} catch(Exception e){
-				if(e instanceof IllegalArgumentException && e.getMessage().equals(("Could not initalize item stack. Invalid argument was given:" + string))){
+				if(e instanceof IllegalArgumentException && e.getMessage().equals(("Could not initalize item stack. Invalid argument was given: " + string))){
 					throw (IllegalArgumentException) e;
 				} else {
 					throw new IllegalArgumentException("Could not initalize item stack. Invalid argument was given: " + string, e);
@@ -53,13 +53,13 @@ public class ItemStackStringTranslator {
 		} else if(o instanceof ItemStack){
 			return toString((ItemStack) o);
 		} else if(o instanceof ItemCount){
-			return toString(((ItemCount) o).toWildcardItemstack());
+			return toString(((ItemCount) o).toItemstack());
 		} else if(o instanceof Item){
 			return toString(new ItemStack((Item) o, 1, OreDictionary.WILDCARD_VALUE));
 		} else if(o instanceof Block ){
 			return toString(new ItemStack((Block) o, 1, OreDictionary.WILDCARD_VALUE));
 		} else if(o instanceof String){
-			return OREDICT + o;
+			return OREDICT + ":" + o;
 		} else {
 			throw new IllegalArgumentException("Illegal argument: " + o);
 		}

@@ -15,13 +15,30 @@ public class RGBA {
 
 	}
 
-	public RGBA(int r, int g, int b, int a) {
+	public RGBA(int r, int g, int b) {
 		this.r = r;
 		this.g = g;
 		this.b = b;
+		this.a = 255;
+	}
+	
+	public RGBA(int r, int g, int b, int a) {
+		this(r, g, b);
 		this.a = a;
 	}
+	
+	public RGBA(float r, float g, float b){
+		this((int)(r * 255f), (int)(g * 255f), (int)(b *255f));
+	}
+	
+	public RGBA(float r, float g, float b, float a){
+		this((int)(r * 255f), (int)(g * 255f), (int)(b *255f), (int)(a * 255f));
+	}
 
+	public RGBA(int h) {
+		this(h >> 16 & 255, h >> 8 & 255, h & 255, h >> 24 & 255);
+	}
+	
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		nbt.setInteger("r", r);
 		nbt.setInteger("g", g);
@@ -45,11 +62,6 @@ public class RGBA {
 
 	public Color getColor(){
 		return new Color(r, g, b, a);
-	}
-	
-	@Deprecated
-	public int getHex(){
-		return argb();
 	}
 	
 	public int argb(){
