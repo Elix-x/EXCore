@@ -17,12 +17,14 @@ public class RecipeStringTranslator {
 
 	public static String[] validateFromConfig(String... recipe){
 		recipe = ArrayUtils.clone(recipe);
-		for(int i = 0; i < getDefinitionsBegining(recipe); i++){
-			recipe[i] = recipe[i].replace('_', ' ');
+		if(isShaped(recipe)){
+			for(int i = 0; i < getDefinitionsBegining(recipe); i++){
+				recipe[i] = recipe[i].replace('_', ' ');
+			}
 		}
 		return recipe;
 	}
-	
+
 	public static boolean isShaped(String... recipe) {
 		return !ItemStackStringTranslator.isValidItemstackAdvanced(recipe[0]);
 	}
@@ -34,7 +36,7 @@ public class RecipeStringTranslator {
 		}
 		return i;
 	}
-	
+
 	public static Object[] fromString(String... srecipe){
 		Object[] recipe = new Object[srecipe.length];
 		if(isShaped(srecipe)){
@@ -68,7 +70,7 @@ public class RecipeStringTranslator {
 	public static boolean isShaped(Map<String, ?> map, String... recipe) {
 		return !(map.containsKey(recipe[0]) || ItemStackStringTranslator.isValidItemstackAdvanced(recipe[0]));
 	}
-	
+
 	public static int getDefinitionsBegining(Map<String, ?> map, String... recipe){
 		int i;
 		for(i = 0; i < recipe.length; i++){
@@ -112,11 +114,11 @@ public class RecipeStringTranslator {
 			return new ShapelessOreRecipe(result, fromString(map, srecipe));
 		}
 	}
-	
+
 	public static boolean isShaped(Object... recipe) {
 		return recipe[0] instanceof String;
 	}
-	
+
 	public static String[] toString(Object... recipe){
 		String[] srecipe = new String[recipe.length];
 		if(isShaped(recipe)){
@@ -141,7 +143,7 @@ public class RecipeStringTranslator {
 		}
 		return srecipe;
 	}
-	
+
 	public static String[] toString(IRecipe recipe){
 		if(recipe instanceof ShapedOreRecipe){
 			return toString(((ShapedOreRecipe) recipe).getInput());
@@ -151,11 +153,11 @@ public class RecipeStringTranslator {
 			throw new IllegalArgumentException("Recipe must either be ShapedOreRecipe or ShapelessOreRecipe");
 		}
 	}
-	
+
 	public static boolean isShaped(Map<?, String> map, Object... recipe) {
 		return recipe[0] instanceof String && !map.containsKey(recipe[0]);
 	}
-	
+
 	public static String[] toString(Map<?, String> map, Object... recipe){
 		String[] srecipe = new String[recipe.length];
 		if(isShaped(map, recipe)){
@@ -186,7 +188,7 @@ public class RecipeStringTranslator {
 		}
 		return srecipe;
 	}
-	
+
 	public static String[] toString(IRecipe recipe, Map<?, String> map){
 		if(recipe instanceof ShapedOreRecipe){
 			return toString(map, ((ShapedOreRecipe) recipe).getInput());
@@ -196,5 +198,5 @@ public class RecipeStringTranslator {
 			throw new IllegalArgumentException("Recipe must either be ShapedOreRecipe or ShapelessOreRecipe");
 		}
 	}
-	
+
 }
