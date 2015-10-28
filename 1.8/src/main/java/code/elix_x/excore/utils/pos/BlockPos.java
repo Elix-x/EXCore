@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class BlockPos {
@@ -49,6 +50,10 @@ public class BlockPos {
 	public void setZ(int z) {
 		this.z = z;
 	}
+	
+	public BlockPos offset(EnumFacing direction) {
+		return offsetX(direction.getDirectionVec().getX()).offsetY(direction.getDirectionVec().getY()).offsetZ(direction.getDirectionVec().getZ());
+	}
 
 	public BlockPos offsetX(int xx){
 		x += xx;
@@ -63,6 +68,10 @@ public class BlockPos {
 	public BlockPos offsetZ(int zz){
 		z += zz;
 		return this;
+	}
+	
+	public BlockPos offsetNew(EnumFacing direction) {
+		return offsetXNew(direction.getDirectionVec().getX()).offsetYNew(direction.getDirectionVec().getY()).offsetZNew(direction.getDirectionVec().getZ());
 	}
 	
 	public BlockPos offsetXNew(int xx){

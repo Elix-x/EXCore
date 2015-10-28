@@ -6,7 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class DimBlockPos extends BlockPos{
+public class DimBlockPos extends BlockPos {
 
 	public int dimId;
 
@@ -27,16 +27,20 @@ public class DimBlockPos extends BlockPos{
 		this.dimId = dimId;
 	}
 	
+	public World getWorld(){
+		return MinecraftServer.getServer().worldServerForDimension(dimId);
+	}
+	
 	public Block getBlock(){
-		return MinecraftServer.getServer().worldServerForDimension(dimId).getBlock(x, y, z);
+		return getWorld().getBlock(x, y, z);
 	}
 	
 	public int getMetadata(){
-		return MinecraftServer.getServer().worldServerForDimension(dimId).getBlockMetadata(x, y, z);
+		return getWorld().getBlockMetadata(x, y, z);
 	}
 	
 	public TileEntity getTileEntity(){
-		return MinecraftServer.getServer().worldServerForDimension(dimId).getTileEntity(x, y, z);
+		return getWorld().getTileEntity(x, y, z);
 	}
 	
 	@Override
@@ -77,7 +81,5 @@ public class DimBlockPos extends BlockPos{
 			return false;
 		return true;
 	}
-	
-	
 	
 }

@@ -56,7 +56,7 @@ public class ItemStackStringTranslator {
 			return toString(((ItemCount) o).toItemstack());
 		} else if(o instanceof Item){
 			return toString(new ItemStack((Item) o, 1, OreDictionary.WILDCARD_VALUE));
-		} else if(o instanceof Block ){
+		} else if(o instanceof Block){
 			return toString(new ItemStack((Block) o, 1, OreDictionary.WILDCARD_VALUE));
 		} else if(o instanceof String){
 			return OREDICT + ":" + o;

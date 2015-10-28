@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockPos {
 	
@@ -44,6 +45,10 @@ public class BlockPos {
 	public void setZ(int z) {
 		this.z = z;
 	}
+	
+	public BlockPos offset(ForgeDirection direction) {
+		return offsetX(direction.offsetX).offsetY(direction.offsetY).offsetZ(direction.offsetZ);
+	}
 
 	public BlockPos offsetX(int xx){
 		x += xx;
@@ -58,6 +63,10 @@ public class BlockPos {
 	public BlockPos offsetZ(int zz){
 		z += zz;
 		return this;
+	}
+	
+	public BlockPos offsetNew(ForgeDirection direction) {
+		return offsetXNew(direction.offsetX).offsetYNew(direction.offsetY).offsetZNew(direction.offsetZ);
 	}
 	
 	public BlockPos offsetXNew(int xx){
