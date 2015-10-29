@@ -5,11 +5,10 @@ import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 
 import code.elix_x.excore.utils.items.ItemStackStringTranslator;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.ShapedRecipes;
-import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
@@ -17,7 +16,7 @@ public class RecipeStringTranslator {
 
 	public static String[] validateFromConfig(String... recipe){
 		recipe = ArrayUtils.clone(recipe);
-		if(isShaped(recipe)){
+		if(!isEmpty(recipe) && isShaped(recipe)){
 			for(int i = 0; i < getDefinitionsBegining(recipe); i++){
 				recipe[i] = recipe[i].replace('_', ' ');
 			}
@@ -25,6 +24,10 @@ public class RecipeStringTranslator {
 		return recipe;
 	}
 
+	public static boolean isEmpty(String... srecipe){
+		return ArrayUtils.isEmpty(srecipe);
+	}
+	
 	public static boolean isShaped(String... recipe) {
 		return !ItemStackStringTranslator.isValidItemstackAdvanced(recipe[0]);
 	}
@@ -60,7 +63,31 @@ public class RecipeStringTranslator {
 	}
 
 	public static IRecipe fromString(ItemStack result, String... srecipe){
-		if(isShaped(srecipe)){
+		if(isEmpty(srecipe)){
+			return new IRecipe() {
+				
+				@Override
+				public boolean matches(InventoryCrafting inventory, World world) {
+					return false;
+				}
+				
+				@Override
+				public int getRecipeSize() {
+					return 0;
+				}
+				
+				@Override
+				public ItemStack getRecipeOutput() {
+					return null;
+				}
+				
+				@Override
+				public ItemStack getCraftingResult(InventoryCrafting inventory) {
+					return null;
+				}
+				
+			};
+		} else if(isShaped(srecipe)){
 			return new ShapedOreRecipe(result, fromString(srecipe));
 		} else {
 			return new ShapelessOreRecipe(result, fromString(srecipe));
@@ -108,7 +135,31 @@ public class RecipeStringTranslator {
 	}
 
 	public static IRecipe fromString(ItemStack result, Map<String, ?> map, String... srecipe){
-		if(isShaped(map, srecipe)){
+		if(isEmpty(srecipe)){
+			return new IRecipe() {
+				
+				@Override
+				public boolean matches(InventoryCrafting inventory, World world) {
+					return false;
+				}
+				
+				@Override
+				public int getRecipeSize() {
+					return 0;
+				}
+				
+				@Override
+				public ItemStack getRecipeOutput() {
+					return null;
+				}
+				
+				@Override
+				public ItemStack getCraftingResult(InventoryCrafting inventory) {
+					return null;
+				}
+				
+			};
+		} else if(isShaped(map, srecipe)){
 			return new ShapedOreRecipe(result, fromString(map, srecipe));
 		} else {
 			return new ShapelessOreRecipe(result, fromString(map, srecipe));
