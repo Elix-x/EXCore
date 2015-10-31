@@ -272,7 +272,7 @@ public class MBT {
 		}
 
 	};
-	
+
 	public static final NBTEncoder<NBTBase, NBTBase> nbtEncoder = new NBTEncoder<NBTBase, NBTBase>() {
 
 		@Override
@@ -294,9 +294,9 @@ public class MBT {
 		public NBTBase fromNBT(MBT mbt, NBTBase nbt, Class<NBTBase> clazz, Class... tsclasses) {
 			return nbt;
 		}
-		
+
 	};
-	
+
 	public static final NBTEncoder<Enum, NBTTagString> enumEncoder = new NBTEncoder<Enum, NBTTagString>() {
 
 		@Override
@@ -318,7 +318,35 @@ public class MBT {
 		public Enum fromNBT(MBT mbt, NBTTagString nbt, Class<Enum> clazz, Class... tsclasses) {
 			return Enum.valueOf(clazz, nbt.func_150285_a_());
 		}
-		
+
+	};
+
+	public static final NBTEncoder<Object, NBTTagCompound> nullEncoder = new NBTEncoder<Object, NBTTagCompound>(){
+
+		public static final String NULL = "#NULL";
+
+		@Override
+		public boolean canEncode(Object o) {
+			return o == null;
+		}
+
+		@Override
+		public boolean canDecode(NBTBase nbt, Class clazz) {
+			return nbt instanceof NBTTagCompound && ((NBTTagCompound) nbt).hasKey(NULL) && ((NBTTagCompound) nbt).getString(NULL).equals(NULL);
+		}
+
+		@Override
+		public NBTTagCompound toNBT(MBT mbt, Object t) {
+			NBTTagCompound nbt = new NBTTagCompound();
+			nbt.setString(NULL, NULL);
+			return nbt;
+		}
+
+		@Override
+		public Object fromNBT(MBT mbt, NBTTagCompound nbt, Class<Object> clazz, Class... tsclasses) {
+			return null;
+		}
+
 	};
 
 	public static final NBTEncoder<Object[], NBTTagList> arrayEncoder = new NBTEncoder<Object[], NBTTagList>() {
@@ -393,7 +421,7 @@ public class MBT {
 		}
 
 	};
-	
+
 	public static final NBTEncoder<Set<?>, NBTTagList> setEncoder = new NBTEncoder<Set<?>, NBTTagList>() {
 
 		@Override
@@ -581,18 +609,18 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder[] DEFAULTENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder, nbtEncoder, enumEncoder, arrayEncoder, listEncoder, setEncoder, mapEncoder, multimapEncoder, classEncoder};
+	public static final NBTEncoder[] DEFAULTENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder, nbtEncoder, enumEncoder, nullEncoder, arrayEncoder, listEncoder, setEncoder, mapEncoder, multimapEncoder, classEncoder};
 
-	public static final NBTEncoder[] DEFAULTSPECIFICENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder, nbtEncoder, enumEncoder, arrayEncoder, listEncoder, setEncoder, mapEncoder, multimapEncoder};
+	public static final NBTEncoder[] DEFAULTSPECIFICENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder, nbtEncoder, enumEncoder, nullEncoder, arrayEncoder, listEncoder, setEncoder, mapEncoder, multimapEncoder};
 
 	public static final NBTEncoder[] PRIMITIVEENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder};
-	
-	public static final NBTEncoder[] OBJECTSPECIFICENCODERS = new NBTEncoder[]{stringEncoder, nbtEncoder, enumEncoder};
-	
+
+	public static final NBTEncoder[] OBJECTSPECIFICENCODERS = new NBTEncoder[]{stringEncoder, nbtEncoder, enumEncoder, nullEncoder};
+
 	public static final NBTEncoder[] ITERABLEENCODERS = new NBTEncoder[]{byteArrayEncoder, intArrayEncoder, arrayEncoder, listEncoder, setEncoder};
-	
+
 	public static final NBTEncoder[] MAPENCODERS = new NBTEncoder[]{mapEncoder, multimapEncoder};
-	
+
 	public static final NBTEncoder[] DIRECTNBTENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder};
 
 	private List<NBTEncoder> encoders;
