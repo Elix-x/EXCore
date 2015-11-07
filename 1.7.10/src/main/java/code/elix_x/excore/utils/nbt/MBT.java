@@ -1,5 +1,6 @@
 package code.elix_x.excore.utils.nbt;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -399,9 +400,9 @@ public class MBT {
 
 		@Override
 		public Object[] fromNBT(MBT mbt, NBTTagList list, Class<Object[]> clazz, Class... tsclasses) {
-			Object[] os = new Object[0];
+			Object[] os = (Object[]) Array.newInstance(clazz.getComponentType(), 0);
 			while(list.tagCount() > 0){
-				os = ArrayUtils.add(os, mbt.fromNBT(list.removeTag(0), tsclasses[0]));
+				os = ArrayUtils.add(os, mbt.fromNBT(list.removeTag(0), clazz.getComponentType()));
 			}
 			return os;
 		}
@@ -676,7 +677,6 @@ public class MBT {
 	}
 
 	public <T> NBTBase toNBT(T t){
-		if(t == null) return null;
 		for(NBTEncoder encoder : encoders){
 			if(encoder.canEncode(t)){
 				return encoder.toNBT(this, t);
@@ -686,7 +686,6 @@ public class MBT {
 	}
 
 	public <T> T fromNBT(NBTBase nbt, Class<T> clazz, Class... tsclasses){
-		if(nbt == null) return null;
 		for(NBTEncoder encoder : encoders){
 			if(encoder.canDecode(nbt, clazz)){
 				return (T) encoder.fromNBT(this, nbt, clazz, tsclasses);
