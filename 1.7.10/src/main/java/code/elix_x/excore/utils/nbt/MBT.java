@@ -1,6 +1,8 @@
 package code.elix_x.excore.utils.nbt;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagByteArray;
@@ -293,6 +296,30 @@ public class MBT {
 		@Override
 		public NBTBase fromNBT(MBT mbt, NBTBase nbt, Class<NBTBase> clazz, Class... tsclasses) {
 			return nbt;
+		}
+
+	};
+
+	public static final NBTEncoder<ItemStack, NBTTagCompound> itemStackEncoder = new NBTEncoder<ItemStack, NBTTagCompound>(){
+
+		@Override
+		public boolean canEncode(Object o) {
+			return o instanceof ItemStack;
+		}
+
+		@Override
+		public boolean canDecode(NBTBase nbt, Class clazz) {
+			return ItemStack.class.isAssignableFrom(clazz);
+		}
+
+		@Override
+		public NBTTagCompound toNBT(MBT mbt, ItemStack itemstack) {
+			return itemstack.writeToNBT(new NBTTagCompound());
+		}
+
+		@Override
+		public ItemStack fromNBT(MBT mbt, NBTTagCompound nbt, Class<ItemStack> clazz, Class... tsclasses) {
+			return ItemStack.loadItemStackFromNBT(nbt);
 		}
 
 	};
@@ -586,7 +613,14 @@ public class MBT {
 		@Override
 		public Object fromNBT(MBT mbt, NBTTagCompound nbt, Class clazz, Class... tsclasses) {
 			try{
-				Object o = clazz.newInstance();
+				Constructor constructor;
+				try {
+					constructor = clazz.getConstructor();
+				} catch (NoSuchMethodException e) {
+					constructor = clazz.getDeclaredConstructor();
+				}
+				constructor.setAccessible(true);
+				Object o = constructor.newInstance();
 				for(Field field : clazz.getDeclaredFields()){
 					field.setAccessible(true);
 					if(!Modifier.isStatic(field.getModifiers())){
@@ -604,18 +638,26 @@ public class MBT {
 				throw Throwables.propagate(e);
 			} catch (IllegalAccessException e) {
 				throw Throwables.propagate(e);
+			} catch (NoSuchMethodException e) {
+				throw Throwables.propagate(e);
+			} catch (SecurityException e) {
+				throw Throwables.propagate(e);
+			} catch (IllegalArgumentException e) {
+				throw Throwables.propagate(e);
+			} catch (InvocationTargetException e) {
+				throw Throwables.propagate(e);
 			}
 		}
 
 	};
 
-	public static final NBTEncoder[] DEFAULTENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder, nbtEncoder, enumEncoder, nullEncoder, arrayEncoder, listEncoder, setEncoder, mapEncoder, multimapEncoder, classEncoder};
+	public static final NBTEncoder[] DEFAULTENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder, nbtEncoder, itemStackEncoder, enumEncoder, nullEncoder, arrayEncoder, listEncoder, setEncoder, mapEncoder, multimapEncoder, classEncoder};
 
-	public static final NBTEncoder[] DEFAULTSPECIFICENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder, nbtEncoder, enumEncoder, nullEncoder, arrayEncoder, listEncoder, setEncoder, mapEncoder, multimapEncoder};
+	public static final NBTEncoder[] DEFAULTSPECIFICENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder, nbtEncoder, itemStackEncoder, enumEncoder, nullEncoder, arrayEncoder, listEncoder, setEncoder, mapEncoder, multimapEncoder};
 
 	public static final NBTEncoder[] PRIMITIVEENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder};
 
-	public static final NBTEncoder[] OBJECTSPECIFICENCODERS = new NBTEncoder[]{stringEncoder, nbtEncoder, enumEncoder, nullEncoder};
+	public static final NBTEncoder[] OBJECTSPECIFICENCODERS = new NBTEncoder[]{stringEncoder, nbtEncoder, itemStackEncoder, enumEncoder, nullEncoder};
 
 	public static final NBTEncoder[] ITERABLEENCODERS = new NBTEncoder[]{byteArrayEncoder, intArrayEncoder, arrayEncoder, listEncoder, setEncoder};
 
