@@ -400,6 +400,7 @@ public class MBT {
 
 		@Override
 		public Object[] fromNBT(MBT mbt, NBTTagList list, Class<Object[]> clazz, Class... tsclasses) {
+			list = (NBTTagList) list.copy();
 			Object[] os = (Object[]) Array.newInstance(clazz.getComponentType(), 0);
 			while(list.tagCount() > 0){
 				os = ArrayUtils.add(os, mbt.fromNBT(list.removeTag(0), clazz.getComponentType()));
@@ -432,6 +433,7 @@ public class MBT {
 
 		@Override
 		public List<Object> fromNBT(MBT mbt, NBTTagList nlist, Class<List<?>> clazz, Class... tsclasses) {
+			nlist = (NBTTagList) nlist.copy();
 			try{
 				List list;
 				try{
@@ -473,6 +475,7 @@ public class MBT {
 
 		@Override
 		public Set<Object> fromNBT(MBT mbt, NBTTagList list, Class<Set<?>> clazz, Class... tsclasses) {
+			list = (NBTTagList) list.copy();
 			try{
 				Set set;
 				try{

@@ -439,8 +439,8 @@ public class MBT {
 				} catch(InstantiationException e){
 					list = new ArrayList();
 				}
-				while(nlist.tagCount() > 0){
-					list.add(mbt.fromNBT(nlist.removeTag(0), tsclasses[0]));
+				for(int i = 0; i < nlist.tagCount(); i++){
+					list.add(mbt.fromNBT(nlist.get(i), tsclasses[0]));
 				}
 				return list;
 			} catch (IllegalAccessException e) {
@@ -480,8 +480,8 @@ public class MBT {
 				} catch(InstantiationException e){
 					set = new HashSet();
 				}
-				while(list.tagCount() > 0){
-					set.add(mbt.fromNBT(list.removeTag(0), tsclasses[0]));
+				for(int i = 0; i < list.tagCount(); i++){
+					set.add(mbt.fromNBT(list.get(i), tsclasses[0]));
 				}
 				return set;
 			} catch (IllegalAccessException e) {
