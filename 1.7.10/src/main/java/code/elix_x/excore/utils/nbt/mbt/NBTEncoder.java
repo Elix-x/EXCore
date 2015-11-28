@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,12 +41,12 @@ public interface NBTEncoder<T, NT extends NBTBase> {
 
 		@Override
 		public boolean canEncode(Object o) {
-			return o instanceof Byte;
+			return o instanceof Boolean;
 		}
 
 		@Override
 		public boolean canDecode(NBTBase nbt, Class clazz) {
-			return nbt instanceof NBTTagByte && Boolean.class.isAssignableFrom(clazz);
+			return nbt instanceof NBTTagByte && (Boolean.class.isAssignableFrom(clazz) || boolean.class.isAssignableFrom(clazz));
 		}
 
 		@Override
@@ -628,8 +629,15 @@ public interface NBTEncoder<T, NT extends NBTBase> {
 					field.setAccessible(true);
 					if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())){
 						if(nbt.hasKey(field.getName())){
-							if(field.getGenericType() instanceof ParameterizedType && ((ParameterizedType) field.getGenericType()).getActualTypeArguments() instanceof Class[]){
-								field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), (Class[]) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()));
+							if(field.getGenericType() instanceof ParameterizedType){
+								Type[] types = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+								Class[] clas = new Class[]{};
+								for(Type type : types){
+									if(type instanceof Class){
+										clas = ArrayUtils.add(clas, (Class) type);
+									}
+								}
+								field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), clas));
 							} else {
 								field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType()));
 							}
@@ -699,8 +707,15 @@ public interface NBTEncoder<T, NT extends NBTBase> {
 					field.setAccessible(true);
 					if(!Modifier.isFinal(field.getModifiers())){
 						if(nbt.hasKey(field.getName())){
-							if(field.getGenericType() instanceof ParameterizedType && ((ParameterizedType) field.getGenericType()).getActualTypeArguments() instanceof Class[]){
-								field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), (Class[]) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()));
+							if(field.getGenericType() instanceof ParameterizedType){
+								Type[] types = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+								Class[] clas = new Class[]{};
+								for(Type type : types){
+									if(type instanceof Class){
+										clas = ArrayUtils.add(clas, (Class) type);
+									}
+								}
+								field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), clas));
 							} else {
 								field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType()));
 							}
@@ -724,7 +739,7 @@ public interface NBTEncoder<T, NT extends NBTBase> {
 		}
 
 	};
-	
+
 	NBTEncoder<? extends Object, NBTTagCompound> classEncoderSu = new NBTEncoder<Object, NBTTagCompound>() {
 
 		@Override
@@ -775,8 +790,15 @@ public interface NBTEncoder<T, NT extends NBTBase> {
 						field.setAccessible(true);
 						if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())){
 							if(nbt.hasKey(field.getName())){
-								if(field.getGenericType() instanceof ParameterizedType && ((ParameterizedType) field.getGenericType()).getActualTypeArguments() instanceof Class[]){
-									field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), (Class[]) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()));
+								if(field.getGenericType() instanceof ParameterizedType){
+									Type[] types = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+									Class[] clas = new Class[]{};
+									for(Type type : types){
+										if(type instanceof Class){
+											clas = ArrayUtils.add(clas, (Class) type);
+										}
+									}
+									field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), clas));
 								} else {
 									field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType()));
 								}
@@ -802,7 +824,7 @@ public interface NBTEncoder<T, NT extends NBTBase> {
 		}
 
 	};
-	
+
 	NBTEncoder<? extends Object, NBTTagCompound> classEncoderStSu = new NBTEncoder<Object, NBTTagCompound>() {
 
 		@Override
@@ -853,8 +875,15 @@ public interface NBTEncoder<T, NT extends NBTBase> {
 						field.setAccessible(true);
 						if(!Modifier.isFinal(field.getModifiers())){
 							if(nbt.hasKey(field.getName())){
-								if(field.getGenericType() instanceof ParameterizedType && ((ParameterizedType) field.getGenericType()).getActualTypeArguments() instanceof Class[]){
-									field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), (Class[]) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()));
+								if(field.getGenericType() instanceof ParameterizedType){
+									Type[] types = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+									Class[] clas = new Class[]{};
+									for(Type type : types){
+										if(type instanceof Class){
+											clas = ArrayUtils.add(clas, (Class) type);
+										}
+									}
+									field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), clas));
 								} else {
 									field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType()));
 								}

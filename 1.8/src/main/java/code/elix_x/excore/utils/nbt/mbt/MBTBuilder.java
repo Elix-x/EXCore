@@ -11,21 +11,24 @@ public class MBTBuilder {
 		
 	}
 	
-	public void add(NBTEncoder encoder){
+	public MBTBuilder add(NBTEncoder encoder){
 		encoders.add(encoder);
+		return this;
 	}
 	
-	public void addDefaultEncoders(){
+	public MBTBuilder addDefaultEncoders(){
 		for(NBTEncoder encoder : MBT.DEFAULTSPECIFICENCODERS){
 			add(encoder);
 		}
+		return this;
 	}
 	
-	public void addClassEncoder(boolean staticc, boolean superr){
+	public MBTBuilder addClassEncoder(boolean staticc, boolean superr){
 		int i = 0;
 		if(staticc) i += 1;
 		if(superr) i += 2;
 		add(MBT.CLASSENCODERS[i]);
+		return this;
 	}
 	
 	public MBT build(){
