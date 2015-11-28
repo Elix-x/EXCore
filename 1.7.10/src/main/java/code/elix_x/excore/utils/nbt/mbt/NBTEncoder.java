@@ -1,4 +1,4 @@
-package code.elix_x.excore.utils.nbt;
+package code.elix_x.excore.utils.nbt.mbt;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -18,7 +18,6 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.item.ItemStack;
@@ -35,9 +34,9 @@ import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
 
-public class MBT {
+public interface NBTEncoder<T, NT extends NBTBase> {
 
-	public static final NBTEncoder<Boolean, NBTTagByte> booleanEncoder = new NBTEncoder<Boolean, NBTTagByte>() {
+	NBTEncoder<Boolean, NBTTagByte> booleanEncoder = new NBTEncoder<Boolean, NBTTagByte>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -61,7 +60,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Byte, NBTTagByte> byteEncoder = new NBTEncoder<Byte, NBTTagByte>() {
+	NBTEncoder<Byte, NBTTagByte> byteEncoder = new NBTEncoder<Byte, NBTTagByte>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -85,7 +84,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Short, NBTTagShort> shortEncoder = new NBTEncoder<Short, NBTTagShort>() {
+	NBTEncoder<Short, NBTTagShort> shortEncoder = new NBTEncoder<Short, NBTTagShort>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -109,7 +108,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Integer, NBTTagInt> intEncoder = new NBTEncoder<Integer, NBTTagInt>() {
+	NBTEncoder<Integer, NBTTagInt> intEncoder = new NBTEncoder<Integer, NBTTagInt>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -133,7 +132,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Long, NBTTagLong> longEncoder = new NBTEncoder<Long, NBTTagLong>() {
+	NBTEncoder<Long, NBTTagLong> longEncoder = new NBTEncoder<Long, NBTTagLong>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -157,7 +156,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Float, NBTTagFloat> floatEncoder = new NBTEncoder<Float, NBTTagFloat>() {
+	NBTEncoder<Float, NBTTagFloat> floatEncoder = new NBTEncoder<Float, NBTTagFloat>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -181,7 +180,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Double, NBTTagDouble> doubleEncoder = new NBTEncoder<Double, NBTTagDouble>() {
+	NBTEncoder<Double, NBTTagDouble> doubleEncoder = new NBTEncoder<Double, NBTTagDouble>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -205,7 +204,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<byte[], NBTTagByteArray> byteArrayEncoder = new NBTEncoder<byte[], NBTTagByteArray>() {
+	NBTEncoder<byte[], NBTTagByteArray> byteArrayEncoder = new NBTEncoder<byte[], NBTTagByteArray>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -229,7 +228,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<int[], NBTTagIntArray> intArrayEncoder = new NBTEncoder<int[], NBTTagIntArray>() {
+	NBTEncoder<int[], NBTTagIntArray> intArrayEncoder = new NBTEncoder<int[], NBTTagIntArray>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -253,7 +252,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<String, NBTTagString> stringEncoder = new NBTEncoder<String, NBTTagString>() {
+	NBTEncoder<String, NBTTagString> stringEncoder = new NBTEncoder<String, NBTTagString>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -277,7 +276,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<NBTBase, NBTBase> nbtEncoder = new NBTEncoder<NBTBase, NBTBase>() {
+	NBTEncoder<NBTBase, NBTBase> nbtEncoder = new NBTEncoder<NBTBase, NBTBase>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -301,7 +300,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<ItemStack, NBTTagCompound> itemStackEncoder = new NBTEncoder<ItemStack, NBTTagCompound>(){
+	NBTEncoder<ItemStack, NBTTagCompound> itemStackEncoder = new NBTEncoder<ItemStack, NBTTagCompound>(){
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -325,7 +324,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Enum, NBTTagString> enumEncoder = new NBTEncoder<Enum, NBTTagString>() {
+	NBTEncoder<Enum, NBTTagString> enumEncoder = new NBTEncoder<Enum, NBTTagString>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -349,7 +348,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Object, NBTTagCompound> nullEncoder = new NBTEncoder<Object, NBTTagCompound>(){
+	NBTEncoder<Object, NBTTagCompound> nullEncoder = new NBTEncoder<Object, NBTTagCompound>(){
 
 		public static final String NULL = "#NULL";
 
@@ -377,7 +376,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Object[], NBTTagList> arrayEncoder = new NBTEncoder<Object[], NBTTagList>() {
+	NBTEncoder<Object[], NBTTagList> arrayEncoder = new NBTEncoder<Object[], NBTTagList>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -410,7 +409,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<List<?>, NBTTagList> listEncoder = new NBTEncoder<List<?>, NBTTagList>() {
+	NBTEncoder<List<?>, NBTTagList> listEncoder = new NBTEncoder<List<?>, NBTTagList>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -452,7 +451,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Set<?>, NBTTagList> setEncoder = new NBTEncoder<Set<?>, NBTTagList>() {
+	NBTEncoder<Set<?>, NBTTagList> setEncoder = new NBTEncoder<Set<?>, NBTTagList>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -494,7 +493,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Map<?, ?>, NBTTagList> mapEncoder = new NBTEncoder<Map<?,?>, NBTTagList>() {
+	NBTEncoder<Map<?, ?>, NBTTagList> mapEncoder = new NBTEncoder<Map<?,?>, NBTTagList>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -539,7 +538,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<Multimap<?, ?>, NBTTagList> multimapEncoder = new NBTEncoder<Multimap<?,?>, NBTTagList>() {
+	NBTEncoder<Multimap<?, ?>, NBTTagList> multimapEncoder = new NBTEncoder<Multimap<?,?>, NBTTagList>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -584,7 +583,7 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder<? extends Object, NBTTagCompound> classEncoder = new NBTEncoder<Object, NBTTagCompound>() {
+	NBTEncoder<? extends Object, NBTTagCompound> classEncoder = new NBTEncoder<Object, NBTTagCompound>() {
 
 		@Override
 		public boolean canEncode(Object o) {
@@ -601,7 +600,7 @@ public class MBT {
 			NBTTagCompound nbt = new NBTTagCompound();
 			for(Field field : t.getClass().getDeclaredFields()){
 				field.setAccessible(true);
-				if(!Modifier.isStatic(field.getModifiers())){
+				if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())){
 					try {
 						nbt.setTag(field.getName(), mbt.toNBT(field.get(t)));
 					} catch (IllegalArgumentException e) {
@@ -627,7 +626,7 @@ public class MBT {
 				Object o = constructor.newInstance();
 				for(Field field : clazz.getDeclaredFields()){
 					field.setAccessible(true);
-					if(!Modifier.isStatic(field.getModifiers())){
+					if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())){
 						if(nbt.hasKey(field.getName())){
 							if(field.getGenericType() instanceof ParameterizedType && ((ParameterizedType) field.getGenericType()).getActualTypeArguments() instanceof Class[]){
 								field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), (Class[]) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()));
@@ -655,58 +654,239 @@ public class MBT {
 
 	};
 
-	public static final NBTEncoder[] DEFAULTENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder, nbtEncoder, itemStackEncoder, enumEncoder, nullEncoder, arrayEncoder, listEncoder, setEncoder, mapEncoder, multimapEncoder, classEncoder};
+	NBTEncoder<? extends Object, NBTTagCompound> classEncoderSt = new NBTEncoder<Object, NBTTagCompound>() {
 
-	public static final NBTEncoder[] DEFAULTSPECIFICENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder, nbtEncoder, itemStackEncoder, enumEncoder, nullEncoder, arrayEncoder, listEncoder, setEncoder, mapEncoder, multimapEncoder};
+		@Override
+		public boolean canEncode(Object o) {
+			return o != null;
+		}
 
-	public static final NBTEncoder[] PRIMITIVEENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder};
+		@Override
+		public boolean canDecode(NBTBase nbt, Class clazz) {
+			return nbt instanceof NBTTagCompound;
+		}
 
-	public static final NBTEncoder[] OBJECTSPECIFICENCODERS = new NBTEncoder[]{stringEncoder, nbtEncoder, itemStackEncoder, enumEncoder, nullEncoder};
+		@Override
+		public NBTTagCompound toNBT(MBT mbt, Object t) {
+			NBTTagCompound nbt = new NBTTagCompound();
+			for(Field field : t.getClass().getDeclaredFields()){
+				field.setAccessible(true);
+				if(!Modifier.isFinal(field.getModifiers())){
+					try {
+						nbt.setTag(field.getName(), mbt.toNBT(field.get(t)));
+					} catch (IllegalArgumentException e) {
+						Throwables.propagate(e);
+					} catch (IllegalAccessException e) {
+						Throwables.propagate(e);
+					}
+				}
+			}
+			return nbt;
+		}
 
-	public static final NBTEncoder[] ITERABLEENCODERS = new NBTEncoder[]{byteArrayEncoder, intArrayEncoder, arrayEncoder, listEncoder, setEncoder};
-
-	public static final NBTEncoder[] MAPENCODERS = new NBTEncoder[]{mapEncoder, multimapEncoder};
-
-	public static final NBTEncoder[] DIRECTNBTENCODERS = new NBTEncoder[]{booleanEncoder, byteEncoder, shortEncoder, intEncoder, longEncoder, floatEncoder, doubleEncoder, byteArrayEncoder, intArrayEncoder, stringEncoder};
-
-	private List<NBTEncoder> encoders;
-
-	public MBT() {
-		this(DEFAULTENCODERS);
-	}
-
-	public MBT(NBTEncoder... encoders) {
-		this.encoders = Lists.newArrayList(encoders);
-	}
-
-	public <T> NBTBase toNBT(T t){
-		for(NBTEncoder encoder : encoders){
-			if(encoder.canEncode(t)){
-				return encoder.toNBT(this, t);
+		@Override
+		public Object fromNBT(MBT mbt, NBTTagCompound nbt, Class clazz, Class... tsclasses) {
+			try{
+				Constructor constructor;
+				try {
+					constructor = clazz.getConstructor();
+				} catch (NoSuchMethodException e) {
+					constructor = clazz.getDeclaredConstructor();
+				}
+				constructor.setAccessible(true);
+				Object o = constructor.newInstance();
+				for(Field field : clazz.getDeclaredFields()){
+					field.setAccessible(true);
+					if(!Modifier.isFinal(field.getModifiers())){
+						if(nbt.hasKey(field.getName())){
+							if(field.getGenericType() instanceof ParameterizedType && ((ParameterizedType) field.getGenericType()).getActualTypeArguments() instanceof Class[]){
+								field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), (Class[]) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()));
+							} else {
+								field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType()));
+							}
+						}
+					}
+				}
+				return o;
+			} catch(InstantiationException e){
+				throw Throwables.propagate(e);
+			} catch (IllegalAccessException e) {
+				throw Throwables.propagate(e);
+			} catch (NoSuchMethodException e) {
+				throw Throwables.propagate(e);
+			} catch (SecurityException e) {
+				throw Throwables.propagate(e);
+			} catch (IllegalArgumentException e) {
+				throw Throwables.propagate(e);
+			} catch (InvocationTargetException e) {
+				throw Throwables.propagate(e);
 			}
 		}
-		return null;
-	}
 
-	public <T> T fromNBT(NBTBase nbt, Class<T> clazz, Class... tsclasses){
-		for(NBTEncoder encoder : encoders){
-			if(encoder.canDecode(nbt, clazz)){
-				return (T) encoder.fromNBT(this, nbt, clazz, tsclasses);
+	};
+	
+	NBTEncoder<? extends Object, NBTTagCompound> classEncoderSu = new NBTEncoder<Object, NBTTagCompound>() {
+
+		@Override
+		public boolean canEncode(Object o) {
+			return o != null;
+		}
+
+		@Override
+		public boolean canDecode(NBTBase nbt, Class clazz) {
+			return nbt instanceof NBTTagCompound;
+		}
+
+		@Override
+		public NBTTagCompound toNBT(MBT mbt, Object t) {
+			NBTTagCompound nbt = new NBTTagCompound();
+			Class clazz = t.getClass();
+			while(clazz != null && clazz != Object.class){
+				for(Field field : clazz.getDeclaredFields()){
+					field.setAccessible(true);
+					if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())){
+						try {
+							nbt.setTag(field.getName(), mbt.toNBT(field.get(t)));
+						} catch (IllegalArgumentException e) {
+							Throwables.propagate(e);
+						} catch (IllegalAccessException e) {
+							Throwables.propagate(e);
+						}
+					}
+				}
+				clazz = clazz.getSuperclass();
+			}
+			return nbt;
+		}
+
+		@Override
+		public Object fromNBT(MBT mbt, NBTTagCompound nbt, Class clazz, Class... tsclasses) {
+			try{
+				Constructor constructor;
+				try {
+					constructor = clazz.getConstructor();
+				} catch (NoSuchMethodException e) {
+					constructor = clazz.getDeclaredConstructor();
+				}
+				constructor.setAccessible(true);
+				Object o = constructor.newInstance();
+				while(clazz != null && clazz != Object.class){
+					for(Field field : clazz.getDeclaredFields()){
+						field.setAccessible(true);
+						if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())){
+							if(nbt.hasKey(field.getName())){
+								if(field.getGenericType() instanceof ParameterizedType && ((ParameterizedType) field.getGenericType()).getActualTypeArguments() instanceof Class[]){
+									field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), (Class[]) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()));
+								} else {
+									field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType()));
+								}
+							}
+						}
+					}
+					clazz = clazz.getSuperclass();
+				}
+				return o;
+			} catch(InstantiationException e){
+				throw Throwables.propagate(e);
+			} catch (IllegalAccessException e) {
+				throw Throwables.propagate(e);
+			} catch (NoSuchMethodException e) {
+				throw Throwables.propagate(e);
+			} catch (SecurityException e) {
+				throw Throwables.propagate(e);
+			} catch (IllegalArgumentException e) {
+				throw Throwables.propagate(e);
+			} catch (InvocationTargetException e) {
+				throw Throwables.propagate(e);
 			}
 		}
-		return null;
-	}
 
-	public static interface NBTEncoder<T, NT extends NBTBase> {
+	};
+	
+	NBTEncoder<? extends Object, NBTTagCompound> classEncoderStSu = new NBTEncoder<Object, NBTTagCompound>() {
 
-		public boolean canEncode(Object o);
+		@Override
+		public boolean canEncode(Object o) {
+			return o != null;
+		}
 
-		public boolean canDecode(NBTBase nbt, Class clazz);
+		@Override
+		public boolean canDecode(NBTBase nbt, Class clazz) {
+			return nbt instanceof NBTTagCompound;
+		}
 
-		public NT toNBT(MBT mbt, T t);
+		@Override
+		public NBTTagCompound toNBT(MBT mbt, Object t) {
+			NBTTagCompound nbt = new NBTTagCompound();
+			Class clazz = t.getClass();
+			while(clazz != null && clazz != Object.class){
+				for(Field field : clazz.getDeclaredFields()){
+					field.setAccessible(true);
+					if(!Modifier.isFinal(field.getModifiers())){
+						try {
+							nbt.setTag(field.getName(), mbt.toNBT(field.get(t)));
+						} catch (IllegalArgumentException e) {
+							Throwables.propagate(e);
+						} catch (IllegalAccessException e) {
+							Throwables.propagate(e);
+						}
+					}
+				}
+				clazz = clazz.getSuperclass();
+			}
+			return nbt;
+		}
 
-		public T fromNBT(MBT mbt, NT nbt, Class<T> clazz, Class... tsclasses);
+		@Override
+		public Object fromNBT(MBT mbt, NBTTagCompound nbt, Class clazz, Class... tsclasses) {
+			try{
+				Constructor constructor;
+				try {
+					constructor = clazz.getConstructor();
+				} catch (NoSuchMethodException e) {
+					constructor = clazz.getDeclaredConstructor();
+				}
+				constructor.setAccessible(true);
+				Object o = constructor.newInstance();
+				while(clazz != null && clazz != Object.class){
+					for(Field field : clazz.getDeclaredFields()){
+						field.setAccessible(true);
+						if(!Modifier.isFinal(field.getModifiers())){
+							if(nbt.hasKey(field.getName())){
+								if(field.getGenericType() instanceof ParameterizedType && ((ParameterizedType) field.getGenericType()).getActualTypeArguments() instanceof Class[]){
+									field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType(), (Class[]) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()));
+								} else {
+									field.set(o, mbt.fromNBT(nbt.getTag(field.getName()), field.getType()));
+								}
+							}
+						}
+					}
+					clazz = clazz.getSuperclass();
+				}
+				return o;
+			} catch(InstantiationException e){
+				throw Throwables.propagate(e);
+			} catch (IllegalAccessException e) {
+				throw Throwables.propagate(e);
+			} catch (NoSuchMethodException e) {
+				throw Throwables.propagate(e);
+			} catch (SecurityException e) {
+				throw Throwables.propagate(e);
+			} catch (IllegalArgumentException e) {
+				throw Throwables.propagate(e);
+			} catch (InvocationTargetException e) {
+				throw Throwables.propagate(e);
+			}
+		}
 
-	}
+	};
+
+	public boolean canEncode(Object o);
+
+	public boolean canDecode(NBTBase nbt, Class clazz);
+
+	public NT toNBT(MBT mbt, T t);
+
+	public T fromNBT(MBT mbt, NT nbt, Class<T> clazz, Class... tsclasses);
 
 }

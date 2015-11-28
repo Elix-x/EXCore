@@ -10,6 +10,10 @@ import net.minecraft.world.World;
 public class DimBlockPos extends BlockPos {
 
 	public int dimId;
+	
+	private DimBlockPos() {
+		super(0, 0, 0);
+	}
 
 	public DimBlockPos(int x, int y, int z, int dimId) {
 		super(x, y, z);
