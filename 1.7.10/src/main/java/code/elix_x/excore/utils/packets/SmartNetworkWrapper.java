@@ -125,25 +125,25 @@ public class SmartNetworkWrapper {
 	 */
 	
 	public void sendToAll(IMessage message) {
-		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT && FMLCommonHandler.instance().getSide() == Side.SERVER){
+		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT){
 			channel.sendToAll(message);
 		}
 	}
 
 	public void sendTo(IMessage message, EntityPlayerMP player) {
-		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT && FMLCommonHandler.instance().getSide() == Side.SERVER){
+		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT){
 			channel.sendTo(message, player);
 		}
 	}
 
 	public void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point) {
-		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT && FMLCommonHandler.instance().getSide() == Side.SERVER){
+		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT){
 			channel.sendToAllAround(message, point);
 		}
 	}
 
 	public void sendToDimension(IMessage message, int dimensionId) {
-		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT && FMLCommonHandler.instance().getSide() == Side.SERVER){
+		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT){
 			channel.sendToDimension(message, dimensionId);
 		}
 	}

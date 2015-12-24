@@ -3,6 +3,7 @@ package code.elix_x.excore.utils.pos;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -83,6 +84,10 @@ public class BlockPos {
 	
 	public BlockPos offsetZNew(int zz){
 		return new BlockPos(x, y, z + zz);
+	}
+	
+	public Vec3 toVec3() {
+		return Vec3.createVectorHelper(x, y, z);
 	}
 	
 	public Block getBlock(World world){

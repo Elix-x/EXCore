@@ -5,6 +5,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class BlockPos {
@@ -88,6 +89,10 @@ public class BlockPos {
 	
 	public BlockPos offsetZNew(int zz){
 		return new BlockPos(x, y, z + zz);
+	}
+	
+	public Vec3 toVec3() {
+		return new Vec3(x, y, z);
 	}
 	
 	public net.minecraft.util.BlockPos toBlockPos(){

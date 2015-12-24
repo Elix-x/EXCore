@@ -1,4 +1,4 @@
-package code.elix_x.excore.utils.vecs;
+package code.elix_x.excore.utils.shape3d;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -6,48 +6,36 @@ import java.util.List;
 import java.util.Set;
 
 import code.elix_x.excore.utils.pos.BlockPos;
+import code.elix_x.excore.utils.vecs.Vec3Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public class PositionnedRotatedRangedVec3 {
+public class SquareBasedPyramid extends Shape3D {
 
-	private World worldObj;
+	protected float rotYaw;
+	protected float rotPitch;
+	protected float rotOffset;
 
-	private double posX;
-	private double posY;
-	private double posZ;
+	protected double range;
 
-	private float rotYaw;
-	private float rotPitch;
-	private float rotR;
-
-	private double range;
-
-	public PositionnedRotatedRangedVec3(World worldObj, double posX, double posY, double posZ, float rotationYaw, float rotationPitch, float rotR, double range) {
-		setData(worldObj, posX, posY, posZ, rotationYaw, rotationPitch, rotR, range);
-	}
-
-	public void setData(World worldObj, double posX, double posY, double posZ, float rotationYaw, float rotationPitch, float rotR, double range){
-		this.worldObj = worldObj;
-		this.posX = posX;
-		this.posY = posY;
-		this.posZ = posZ;
+	public SquareBasedPyramid(World worldObj, double posX, double posY, double posZ, float rotationYaw, float rotationPitch, float rotOffset, double range) {
+		super(worldObj, posX, posY, posZ);
 		this.rotYaw = rotationYaw;
 		this.rotPitch = rotationPitch;
-		this.rotR = rotR;
+		this.rotOffset = rotOffset;
 		this.range = range;
 	}
 
 	public Vec3[] getMainVecs() {
-		return new Vec3[]{Vec3Utils.getLookVec(rotYaw, rotPitch), Vec3Utils.getLookVec(rotYaw + rotR, rotPitch + rotR), Vec3Utils.getLookVec(rotYaw - rotR, rotPitch + rotR), Vec3Utils.getLookVec(rotYaw + rotR, rotPitch - rotR), Vec3Utils.getLookVec(rotYaw - rotR, rotPitch - rotR)};
+		return new Vec3[]{Vec3Utils.getLookVec(rotYaw, rotPitch), Vec3Utils.getLookVec(rotYaw + rotOffset, rotPitch + rotOffset), Vec3Utils.getLookVec(rotYaw - rotOffset, rotPitch + rotOffset), Vec3Utils.getLookVec(rotYaw + rotOffset, rotPitch - rotOffset), Vec3Utils.getLookVec(rotYaw - rotOffset, rotPitch - rotOffset)};
 	}
 
 	public List<AxisAlignedBB> getMainBoxes() {
 		List<AxisAlignedBB> list = new ArrayList<AxisAlignedBB>();
 
-		Vec3[] vecs = new Vec3[]{new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ)};
+		Vec3[] vecs = new Vec3[]{Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ)};
 		Vec3[] vec2s = getMainVecs();
 
 		boolean arrived = false;
@@ -102,9 +90,9 @@ public class PositionnedRotatedRangedVec3 {
 				vecs[i] = vec;
 			}
 
-			list.add(new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ));
+			list.add(AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ));
 
-			double dist = vecs[0].distanceTo(new Vec3(posX, posY, posZ));
+			double dist = vecs[0].distanceTo(Vec3.createVectorHelper(posX, posY, posZ));
 			if(dist >= range){
 				arrived = true;
 				break;
@@ -122,7 +110,7 @@ public class PositionnedRotatedRangedVec3 {
 	public Set<BlockPos> getAffectedBlocks(){
 		Set<BlockPos> blocks = new HashSet<BlockPos>();
 
-		Vec3[] vecs = new Vec3[]{new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ)};
+		Vec3[] vecs = new Vec3[]{Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ)};
 		Vec3[] vec2s = getMainVecs();
 
 		boolean arrived = false;
@@ -177,15 +165,9 @@ public class PositionnedRotatedRangedVec3 {
 				vecs[i] = vec;
 			}
 
-			for(int i = (int) minX; i <= maxX; i++){
-				for(int j = (int) minY; j <= maxY; j++){
-					for(int k = (int) minZ; k <= maxZ; k++){
-						blocks.add(new BlockPos(i, j, k));
-					}
-				}
-			}
+			blocks.addAll(new AxisAlignedBox(worldObj, minX, minY, minZ, maxX, maxY, maxZ).getAffectedBlocks());
 
-			double dist = vecs[0].distanceTo(new Vec3(posX, posY, posZ));
+			double dist = vecs[0].distanceTo(Vec3.createVectorHelper(posX, posY, posZ));
 			if(dist >= range){
 				arrived = true;
 				break;
@@ -204,9 +186,9 @@ public class PositionnedRotatedRangedVec3 {
 	public Set<Entity> getAffectedEntities(){
 		Set<Entity> entities = new HashSet<Entity>();
 
-		List<Entity> list = worldObj.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(posX - range, posY - range, posZ - range, posX + range, posY + range, posZ + range));
+		Set<Entity> set = new AxisAlignedBox(worldObj, posX - range, posY - range, posZ - range, posX + range, posY + range, posZ + range).getAffectedEntities();
 
-		Vec3[] vecs = new Vec3[]{new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ), new Vec3(posX, posY, posZ)};
+		Vec3[] vecs = new Vec3[]{Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ)};
 		Vec3[] vec2s = getMainVecs();
 
 		boolean arrived = false;
@@ -261,14 +243,9 @@ public class PositionnedRotatedRangedVec3 {
 				vecs[i] = vec;
 			}
 
-			AxisAlignedBB box = new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
-			for(Entity e : list){
-				if(box.intersectsWith(e.getEntityBoundingBox())){
-					entities.add(e);
-				}
-			}
+			entities.addAll(new AxisAlignedBox(worldObj, minX, minY, minZ, maxX, maxY, maxZ).getAffectedEntities(set));
 
-			double dist = vecs[0].distanceTo(new Vec3(posX, posY, posZ));
+			double dist = vecs[0].distanceTo(Vec3.createVectorHelper(posX, posY, posZ));
 			if(dist >= range){
 				arrived = true;
 				break;
@@ -282,11 +259,6 @@ public class PositionnedRotatedRangedVec3 {
 		vec2s = null;
 
 		return entities;
-	}
-
-	@Override
-	public String toString() {
-		return "PyramidalVec3{Pos:{" + posX + ", " + posY + ", " + posZ + "}, Rot:{" + rotYaw + ", " + rotPitch + "}, Borders degree: " + rotR + ", Height: " + range + "}";
 	}
 
 }
