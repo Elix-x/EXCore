@@ -1,8 +1,8 @@
 package code.elix_x.excore;
 
-import cpw.mods.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod;
 
-@Mod(modid = EXCore.MODID, name = EXCore.NAME, version = EXCore.VERSION, acceptedMinecraftVersions = EXCore.MCVERSION)
+@Mod(modid = EXCore.MODID, name = EXCore.NAME, version = EXCore.VERSION, acceptedMinecraftVersions = "[1.8,1.8.9]")
 public class EXCore {
 
 	public static final String MODID = "excore";
@@ -11,6 +11,7 @@ public class EXCore {
 
 	public static final String DEPENDENCY = MODID + "@[" + VERSION + ",)";
 
-	public static final String MCVERSION = "1.7.10";
+	public static final String MCVERSION = "1.8.9";
+
 
 }

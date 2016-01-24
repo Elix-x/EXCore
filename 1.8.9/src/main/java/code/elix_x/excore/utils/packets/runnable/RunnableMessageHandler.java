@@ -5,11 +5,12 @@ import java.util.function.Function;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.util.IThreadListener;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class RunnableMessageHandler<REQ extends IMessage, REPLY extends IMessage> implements IMessageHandler<REQ, REPLY> {
+public abstract class RunnableMessageHandler<REQ extends IMessage, REPLY extends IMessage> implements IMessageHandler<REQ, REPLY> {
 
 	public Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>> run;
 
@@ -20,8 +21,10 @@ public class RunnableMessageHandler<REQ extends IMessage, REPLY extends IMessage
 	@Override
 	public REPLY onMessage(REQ message, MessageContext ctx) {
 		Pair<Runnable, REPLY> pair = run.apply(new ImmutablePair<REQ, MessageContext>(message, ctx));
-		pair.getKey().run();
+		getListener(ctx).addScheduledTask(pair.getKey());
 		return pair.getValue();
 	}
+
+	public abstract IThreadListener getListener(MessageContext ctx);
 
 }
