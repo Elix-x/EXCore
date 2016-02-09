@@ -37,7 +37,7 @@ public class SmartNetworkWrapper {
 
 	private Map<Class<? extends IMessage>, Side> packetsReceivingSide = new HashMap<Class<? extends IMessage>, Side>();
 
-	public SmartNetworkWrapper(String name) {
+	public SmartNetworkWrapper(String name){
 		this.name = name;
 		packetCodec = new SimpleIndexedCodec();
 		channels = NetworkRegistry.INSTANCE.newChannel(name, packetCodec);
@@ -47,11 +47,11 @@ public class SmartNetworkWrapper {
 	 * Getters
 	 */
 
-	public String getName() {
+	public String getName(){
 		return name;
 	}
 
-	public int getNextPacketId() {
+	public int getNextPacketId(){
 		return nextPacketId;
 	}
 
@@ -78,7 +78,7 @@ public class SmartNetworkWrapper {
 	 * Register
 	 */
 
-	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestMessageType, Side side) {
+	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestMessageType, Side side){
 		packetCodec.addDiscriminator(nextPacketId, requestMessageType);
 		FMLEmbeddedChannel channel = channels.get(side);
 		String type = channel.findChannelHandlerNameForType(SimpleIndexedCodec.class);
@@ -110,48 +110,48 @@ public class SmartNetworkWrapper {
 	 * Runnable
 	 */
 
-	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>> onReceive, Class<REQ> requestMessageType, Side side) {
+	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>> onReceive, Class<REQ> requestMessageType, Side side){
 		registerMessage(new RunnableMessageHandler(onReceive), requestMessageType, side);
 	}
 
-	public <REQ extends IMessage> void registerMessage1(final Function<Pair<REQ, MessageContext>, Runnable> onReceive, Class<REQ> requestMessageType, Side side) {
+	public <REQ extends IMessage> void registerMessage1(final Function<Pair<REQ, MessageContext>, Runnable> onReceive, Class<REQ> requestMessageType, Side side){
 		registerMessage(new Function<Pair<REQ, MessageContext>, Pair<Runnable, IMessage>>(){
 
 			@Override
-			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t) {
+			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t){
 				return new ImmutablePair<Runnable, IMessage>(onReceive.apply(t), null);
 			}
 
 		}, requestMessageType, side);
 	}
 
-	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage2(final Function<REQ, Pair<Runnable, REPLY>> onReceive, Class<REQ> requestMessageType, Side side) {
+	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage2(final Function<REQ, Pair<Runnable, REPLY>> onReceive, Class<REQ> requestMessageType, Side side){
 		registerMessage(new Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>>(){
 
 			@Override
-			public Pair<Runnable, REPLY> apply(Pair<REQ, MessageContext> t) {
+			public Pair<Runnable, REPLY> apply(Pair<REQ, MessageContext> t){
 				return onReceive.apply(t.getKey());
 			}
 
 		}, requestMessageType, side);
 	}
 
-	public <REQ extends IMessage> void registerMessage3(final Function<REQ, Runnable> onReceive, Class<REQ> requestMessageType, Side side) {
+	public <REQ extends IMessage> void registerMessage3(final Function<REQ, Runnable> onReceive, Class<REQ> requestMessageType, Side side){
 		registerMessage(new Function<Pair<REQ, MessageContext>, Pair<Runnable, IMessage>>(){
 
 			@Override
-			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t) {
+			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t){
 				return new ImmutablePair<Runnable, IMessage>(onReceive.apply(t.getKey()), null);
 			}
 
 		}, requestMessageType, side);
 	}
 
-	public <REQ extends IMessage> void registerMessage(final Runnable onReceive, Class<REQ> requestMessageType, Side side) {
-		registerMessage(new Function<Pair<REQ, MessageContext>, Pair<Runnable, IMessage>>() {
+	public <REQ extends IMessage> void registerMessage(final Runnable onReceive, Class<REQ> requestMessageType, Side side){
+		registerMessage(new Function<Pair<REQ, MessageContext>, Pair<Runnable, IMessage>>(){
 
 			@Override
-			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t) {
+			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t){
 				return new ImmutablePair<Runnable, IMessage>(onReceive, null);
 			}
 

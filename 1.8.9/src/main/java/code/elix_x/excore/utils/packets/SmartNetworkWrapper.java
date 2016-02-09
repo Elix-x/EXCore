@@ -7,8 +7,7 @@ import java.util.function.Function;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.base.Throwables;
-
+import code.elix_x.excore.utils.packets.runnable.ClientRunnableMessageHandler;
 import code.elix_x.excore.utils.packets.runnable.RunnableMessageHandler;
 import code.elix_x.excore.utils.packets.runnable.ServerRunnableMessageHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,7 +29,7 @@ public class SmartNetworkWrapper {
 
 	private Map<Class<? extends IMessage>, Side> packetsReceivingSide = new HashMap<Class<? extends IMessage>, Side>();
 
-	public SmartNetworkWrapper(String name) {
+	public SmartNetworkWrapper(String name){
 		this.name = name;
 		channel = NetworkRegistry.INSTANCE.newSimpleChannel(name);
 	}
@@ -38,34 +37,34 @@ public class SmartNetworkWrapper {
 	/*
 	 * Getters
 	 */
-	
-	public String getName() {
+
+	public String getName(){
 		return name;
 	}
 
-	public SimpleNetworkWrapper getChannel() {
+	public SimpleNetworkWrapper getChannel(){
 		return channel;
 	}
 
-	public int getNextPacketId() {
+	public int getNextPacketId(){
 		return nextPacketId;
 	}
 
 	public Side getPacketReceivingSide(Class<? extends IMessage> clazz){
 		return packetsReceivingSide.get(clazz);
 	}
-	
+
 	/*
 	 * Register
 	 */
 
-	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side) {
+	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side){
 		channel.registerMessage(messageHandler, requestMessageType, nextPacketId, side);
 		packetsReceivingSide.put(requestMessageType, side);
 		nextPacketId++;
 	}
 
-	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestMessageType, Side side) {
+	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestMessageType, Side side){
 		channel.registerMessage(messageHandler, requestMessageType, nextPacketId, side);
 		packetsReceivingSide.put(requestMessageType, side);
 		nextPacketId++;
@@ -75,61 +74,53 @@ public class SmartNetworkWrapper {
 	 * Runnable
 	 */
 
-	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>> onReceive, Class<REQ> requestMessageType, Side side) {
+	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>> onReceive, Class<REQ> requestMessageType, Side side){
 		RunnableMessageHandler<REQ, REPLY> handler = new ServerRunnableMessageHandler<REQ, REPLY>();
-		if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			try {
-				handler = (RunnableMessageHandler<REQ, REPLY>) Class.forName("code.elix_x.excore.utils.packets.runnable.ClientRunnableMessageHandler").newInstance();
-			} catch (InstantiationException e) {
-				Throwables.propagate(e);
-			} catch (IllegalAccessException e) {
-				Throwables.propagate(e);
-			} catch (ClassNotFoundException e) {
-				Throwables.propagate(e);
-			}
+		if(side == Side.CLIENT && FMLCommonHandler.instance().getSide() == Side.CLIENT){
+			handler = new ClientRunnableMessageHandler<REQ, REPLY>();
 		}
 		handler.run = onReceive;
 		registerMessage(handler, requestMessageType, side);
 	}
 
-	public <REQ extends IMessage> void registerMessage1(final Function<Pair<REQ, MessageContext>, Runnable> onReceive, Class<REQ> requestMessageType, Side side) {
+	public <REQ extends IMessage> void registerMessage1(final Function<Pair<REQ, MessageContext>, Runnable> onReceive, Class<REQ> requestMessageType, Side side){
 		registerMessage(new Function<Pair<REQ, MessageContext>, Pair<Runnable, IMessage>>(){
 
 			@Override
-			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t) {
+			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t){
 				return new ImmutablePair<Runnable, IMessage>(onReceive.apply(t), null);
 			}
 
 		}, requestMessageType, side);
 	}
 
-	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage2(final Function<REQ, Pair<Runnable, REPLY>> onReceive, Class<REQ> requestMessageType, Side side) {
+	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage2(final Function<REQ, Pair<Runnable, REPLY>> onReceive, Class<REQ> requestMessageType, Side side){
 		registerMessage(new Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>>(){
 
 			@Override
-			public Pair<Runnable, REPLY> apply(Pair<REQ, MessageContext> t) {
+			public Pair<Runnable, REPLY> apply(Pair<REQ, MessageContext> t){
 				return onReceive.apply(t.getKey());
 			}
 
 		}, requestMessageType, side);
 	}
 
-	public <REQ extends IMessage> void registerMessage3(final Function<REQ, Runnable> onReceive, Class<REQ> requestMessageType, Side side) {
+	public <REQ extends IMessage> void registerMessage3(final Function<REQ, Runnable> onReceive, Class<REQ> requestMessageType, Side side){
 		registerMessage(new Function<Pair<REQ, MessageContext>, Pair<Runnable, IMessage>>(){
 
 			@Override
-			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t) {
+			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t){
 				return new ImmutablePair<Runnable, IMessage>(onReceive.apply(t.getKey()), null);
 			}
 
 		}, requestMessageType, side);
 	}
 
-	public <REQ extends IMessage> void registerMessage(final Runnable onReceive, Class<REQ> requestMessageType, Side side) {
-		registerMessage(new Function<Pair<REQ, MessageContext>, Pair<Runnable, IMessage>>() {
+	public <REQ extends IMessage> void registerMessage(final Runnable onReceive, Class<REQ> requestMessageType, Side side){
+		registerMessage(new Function<Pair<REQ, MessageContext>, Pair<Runnable, IMessage>>(){
 
 			@Override
-			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t) {
+			public Pair<Runnable, IMessage> apply(Pair<REQ, MessageContext> t){
 				return new ImmutablePair<Runnable, IMessage>(onReceive, null);
 			}
 
@@ -140,25 +131,25 @@ public class SmartNetworkWrapper {
 	 * Sending
 	 */
 
-	public void sendToAll(IMessage message) {
+	public void sendToAll(IMessage message){
 		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT){
 			channel.sendToAll(message);
 		}
 	}
 
-	public void sendTo(IMessage message, EntityPlayerMP player) {
+	public void sendTo(IMessage message, EntityPlayerMP player){
 		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT){
 			channel.sendTo(message, player);
 		}
 	}
 
-	public void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point) {
+	public void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point){
 		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT){
 			channel.sendToAllAround(message, point);
 		}
 	}
 
-	public void sendToDimension(IMessage message, int dimensionId) {
+	public void sendToDimension(IMessage message, int dimensionId){
 		if(packetsReceivingSide.get(message.getClass()) == Side.CLIENT){
 			channel.sendToDimension(message, dimensionId);
 		}
