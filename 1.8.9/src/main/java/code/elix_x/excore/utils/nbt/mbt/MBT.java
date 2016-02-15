@@ -8,13 +8,13 @@ import net.minecraft.nbt.NBTBase;
 
 public class MBT {
 
-	public static final NBTEncoder[] DEFAULTENCODERS = new NBTEncoder[]{NBTEncoder.booleanEncoder, NBTEncoder.byteEncoder, NBTEncoder.shortEncoder, NBTEncoder.intEncoder, NBTEncoder.longEncoder, NBTEncoder.floatEncoder, NBTEncoder.doubleEncoder, NBTEncoder.byteArrayEncoder, NBTEncoder.intArrayEncoder, NBTEncoder.stringEncoder, NBTEncoder.nbtEncoder, NBTEncoder.itemStackEncoder, NBTEncoder.enumEncoder, NBTEncoder.nullEncoder, NBTEncoder.arrayEncoder, NBTEncoder.listEncoder, NBTEncoder.setEncoder, NBTEncoder.mapEncoder, NBTEncoder.multimapEncoder, NBTEncoder.classEncoder};
+	public static final NBTEncoder[] DEFAULTENCODERS = new NBTEncoder[]{NBTEncoder.booleanEncoder, NBTEncoder.byteEncoder, NBTEncoder.shortEncoder, NBTEncoder.intEncoder, NBTEncoder.longEncoder, NBTEncoder.floatEncoder, NBTEncoder.doubleEncoder, NBTEncoder.byteArrayEncoder, NBTEncoder.intArrayEncoder, NBTEncoder.stringEncoder, NBTEncoder.nbtEncoder, NBTEncoder.itemStackEncoder, NBTEncoder.uuidEncoder, NBTEncoder.enumEncoder, NBTEncoder.nullEncoder, NBTEncoder.arrayEncoder, NBTEncoder.listEncoder, NBTEncoder.setEncoder, NBTEncoder.mapEncoder, NBTEncoder.multimapEncoder, NBTEncoder.classEncoder};
 
-	public static final NBTEncoder[] DEFAULTSPECIFICENCODERS = new NBTEncoder[]{NBTEncoder.booleanEncoder, NBTEncoder.byteEncoder, NBTEncoder.shortEncoder, NBTEncoder.intEncoder, NBTEncoder.longEncoder, NBTEncoder.floatEncoder, NBTEncoder.doubleEncoder, NBTEncoder.byteArrayEncoder, NBTEncoder.intArrayEncoder, NBTEncoder.stringEncoder, NBTEncoder.nbtEncoder, NBTEncoder.itemStackEncoder, NBTEncoder.enumEncoder, NBTEncoder.nullEncoder, NBTEncoder.arrayEncoder, NBTEncoder.listEncoder, NBTEncoder.setEncoder, NBTEncoder.mapEncoder, NBTEncoder.multimapEncoder};
+	public static final NBTEncoder[] DEFAULTSPECIFICENCODERS = new NBTEncoder[]{NBTEncoder.booleanEncoder, NBTEncoder.byteEncoder, NBTEncoder.shortEncoder, NBTEncoder.intEncoder, NBTEncoder.longEncoder, NBTEncoder.floatEncoder, NBTEncoder.doubleEncoder, NBTEncoder.byteArrayEncoder, NBTEncoder.intArrayEncoder, NBTEncoder.stringEncoder, NBTEncoder.nbtEncoder, NBTEncoder.itemStackEncoder, NBTEncoder.uuidEncoder, NBTEncoder.enumEncoder, NBTEncoder.nullEncoder, NBTEncoder.arrayEncoder, NBTEncoder.listEncoder, NBTEncoder.setEncoder, NBTEncoder.mapEncoder, NBTEncoder.multimapEncoder};
 
 	public static final NBTEncoder[] PRIMITIVEENCODERS = new NBTEncoder[]{NBTEncoder.booleanEncoder, NBTEncoder.byteEncoder, NBTEncoder.shortEncoder, NBTEncoder.intEncoder, NBTEncoder.longEncoder, NBTEncoder.floatEncoder, NBTEncoder.doubleEncoder};
 
-	public static final NBTEncoder[] OBJECTSPECIFICENCODERS = new NBTEncoder[]{NBTEncoder.stringEncoder, NBTEncoder.nbtEncoder, NBTEncoder.itemStackEncoder, NBTEncoder.enumEncoder, NBTEncoder.nullEncoder};
+	public static final NBTEncoder[] OBJECTSPECIFICENCODERS = new NBTEncoder[]{NBTEncoder.stringEncoder, NBTEncoder.nbtEncoder, NBTEncoder.itemStackEncoder, NBTEncoder.uuidEncoder, NBTEncoder.enumEncoder, NBTEncoder.nullEncoder};
 
 	public static final NBTEncoder[] ITERABLEENCODERS = new NBTEncoder[]{NBTEncoder.byteArrayEncoder, NBTEncoder.intArrayEncoder, NBTEncoder.arrayEncoder, NBTEncoder.listEncoder, NBTEncoder.setEncoder};
 
@@ -23,17 +23,17 @@ public class MBT {
 	public static final NBTEncoder[] DIRECTNBTENCODERS = new NBTEncoder[]{NBTEncoder.booleanEncoder, NBTEncoder.byteEncoder, NBTEncoder.shortEncoder, NBTEncoder.intEncoder, NBTEncoder.longEncoder, NBTEncoder.floatEncoder, NBTEncoder.doubleEncoder, NBTEncoder.byteArrayEncoder, NBTEncoder.intArrayEncoder, NBTEncoder.stringEncoder};
 
 	public static final NBTEncoder[] CLASSENCODERS = new NBTEncoder[]{NBTEncoder.classEncoder, NBTEncoder.classEncoderSt, NBTEncoder.classEncoderSu, NBTEncoder.classEncoderStSu};
-	
+
 	private List<NBTEncoder> encoders;
 
-	public MBT() {
+	public MBT(){
 		this(DEFAULTENCODERS);
 	}
 
-	public MBT(NBTEncoder... encoders) {
+	public MBT(NBTEncoder... encoders){
 		this.encoders = Lists.newArrayList(encoders);
 	}
-	
+
 	public MBT(List<NBTEncoder> encoders){
 		this.encoders = encoders;
 	}
