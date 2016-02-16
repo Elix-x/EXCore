@@ -21,10 +21,10 @@ public abstract class RunnableMessageHandler<REQ extends IMessage, REPLY extends
 	@Override
 	public REPLY onMessage(REQ message, MessageContext ctx) {
 		Pair<Runnable, REPLY> pair = run.apply(new ImmutablePair<REQ, MessageContext>(message, ctx));
-		getListener(ctx).addScheduledTask(pair.getKey());
+		getThreadListener(ctx).addScheduledTask(pair.getKey());
 		return pair.getValue();
 	}
 
-	public abstract IThreadListener getListener(MessageContext ctx);
+	public abstract IThreadListener getThreadListener(MessageContext ctx);
 
 }

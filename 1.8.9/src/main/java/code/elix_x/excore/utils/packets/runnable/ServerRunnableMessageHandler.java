@@ -1,18 +1,23 @@
 package code.elix_x.excore.utils.packets.runnable;
 
+import java.util.function.Function;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class ServerRunnableMessageHandler<REQ extends IMessage, REPLY extends IMessage> extends RunnableMessageHandler<REQ, REPLY> {
 
-	public ServerRunnableMessageHandler() {
-		super(null);
+	public ServerRunnableMessageHandler(Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>> run){
+		super(run);
 	}
 
 	@Override
-	public IThreadListener getListener(MessageContext ctx) {
-		return null;
+	public IThreadListener getThreadListener(MessageContext ctx){
+		return MinecraftServer.getServer();
 	}
 
 }

@@ -75,11 +75,10 @@ public class SmartNetworkWrapper {
 	 */
 
 	public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>> onReceive, Class<REQ> requestMessageType, Side side){
-		RunnableMessageHandler<REQ, REPLY> handler = new ServerRunnableMessageHandler<REQ, REPLY>();
+		RunnableMessageHandler<REQ, REPLY> handler = new ServerRunnableMessageHandler<REQ, REPLY>(onReceive);
 		if(side == Side.CLIENT && FMLCommonHandler.instance().getSide() == Side.CLIENT){
-			handler = new ClientRunnableMessageHandler<REQ, REPLY>();
+			handler = new ClientRunnableMessageHandler<REQ, REPLY>(onReceive);
 		}
-		handler.run = onReceive;
 		registerMessage(handler, requestMessageType, side);
 	}
 

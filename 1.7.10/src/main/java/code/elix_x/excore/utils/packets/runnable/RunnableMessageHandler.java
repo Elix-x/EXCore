@@ -13,12 +13,12 @@ public class RunnableMessageHandler<REQ extends IMessage, REPLY extends IMessage
 
 	public Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>> run;
 
-	public RunnableMessageHandler(Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>> run) {
+	public RunnableMessageHandler(Function<Pair<REQ, MessageContext>, Pair<Runnable, REPLY>> run){
 		this.run = run;
 	}
 
 	@Override
-	public REPLY onMessage(REQ message, MessageContext ctx) {
+	public REPLY onMessage(REQ message, MessageContext ctx){
 		Pair<Runnable, REPLY> pair = run.apply(new ImmutablePair<REQ, MessageContext>(message, ctx));
 		pair.getKey().run();
 		return pair.getValue();
