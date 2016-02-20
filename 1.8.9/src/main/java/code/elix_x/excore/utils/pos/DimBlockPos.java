@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 public class DimBlockPos extends BlockPos {
 
 	public int dimId;
-	
+
 	private DimBlockPos() {
 		super(0, 0, 0);
 	}
@@ -19,11 +19,11 @@ public class DimBlockPos extends BlockPos {
 		super(x, y, z);
 		this.dimId = dimId;
 	}
-	
+
 	public DimBlockPos(net.minecraft.util.BlockPos pos, int dimId) {
 		this(pos.getX(), pos.getY(), pos.getZ(), dimId);
 	}
-	
+
 	public DimBlockPos(TileEntity te) {
 		this(te.getPos(), te.getWorld().provider.getDimensionId());
 	}
@@ -35,40 +35,40 @@ public class DimBlockPos extends BlockPos {
 	public void setDimId(int dimId) {
 		this.dimId = dimId;
 	}
-	
+
 	public World getWorld(){
 		return MinecraftServer.getServer().worldServerForDimension(dimId);
 	}
-	
+
 	public TileEntity getTileEntity(){
-		return getWorld().getTileEntity(toBlockPos());
+		return getTileEntity(getWorld());
 	}
-	
+
 	public IBlockState getBlockState(){
-		return super.getBlockState(getWorld());
+		return getBlockState(getWorld());
 	}
-	
+
 	public Block getBlock(){
-		return super.getBlock(getWorld());
+		return getBlock(getWorld());
 	}
-	
+
 	public int getMetadata(World world){
-		return super.getMetadata(getWorld());
+		return getMetadata(getWorld());
 	}
-	
+
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		nbt = super.writeToNBT(nbt);
 		nbt.setInteger("dimId", dimId);
 		return nbt;
 	}
-	
+
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		dimId = nbt.getInteger("dimId");
 	}
-	
+
 	public static DimBlockPos createFromNBT(NBTTagCompound nbt){
 		return new DimBlockPos(nbt.getInteger("x"), nbt.getInteger("y"), nbt.getInteger("z"), nbt.getInteger("dimId"));
 	}
@@ -94,7 +94,7 @@ public class DimBlockPos extends BlockPos {
 			return false;
 		return true;
 	}
-	
-	
-	
+
+
+
 }

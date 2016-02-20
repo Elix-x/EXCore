@@ -2,10 +2,11 @@ package code.elix_x.excore.utils.packets;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+
+import com.google.common.base.Function;
 
 import code.elix_x.excore.utils.packets.runnable.ClientRunnableMessageHandler;
 import code.elix_x.excore.utils.packets.runnable.RunnableMessageHandler;

@@ -8,50 +8,50 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockPos {
-	
+
 	public int x;
 	public int y;
 	public int z;
-	
-	private BlockPos() {
-		
+
+	private BlockPos(){
+
 	}
-	
-	public BlockPos(int x, int y, int z) {
+
+	public BlockPos(int x, int y, int z){
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
-	
-	public BlockPos(TileEntity te) {
+
+	public BlockPos(TileEntity te){
 		this(te.xCoord, te.yCoord, te.zCoord);
 	}
-	
-	public int getX() {
+
+	public int getX(){
 		return x;
 	}
 
-	public void setX(int x) {
+	public void setX(int x){
 		this.x = x;
 	}
 
-	public int getY() {
+	public int getY(){
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(int y){
 		this.y = y;
 	}
 
-	public int getZ() {
+	public int getZ(){
 		return z;
 	}
 
-	public void setZ(int z) {
+	public void setZ(int z){
 		this.z = z;
 	}
-	
-	public BlockPos offset(ForgeDirection direction) {
+
+	public BlockPos offset(ForgeDirection direction){
 		return offsetX(direction.offsetX).offsetY(direction.offsetY).offsetZ(direction.offsetZ);
 	}
 
@@ -59,68 +59,68 @@ public class BlockPos {
 		x += xx;
 		return this;
 	}
-	
+
 	public BlockPos offsetY(int yy){
 		y += yy;
 		return this;
 	}
-	
+
 	public BlockPos offsetZ(int zz){
 		z += zz;
 		return this;
 	}
-	
-	public BlockPos offsetNew(ForgeDirection direction) {
+
+	public BlockPos offsetNew(ForgeDirection direction){
 		return offsetXNew(direction.offsetX).offsetYNew(direction.offsetY).offsetZNew(direction.offsetZ);
 	}
-	
+
 	public BlockPos offsetXNew(int xx){
 		return new BlockPos(x + xx, y, z);
 	}
-	
+
 	public BlockPos offsetYNew(int yy){
 		return new BlockPos(x, y + yy, z);
 	}
-	
+
 	public BlockPos offsetZNew(int zz){
 		return new BlockPos(x, y, z + zz);
 	}
-	
-	public Vec3 toVec3() {
+
+	public Vec3 toVec3(){
 		return Vec3.createVectorHelper(x, y, z);
 	}
-	
+
 	public Block getBlock(World world){
 		return world.getBlock(x, y, z);
 	}
-	
+
 	public int getMetadata(World world){
 		return world.getBlockMetadata(x, y, z);
 	}
-	
+
 	public TileEntity getTileEntity(World world){
 		return world.getTileEntity(x, y, z);
 	}
-	
+
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
 		nbt.setInteger("x", x);
 		nbt.setInteger("y", y);
 		nbt.setInteger("z", z);
 		return nbt;
 	}
-	
+
 	public void readFromNBT(NBTTagCompound nbt){
 		x = nbt.getInteger("x");
 		y = nbt.getInteger("y");
 		z = nbt.getInteger("z");
 	}
-	
+
 	public static BlockPos createFromNBT(NBTTagCompound nbt){
 		return new BlockPos(nbt.getInteger("x"), nbt.getInteger("y"), nbt.getInteger("z"));
 	}
-	
+
 	@Override
-	public int hashCode() {
+	public int hashCode(){
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + x;
@@ -130,7 +130,7 @@ public class BlockPos {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj){
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -148,8 +148,8 @@ public class BlockPos {
 	}
 
 	@Override
-	public String toString() {
+	public String toString(){
 		return "BlockPos [" + x + ", " + y + ", " + z + "]";
 	}
-	
+
 }
