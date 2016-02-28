@@ -9,17 +9,21 @@ import net.minecraft.nbt.NBTTagCompound;
 public abstract class SmartMessage<T> implements IMessage {
 
 	public static final MBT mbt = new MBT();
-	
+
 	public T t;
-	
-	public SmartMessage(T t) {
+
+	public SmartMessage(){
+
+	}
+
+	public SmartMessage(T t){
 		this.t = t;
 	}
 
 	public MBT getMBT(){
 		return mbt;
 	}
-	
+
 	public abstract Class<? extends T> getTClass();
 
 	@Override
@@ -32,7 +36,7 @@ public abstract class SmartMessage<T> implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		NBTTagCompound nbt = ByteBufUtils.readTag(buf);
-		t = getMBT().fromNBT(nbt, getTClass());
+		t = getMBT().fromNBT(nbt.getTag("data"), getTClass());
 	}
-	
+
 }

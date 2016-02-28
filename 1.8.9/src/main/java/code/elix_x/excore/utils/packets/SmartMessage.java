@@ -32,7 +32,7 @@ public abstract class SmartMessage<T> implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		NBTTagCompound nbt = ByteBufUtils.readTag(buf);
-		t = getMBT().fromNBT(nbt, getTClass());
+		t = getMBT().fromNBT(nbt.getTag("data"), getTClass());
 	}
 
 }
