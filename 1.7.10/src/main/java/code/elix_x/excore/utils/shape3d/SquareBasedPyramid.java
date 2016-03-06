@@ -20,19 +20,28 @@ public class SquareBasedPyramid extends Shape3D {
 
 	protected double range;
 
-	public SquareBasedPyramid(World worldObj, double posX, double posY, double posZ, float rotationYaw, float rotationPitch, float rotOffset, double range) {
-		super(worldObj, posX, posY, posZ);
+	private SquareBasedPyramid(){
+		super(0, 0, 0);
+	}
+
+	public SquareBasedPyramid(double posX, double posY, double posZ, float rotationYaw, float rotationPitch, float rotOffset, double range){
+		super(posX, posY, posZ);
 		this.rotYaw = rotationYaw;
 		this.rotPitch = rotationPitch;
 		this.rotOffset = rotOffset;
 		this.range = range;
 	}
 
-	public Vec3[] getMainVecs() {
+	@Override
+	public AxisAlignedBox getBounds(){
+		return new AxisAlignedBox(posX - range, posY - range, posZ - range, posX + range, posY + range, posZ + range);
+	}
+
+	public Vec3[] getMainVecs(){
 		return new Vec3[]{Vec3Utils.getLookVec(rotYaw, rotPitch), Vec3Utils.getLookVec(rotYaw + rotOffset, rotPitch + rotOffset), Vec3Utils.getLookVec(rotYaw - rotOffset, rotPitch + rotOffset), Vec3Utils.getLookVec(rotYaw + rotOffset, rotPitch - rotOffset), Vec3Utils.getLookVec(rotYaw - rotOffset, rotPitch - rotOffset)};
 	}
 
-	public List<AxisAlignedBB> getMainBoxes() {
+	public List<AxisAlignedBB> getMainBoxes(){
 		List<AxisAlignedBB> list = new ArrayList<AxisAlignedBB>();
 
 		Vec3[] vecs = new Vec3[]{Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ)};
@@ -107,7 +116,8 @@ public class SquareBasedPyramid extends Shape3D {
 		return list;
 	}
 
-	public Set<BlockPos> getAffectedBlocks(){
+	@Override
+	public Set<BlockPos> getAffectedBlocks(World world){
 		Set<BlockPos> blocks = new HashSet<BlockPos>();
 
 		Vec3[] vecs = new Vec3[]{Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ)};
@@ -165,7 +175,7 @@ public class SquareBasedPyramid extends Shape3D {
 				vecs[i] = vec;
 			}
 
-			blocks.addAll(new AxisAlignedBox(worldObj, minX, minY, minZ, maxX, maxY, maxZ).getAffectedBlocks());
+			blocks.addAll(new AxisAlignedBox(minX, minY, minZ, maxX, maxY, maxZ).getAffectedBlocks(world));
 
 			double dist = vecs[0].distanceTo(Vec3.createVectorHelper(posX, posY, posZ));
 			if(dist >= range){
@@ -183,10 +193,11 @@ public class SquareBasedPyramid extends Shape3D {
 		return blocks;
 	}
 
-	public Set<Entity> getAffectedEntities(){
-		Set<Entity> entities = new HashSet<Entity>();
+	@Override
+	public <E extends Entity> Set<E> getAffectedEntities(World world, Class<E> clazz){
+		Set<E> entities = new HashSet<E>();
 
-		Set<Entity> set = new AxisAlignedBox(worldObj, posX - range, posY - range, posZ - range, posX + range, posY + range, posZ + range).getAffectedEntities();
+		Set<E> set = getBounds().getAffectedEntities(world, clazz);
 
 		Vec3[] vecs = new Vec3[]{Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ), Vec3.createVectorHelper(posX, posY, posZ)};
 		Vec3[] vec2s = getMainVecs();
@@ -243,7 +254,7 @@ public class SquareBasedPyramid extends Shape3D {
 				vecs[i] = vec;
 			}
 
-			entities.addAll(new AxisAlignedBox(worldObj, minX, minY, minZ, maxX, maxY, maxZ).getAffectedEntities(set));
+			entities.addAll(new AxisAlignedBox(minX, minY, minZ, maxX, maxY, maxZ).getAffectedEntities(world, set, clazz));
 
 			double dist = vecs[0].distanceTo(Vec3.createVectorHelper(posX, posY, posZ));
 			if(dist >= range){
@@ -259,6 +270,16 @@ public class SquareBasedPyramid extends Shape3D {
 		vec2s = null;
 
 		return entities;
+	}
+
+	@Override
+	public boolean isInside(World world, BlockPos pos){
+		return getAffectedBlocks(world).contains(pos);
+	}
+
+	@Override
+	public boolean isInside(World world, Entity entity){
+		return getAffectedEntities(world, entity.getClass()).contains(entity);
 	}
 
 }

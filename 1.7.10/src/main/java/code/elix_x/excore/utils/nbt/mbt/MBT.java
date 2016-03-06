@@ -22,8 +22,6 @@ public class MBT {
 
 	public static final NBTEncoder[] DIRECTNBTENCODERS = new NBTEncoder[]{NBTEncoder.booleanEncoder, NBTEncoder.byteEncoder, NBTEncoder.shortEncoder, NBTEncoder.intEncoder, NBTEncoder.longEncoder, NBTEncoder.floatEncoder, NBTEncoder.doubleEncoder, NBTEncoder.byteArrayEncoder, NBTEncoder.intArrayEncoder, NBTEncoder.stringEncoder};
 
-	public static final NBTEncoder[] CLASSENCODERS = new NBTEncoder[]{NBTEncoder.classEncoder, NBTEncoder.classEncoderSt, NBTEncoder.classEncoderSu, NBTEncoder.classEncoderStSu};
-
 	private List<NBTEncoder> encoders;
 
 	public MBT(){
