@@ -63,11 +63,43 @@ public abstract class Shape3D {
 	}
 
 	public boolean isInside(World world, Entity entity){
-		return isInside(world, new AxisAlignedBox(entity.getEntityBoundingBox()));
+		return entity.getEntityBoundingBox() != null ? isInside(world, new AxisAlignedBox(entity.getEntityBoundingBox())) : isInside(world, new Vec3(entity.posX, entity.posY, entity.posZ));
 	}
 
 	public boolean intersectsWith(World world, Entity entity){
-		return intersectsWith(world, new AxisAlignedBox(entity.getEntityBoundingBox()));
+		return entity.getEntityBoundingBox() != null ? intersectsWith(world, new AxisAlignedBox(entity.getEntityBoundingBox())) : isInside(world, new Vec3(entity.posX, entity.posY, entity.posZ));
+	}
+
+	@Override
+	public int hashCode(){
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(posX);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(posY);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(posZ);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj){
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Shape3D other = (Shape3D) obj;
+		if (Double.doubleToLongBits(posX) != Double.doubleToLongBits(other.posX))
+			return false;
+		if (Double.doubleToLongBits(posY) != Double.doubleToLongBits(other.posY))
+			return false;
+		if (Double.doubleToLongBits(posZ) != Double.doubleToLongBits(other.posZ))
+			return false;
+		return true;
 	}
 
 }

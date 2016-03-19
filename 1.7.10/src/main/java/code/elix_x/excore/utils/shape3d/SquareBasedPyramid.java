@@ -16,7 +16,7 @@ public class SquareBasedPyramid extends Shape3D {
 
 	protected float rotYaw;
 	protected float rotPitch;
-	protected float rotOffset;
+	protected float rotOffsetDegree;
 
 	protected double range;
 
@@ -28,7 +28,7 @@ public class SquareBasedPyramid extends Shape3D {
 		super(posX, posY, posZ);
 		this.rotYaw = rotationYaw;
 		this.rotPitch = rotationPitch;
-		this.rotOffset = rotOffset;
+		this.rotOffsetDegree = rotOffset;
 		this.range = range;
 	}
 
@@ -38,7 +38,7 @@ public class SquareBasedPyramid extends Shape3D {
 	}
 
 	public Vec3[] getMainVecs(){
-		return new Vec3[]{Vec3Utils.getLookVec(rotYaw, rotPitch), Vec3Utils.getLookVec(rotYaw + rotOffset, rotPitch + rotOffset), Vec3Utils.getLookVec(rotYaw - rotOffset, rotPitch + rotOffset), Vec3Utils.getLookVec(rotYaw + rotOffset, rotPitch - rotOffset), Vec3Utils.getLookVec(rotYaw - rotOffset, rotPitch - rotOffset)};
+		return new Vec3[]{Vec3Utils.getLookVec(rotYaw, rotPitch), Vec3Utils.getLookVec(rotYaw + rotOffsetDegree, rotPitch + rotOffsetDegree), Vec3Utils.getLookVec(rotYaw - rotOffsetDegree, rotPitch + rotOffsetDegree), Vec3Utils.getLookVec(rotYaw + rotOffsetDegree, rotPitch - rotOffsetDegree), Vec3Utils.getLookVec(rotYaw - rotOffsetDegree, rotPitch - rotOffsetDegree)};
 	}
 
 	public List<AxisAlignedBB> getMainBoxes(){
@@ -280,6 +280,39 @@ public class SquareBasedPyramid extends Shape3D {
 	@Override
 	public boolean isInside(World world, Entity entity){
 		return getAffectedEntities(world, entity.getClass()).contains(entity);
+	}
+
+	@Override
+	public int hashCode(){
+		final int prime = 31;
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(range);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + Float.floatToIntBits(rotOffsetDegree);
+		result = prime * result + Float.floatToIntBits(rotPitch);
+		result = prime * result + Float.floatToIntBits(rotYaw);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj){
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SquareBasedPyramid other = (SquareBasedPyramid) obj;
+		if (Double.doubleToLongBits(range) != Double.doubleToLongBits(other.range))
+			return false;
+		if (Float.floatToIntBits(rotOffsetDegree) != Float.floatToIntBits(other.rotOffsetDegree))
+			return false;
+		if (Float.floatToIntBits(rotPitch) != Float.floatToIntBits(other.rotPitch))
+			return false;
+		if (Float.floatToIntBits(rotYaw) != Float.floatToIntBits(other.rotYaw))
+			return false;
+		return true;
 	}
 
 }

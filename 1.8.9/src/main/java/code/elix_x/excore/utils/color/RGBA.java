@@ -25,15 +25,15 @@ public class RGBA implements IColor {
 	}
 
 	public RGBA(float r, float g, float b){
-		this((int)(r * 255f), (int)(g * 255f), (int)(b *255f));
+		this((int)(r * 255f), (int)(g * 255f), (int)(b * 255f));
 	}
 
 	public RGBA(float r, float g, float b, float a){
-		this((int)(r * 255f), (int)(g * 255f), (int)(b *255f), (int)(a * 255f));
+		this((int)(r * 255f), (int)(g * 255f), (int)(b * 255f), (int)(a * 255f));
 	}
 
-	public RGBA(int h){
-		this(h >> 16 & 255, h >> 8 & 255, h & 255, h >> 24 & 255);
+	public RGBA(int argb){
+		this(argb >> 16 & 255, argb >> 8 & 255, argb & 255, argb >> 24 & 255);
 	}
 
 	public int getRI(){

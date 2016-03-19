@@ -282,4 +282,37 @@ public class SquareBasedPyramid extends Shape3D {
 		return getAffectedEntities(world, entity.getClass()).contains(entity);
 	}
 
+	@Override
+	public int hashCode(){
+		final int prime = 31;
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(range);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + Float.floatToIntBits(rotOffset);
+		result = prime * result + Float.floatToIntBits(rotPitch);
+		result = prime * result + Float.floatToIntBits(rotYaw);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj){
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SquareBasedPyramid other = (SquareBasedPyramid) obj;
+		if (Double.doubleToLongBits(range) != Double.doubleToLongBits(other.range))
+			return false;
+		if (Float.floatToIntBits(rotOffset) != Float.floatToIntBits(other.rotOffset))
+			return false;
+		if (Float.floatToIntBits(rotPitch) != Float.floatToIntBits(other.rotPitch))
+			return false;
+		if (Float.floatToIntBits(rotYaw) != Float.floatToIntBits(other.rotYaw))
+			return false;
+		return true;
+	}
+
 }

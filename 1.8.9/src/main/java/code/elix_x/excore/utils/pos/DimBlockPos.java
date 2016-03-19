@@ -3,41 +3,41 @@ package code.elix_x.excore.utils.pos;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class DimBlockPos extends BlockPos {
 
 	public int dimId;
 
-	private DimBlockPos() {
+	private DimBlockPos(){
 		super(0, 0, 0);
 	}
 
-	public DimBlockPos(int x, int y, int z, int dimId) {
+	public DimBlockPos(int x, int y, int z, int dimId){
 		super(x, y, z);
 		this.dimId = dimId;
 	}
 
-	public DimBlockPos(net.minecraft.util.BlockPos pos, int dimId) {
+	public DimBlockPos(net.minecraft.util.BlockPos pos, int dimId){
 		this(pos.getX(), pos.getY(), pos.getZ(), dimId);
 	}
 
-	public DimBlockPos(TileEntity te) {
+	public DimBlockPos(TileEntity te){
 		this(te.getPos(), te.getWorld().provider.getDimensionId());
 	}
 
-	public int getDimId() {
+	public int getDimId(){
 		return dimId;
 	}
 
-	public void setDimId(int dimId) {
+	public void setDimId(int dimId){
 		this.dimId = dimId;
 	}
 
 	public World getWorld(){
-		return MinecraftServer.getServer().worldServerForDimension(dimId);
+		return DimensionManager.getWorld(dimId);
 	}
 
 	public TileEntity getTileEntity(){
@@ -57,14 +57,14 @@ public class DimBlockPos extends BlockPos {
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
 		nbt = super.writeToNBT(nbt);
 		nbt.setInteger("dimId", dimId);
 		return nbt;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(NBTTagCompound nbt){
 		super.readFromNBT(nbt);
 		dimId = nbt.getInteger("dimId");
 	}
@@ -74,7 +74,7 @@ public class DimBlockPos extends BlockPos {
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode(){
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + dimId;
@@ -82,7 +82,7 @@ public class DimBlockPos extends BlockPos {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj){
 		if (this == obj)
 			return true;
 		if (!super.equals(obj))
@@ -94,7 +94,5 @@ public class DimBlockPos extends BlockPos {
 			return false;
 		return true;
 	}
-
-
 
 }

@@ -2,9 +2,9 @@ package code.elix_x.excore.utils.pos;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class DimBlockPos extends BlockPos {
 
@@ -32,7 +32,7 @@ public class DimBlockPos extends BlockPos {
 	}
 
 	public World getWorld(){
-		return MinecraftServer.getServer().worldServerForDimension(dimId);
+		return DimensionManager.getWorld(dimId);
 	}
 
 	public Block getBlock(){

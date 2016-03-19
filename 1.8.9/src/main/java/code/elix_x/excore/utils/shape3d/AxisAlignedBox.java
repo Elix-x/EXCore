@@ -14,12 +14,12 @@ import net.minecraft.world.World;
 
 public class AxisAlignedBox extends Shape3D {
 
-	public double minX;
-	public double minY;
-	public double minZ;
-	public double maxX;
-	public double maxY;
-	public double maxZ;
+	protected double minX;
+	protected double minY;
+	protected double minZ;
+	protected double maxX;
+	protected double maxY;
+	protected double maxZ;
 
 	private AxisAlignedBox(){
 		super(0, 0, 0);
@@ -80,6 +80,50 @@ public class AxisAlignedBox extends Shape3D {
 	@Override
 	public boolean intersectsWith(World world, Shape3D shape){
 		return toAxisAlignedBB().intersectsWith(shape.getBounds().toAxisAlignedBB());
+	}
+
+	@Override
+	public int hashCode(){
+		final int prime = 31;
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(maxX);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(maxY);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(maxZ);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(minX);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(minY);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(minZ);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj){
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AxisAlignedBox other = (AxisAlignedBox) obj;
+		if (Double.doubleToLongBits(maxX) != Double.doubleToLongBits(other.maxX))
+			return false;
+		if (Double.doubleToLongBits(maxY) != Double.doubleToLongBits(other.maxY))
+			return false;
+		if (Double.doubleToLongBits(maxZ) != Double.doubleToLongBits(other.maxZ))
+			return false;
+		if (Double.doubleToLongBits(minX) != Double.doubleToLongBits(other.minX))
+			return false;
+		if (Double.doubleToLongBits(minY) != Double.doubleToLongBits(other.minY))
+			return false;
+		if (Double.doubleToLongBits(minZ) != Double.doubleToLongBits(other.minZ))
+			return false;
+		return true;
 	}
 
 }
