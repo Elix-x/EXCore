@@ -511,7 +511,7 @@ public interface NBTEncoder<T, NT extends NBTBase> {
 
 	};
 
-	NBTEncoder<Map<?, ?>, NBTTagList> mapEncoder = new NBTEncoder<Map<?,?>, NBTTagList>(){
+	NBTEncoder<Map<?, ?>, NBTTagList> mapEncoder = new NBTEncoder<Map<?, ?>, NBTTagList>(){
 
 		@Override
 		public boolean canEncode(Object o){

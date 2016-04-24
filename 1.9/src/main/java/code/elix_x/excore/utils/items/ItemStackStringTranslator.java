@@ -12,7 +12,7 @@ public class ItemStackStringTranslator {
 	public static final String OREDICT = "oreDict";
 
 	public static String toString(ItemStack itemstack){
-		return itemstack == null ? NULL : (Item.itemRegistry.getNameForObject(itemstack.getItem())) + (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE ? "" : "/" + itemstack.getItemDamage());
+		return itemstack == null ? NULL : (Item.REGISTRY.getNameForObject(itemstack.getItem())) + (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE ? "" : "/" + itemstack.getItemDamage());
 	}
 
 	public static ItemStack fromString(String string){
