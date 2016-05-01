@@ -2,9 +2,7 @@ package code.elix_x.excore.utils.client.gui.elements;
 
 import org.lwjgl.util.Rectangle;
 
-import code.elix_x.excore.utils.client.gui.screen.ScreenSizeListener;
 import code.elix_x.excore.utils.color.RGBA;
-import net.minecraft.client.gui.GuiScreen;
 
 public abstract class RectangularGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<H>>> extends PositionedGuiElement<H> {
 
@@ -13,8 +11,6 @@ public abstract class RectangularGuiElement<H extends IGuiElementsHandler<? exte
 
 	protected int borderX;
 	protected int borderY;
-
-	protected ScreenSizeListener screenSizeListener;
 
 	public RectangularGuiElement(String name, int xPos, int yPos, int width, int height, int borderX, int borderY){
 		super(name, xPos, yPos);
@@ -87,22 +83,6 @@ public abstract class RectangularGuiElement<H extends IGuiElementsHandler<? exte
 
 	public void fill(RGBA color){
 		drawColoredRect(toRectangle(), color);
-	}
-
-	@Override
-	public void initGui(H handler, GuiScreen gui){
-		if(screenSizeListener == null){
-			screenSizeListener = new ScreenSizeListener();
-			if(xPos > 0) xPos = 0;
-			if(xPos + getWidth() > screenSizeListener.screenWidth) xPos = screenSizeListener.screenWidth - getWidth();
-			if(yPos > 0) yPos = 0;
-			if(yPos + getHeight() > screenSizeListener.screenHeight) yPos = screenSizeListener.screenHeight - getHeight();
-		} else{
-			if(screenSizeListener.update()){
-				xPos = (int) (xPos / (float) screenSizeListener.prevScreenWidth * screenSizeListener.screenWidth);
-				yPos = (int) (yPos / (float) screenSizeListener.prevScreenHeight * screenSizeListener.screenHeight);
-			}
-		}
 	}
 
 }

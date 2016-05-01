@@ -36,45 +36,75 @@ public class AdvancedReflectionHelper {
 		}
 	}
 
-	public static class AClass<T> {
+	public static class AClass<C> {
 
-		private final Class<T> clas;
+		private final Class<C> clas;
 
-		public AClass(Class<T> clas){
+		public AClass(Class<C> clas){
 			this.clas = clas;
 		}
 
 		public AClass(String clas){
 			try {
-				this.clas = (Class<T>) Class.forName(clas);
+				this.clas = (Class<C>) Class.forName(clas);
 			} catch(Exception e){
 				throw Throwables.propagate(e);
 			}
 		}
 
-		public AConstructor<T> getDeclaredConstructor(Class... args){
+		public AConstructor<C> getDeclaredConstructor(Class... args){
 			return new AConstructor(clas, args);
 		}
 
-		public <FT> AField<FT> getDeclaredField(String... names){
+		public <T> AField<C, T> getDeclaredField(String... names){
 			return new AField(clas, names);
 		}
 
-		public <MT> AMethod<MT> getDeclaredMethod(String[] names, Class... args){
+		public <T> AMethod<C, T> getDeclaredMethod(String[] names, Class... args){
 			return new AMethod(clas, names, args);
 		}
 
 	}
 
-	public static class AConstructor<T> {
+	private static abstract class ReflectionObject<C, T> {
 
-		private final Constructor<T> constructor;
+		private final AClass<C> clas;
 
-		public AConstructor(Constructor<T> constructor){
+		public ReflectionObject(Class<C> clas){
+			this.clas = new AClass<C>(clas);
+		}
+
+		public ReflectionObject(String clas){
+			try {
+				this.clas = new AClass(Class.forName(clas));
+			} catch(Exception e){
+				throw Throwables.propagate(e);
+			}
+		}
+
+		public AClass<C> clas(){
+			return clas;
+		}
+
+		public abstract <R extends ReflectionObject<C, T>> R set(int modifier, boolean on);
+
+		public abstract <R extends ReflectionObject<C, T>> R setAccessible(boolean accessible);
+
+		public abstract T get();
+
+	}
+
+	public static class AConstructor<C> extends ReflectionObject<C, Constructor<C>> {
+
+		private final Constructor<C> constructor;
+
+		public AConstructor(Constructor<C> constructor){
+			super(constructor.getDeclaringClass());
 			this.constructor = constructor;
 		}
 
-		public AConstructor(Class<T> clas, Class... args){
+		public AConstructor(Class<C> clas, Class... args){
+			super(clas);
 			try {
 				this.constructor = clas.getDeclaredConstructor(args);
 			} catch(Exception e){
@@ -82,7 +112,7 @@ public class AdvancedReflectionHelper {
 			}
 		}
 
-		public AConstructor set(int modifier, boolean on){
+		public AConstructor<C> set(int modifier, boolean on){
 			try {
 				fieldConstructorModifiers.setInt(constructor, AdvancedReflectionHelper.set(constructor.getModifiers(), modifier, on));
 			} catch(Exception e){
@@ -91,16 +121,16 @@ public class AdvancedReflectionHelper {
 			return this;
 		}
 
-		public AConstructor setAccessible(boolean accessible){
+		public AConstructor<C> setAccessible(boolean accessible){
 			constructor.setAccessible(accessible);
 			return this;
 		}
 
-		public Constructor constructor(){
+		public Constructor get(){
 			return constructor;
 		}
 
-		public T newInstance(Object... args){
+		public C newInstance(Object... args){
 			try {
 				return constructor.newInstance(args);
 			} catch(Exception e){
@@ -110,19 +140,20 @@ public class AdvancedReflectionHelper {
 
 	}
 
-	public static class AField<T> {
+	public static class AField<C, T> extends ReflectionObject<C, Field> {
 
 		private final Field field;
 
 		public AField(Field field){
+			super((Class<C>) field.getDeclaringClass());
 			this.field = field;
 		}
 
-		public AField(Class<?> clas, String... names){
+		public AField(Class<C> clas, String... names){
 			this(ReflectionHelper.findField(clas, names));
 		}
 
-		public AField set(int modifier, boolean on){
+		public AField<C, T> set(int modifier, boolean on){
 			try {
 				fieldFieldModifiers.setInt(field, AdvancedReflectionHelper.set(field.getModifiers(), modifier, on));
 			} catch(Exception e){
@@ -131,20 +162,20 @@ public class AdvancedReflectionHelper {
 			return this;
 		}
 
-		public AField setAccessible(boolean accessible){
+		public AField<C, T> setAccessible(boolean accessible){
 			field.setAccessible(accessible);
 			return this;
 		}
 
-		public AField setFinal(boolean finall){
+		public AField<C, T> setFinal(boolean finall){
 			return set(Modifier.FINAL, finall);
 		}
 
-		public Field field(){
+		public Field get(){
 			return field;
 		}
 
-		public T get(Object instance){
+		public <I extends C> T get(I instance){
 			try {
 				return (T) field.get(instance);
 			} catch(Exception e){
@@ -152,7 +183,7 @@ public class AdvancedReflectionHelper {
 			}
 		}
 
-		public void set(Object instance, T t){
+		public <I extends C> void set(I instance, T t){
 			try {
 				field.set(instance, t);
 			} catch(Exception e){
@@ -162,19 +193,20 @@ public class AdvancedReflectionHelper {
 
 	}
 
-	public static class AMethod<T> {
+	public static class AMethod<C, T> extends ReflectionObject<C, Method> {
 
 		private final Method method;
 
 		public AMethod(Method method){
+			super((Class<C>) method.getDeclaringClass());
 			this.method = method;
 		}
 
-		public AMethod(Class clas, String[] names, Class... args){
+		public AMethod(Class<C> clas, String[] names, Class... args){
 			this(ReflectionHelper.findMethod(clas, null, names, args));
 		}
 
-		public AMethod set(int modifier, boolean on){
+		public AMethod<C, T> set(int modifier, boolean on){
 			try {
 				fieldMethodModifiers.setInt(method, AdvancedReflectionHelper.set(method.getModifiers(), modifier, on));
 			} catch(Exception e){
@@ -183,20 +215,20 @@ public class AdvancedReflectionHelper {
 			return this;
 		}
 
-		public AMethod setAccessible(boolean accessible){
+		public AMethod<C, T> setAccessible(boolean accessible){
 			method.setAccessible(accessible);
 			return this;
 		}
 
-		public AMethod setFinal(boolean finall){
+		public AMethod<C, T> setFinal(boolean finall){
 			return set(Modifier.FINAL, finall);
 		}
 
-		public Method method(){
+		public Method get(){
 			return method;
 		}
 
-		public T invoke(Object instance, Object... args){
+		public <I extends C> T invoke(I instance, Object... args){
 			try {
 				return (T) method.invoke(instance, args);
 			} catch(Exception e){

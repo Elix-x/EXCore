@@ -16,6 +16,8 @@ public class ElementalGuiScreen extends BasicGuiScreen implements IGuiElementsHa
 
 	protected IGuiElement<ElementalGuiScreen> focused;
 
+	protected int nextY;
+
 	public ElementalGuiScreen(GuiScreen parent, int guiWidth, int guiHeight){
 		super(parent, guiWidth, guiHeight);
 	}
@@ -43,9 +45,14 @@ public class ElementalGuiScreen extends BasicGuiScreen implements IGuiElementsHa
 	@Override
 	public void initGui(){
 		super.initGui();
-		for(IGuiElement<ElementalGuiScreen> element : elements){
-			element.initGui(this, parent);
-		}
+		elements.clear();
+		nextY = yPos;
+		addElements();
+		for(IGuiElement<ElementalGuiScreen> element : elements) element.initGui(this, parent);
+	}
+
+	public void addElements(){
+
 	}
 
 	@Override
