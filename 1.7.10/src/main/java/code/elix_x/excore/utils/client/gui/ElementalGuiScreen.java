@@ -1,6 +1,5 @@
 package code.elix_x.excore.utils.client.gui;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +68,7 @@ public class ElementalGuiScreen extends BasicGuiScreen implements IGuiElementsHa
 	}
 
 	@Override
-	protected void keyTyped(char c, int key) throws IOException {
+	protected void keyTyped(char c, int key){
 		super.keyTyped(c, key);
 		if(focused != null && focused.handleKeyboardEvent(this, this, true, key, c)) return;
 		for(IGuiElement<ElementalGuiScreen> element : elements){
@@ -78,7 +77,7 @@ public class ElementalGuiScreen extends BasicGuiScreen implements IGuiElementsHa
 	}
 
 	@Override
-	public void handleMouseInput() throws IOException {
+	public void handleMouseInput(){
 		super.handleMouseInput();
 		int dWheel = Mouse.getEventDWheel();
 		if(dWheel != 0){
@@ -92,7 +91,7 @@ public class ElementalGuiScreen extends BasicGuiScreen implements IGuiElementsHa
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int key) throws IOException {
+	protected void mouseClicked(int mouseX, int mouseY, int key){
 		if(focused != null && focused.handleMouseEvent(this, this, mouseX, mouseY, true, key)) return;
 		for(IGuiElement<ElementalGuiScreen> element : elements){
 			if(element != focused && element.handleMouseEvent(this, this, mouseX, mouseY, true, key)) return;
@@ -101,12 +100,12 @@ public class ElementalGuiScreen extends BasicGuiScreen implements IGuiElementsHa
 	}
 
 	@Override
-	protected void mouseReleased(int mouseX, int mouseY, int key){
+	protected void mouseMovedOrUp(int mouseX, int mouseY, int key){
 		if(focused != null && focused.handleMouseEvent(this, this, mouseX, mouseY, false, key)) return;
 		for(IGuiElement<ElementalGuiScreen> element : elements){
 			if(element != focused && element.handleMouseEvent(this, this, mouseX, mouseY, false, key)) return;
 		}
-		super.mouseReleased(mouseX, mouseY, key);
+		super.mouseMovedOrUp(mouseX, mouseY, key);
 	}
 
 }

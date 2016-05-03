@@ -7,7 +7,7 @@ public class EXCore {
 
 	public static final String MODID = "excore";
 	public static final String NAME = "EXCore";
-	public static final String VERSION = "1.4.1";
+	public static final String VERSION = "1.5.3";
 
 	public static final String DEPENDENCY = MODID + "@[" + VERSION + ",)";
 

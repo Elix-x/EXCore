@@ -18,10 +18,10 @@ public class Sphere extends Shape3D {
 		super(0, 0, 0);
 	}
 
-	public Sphere(double posX, double posY, double posZ, double range){
+	public Sphere(double posX, double posY, double posZ, double radius){
 		super(posX, posY, posZ);
-		this.radius = range;
-		this.box = new AxisAlignedBox(posX - range, posY - range, posZ - range, posX + range, posY + range, posZ + range);
+		this.radius = radius;
+		this.box = new AxisAlignedBox(posX - radius, posY - radius, posZ - radius, posX + radius, posY + radius, posZ + radius);
 	}
 
 	@Override

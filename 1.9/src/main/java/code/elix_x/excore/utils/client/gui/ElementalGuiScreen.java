@@ -51,7 +51,7 @@ public class ElementalGuiScreen extends BasicGuiScreen implements IGuiElementsHa
 		for(IGuiElement<ElementalGuiScreen> element : elements) element.initGui(this, parent);
 	}
 
-	public void addElements(){
+	protected void addElements(){
 
 	}
 
