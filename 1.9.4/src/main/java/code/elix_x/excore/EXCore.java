@@ -11,6 +11,6 @@ public class EXCore {
 
 	public static final String DEPENDENCY = MODID + "@[" + VERSION + ",)";
 
-	public static final String MCVERSION = "1.9";
+	public static final String MCVERSION = "1.9.4";
 
 }
