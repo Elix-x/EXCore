@@ -3,6 +3,7 @@ package code.elix_x.excore.utils.client.gui.elements;
 import code.elix_x.excore.utils.color.RGBA;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class StringGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<H>>> extends RectangularGuiElement<H> {
 
@@ -40,6 +41,7 @@ public class StringGuiElement<H extends IGuiElementsHandler<? extends IGuiElemen
 	@Override
 	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY){
 		drawStringFull(fontRenderer, text, xPos + borderX, yPos + borderY, color);
+		GlStateManager.color(1, 1, 1, 1);
 	}
 
 	@Override

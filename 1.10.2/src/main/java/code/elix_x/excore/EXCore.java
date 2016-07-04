@@ -9,19 +9,19 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = EXCore.MODID, name = EXCore.NAME, version = EXCore.VERSION, acceptedMinecraftVersions = EXCore.MCVERSION)
+@Mod(modid = EXCore.MODID, name = EXCore.NAME, version = EXCore.VERSION, acceptedMinecraftVersions = EXCore.MCVERSIONDEPENDENCY)
 public class EXCore implements IMod<EXCore, IProxy<EXCore>> {
 
 	public static final String MODID = "excore";
 	public static final String NAME = "EXCore";
-	public static final String VERSION = "1.6";
+	public static final String VERSION = "1.6.1";
 
 	public static final String SPLIT_VERSION = "2.0";
 
 	public static final String DEPENDENCY = MODID + "@[" + VERSION + "," + SPLIT_VERSION + ")";
 
 	public static final String MCVERSION = "1.10.2";
-	public static final String MCVERSIONDEPENDENCY = "[" + MCVERSION + ";)";
+	public static final String MCVERSIONDEPENDENCY = "[" + MCVERSION + ",)";
 
 	@SidedProxy(modId = MODID, clientSide = "code.elix_x.excore.proxy.ClientProxy", serverSide = "code.elix_x.excore.proxy.ServerProxy")
 	public static IProxy proxy;

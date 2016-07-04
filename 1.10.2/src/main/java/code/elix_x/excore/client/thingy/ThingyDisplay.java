@@ -4,16 +4,18 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import code.elix_x.excore.client.debug.AdvancedDebugTools;
+import code.elix_x.excore.client.debug.AdvancedDebugTools.DebugTool;
 import code.elix_x.excore.client.thingy.ThingyData.Human;
 import code.elix_x.excore.client.thingy.ThingyData.Human.Link;
 import code.elix_x.excore.client.thingy.ThingyDisplay.MovingHuman;
@@ -49,27 +51,50 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
 	private Multimap<GuiScreen, MovingHuman> guiHumansMultimap = HashMultimap.create();
 
-	private Cache<URL, ResourceLocation> cachedIcons = CacheBuilder.newBuilder().maximumSize(10).build();
+	private LoadingCache<URL, ResourceLocation> cachedIcons = CacheBuilder.newBuilder().maximumSize(10).build(new CacheLoader<URL, ResourceLocation>(){
+
+		@Override
+		public ResourceLocation load(URL url) throws Exception{
+			return new ResourceLocation("http://www", url.toString());
+		}
+
+	});
 
 	public ThingyDisplay(Thingy thingy, ThingyData data, Random random, int chance){
 		this.thingy = thingy;
 		this.data = data;
 		this.random = random;
 		this.chance = chance;
+
+		AdvancedDebugTools.registerGUI(Keyboard.KEY_E, new DebugTool(){
+
+			@Override
+			public void toggle(){
+				if(Minecraft.getMinecraft().currentScreen != null) regenHumans(Minecraft.getMinecraft().currentScreen);
+			}
+
+		});
 	}
 
 	private ResourceLocation getCachedIcon(final URL url){
-		try{
-			return cachedIcons.get(url, new Callable<ResourceLocation>(){
+		return cachedIcons.getUnchecked(url);
+	}
 
-				@Override
-				public ResourceLocation call() throws Exception{
-					return new ResourceLocation("http://www", url.toString());
-				}
-
-			});
-		} catch(ExecutionException e){
-			return new ResourceLocation("http://www", url.toString());
+	private void regenHumans(GuiScreen gui){
+		guiHumansMultimap.removeAll(gui);
+		List<Human> all = data.humans;
+		List<Human> c = new ArrayList<>();
+		int cc = 1 + random.nextInt(all.size());
+		for(int i = 0; i < cc; i++){
+			Human h = all.get(random.nextInt(all.size()));
+			while(c.contains(h))
+				h = all.get(random.nextInt(all.size()));
+			c.add(h);
+		}
+		ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+		for(Human h : c){
+			int size = 16 + random.nextInt(32);
+			guiHumansMultimap.put(gui, new MovingHuman(h, size, size, new Vec3i(random.nextInt(res.getScaledWidth() - size), random.nextInt(res.getScaledHeight() - size), 0), new Vec3d(random.nextDouble(), random.nextDouble(), 0), 1 + random.nextInt(9), CollisionPhysics.values()[random.nextInt(CollisionPhysics.values().length)]));
 		}
 	}
 
@@ -78,20 +103,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 		if(!(event.getGui() instanceof HumanGui) && !(Minecraft.getMinecraft().currentScreen instanceof HumanGui)){
 			guiHumansMultimap.removeAll(Minecraft.getMinecraft().currentScreen);
 			if(random.nextInt(chance) == 0){
-				List<Human> all = data.humans;
-				List<Human> c = new ArrayList<>();
-				int cc = 1 + random.nextInt(all.size());
-				for(int i = 0; i < cc; i++){
-					Human h = all.get(random.nextInt(all.size()));
-					while(c.contains(h))
-						h = all.get(random.nextInt(all.size()));
-					c.add(h);
-				}
-				ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
-				for(Human h : c){
-					int size = 16 + random.nextInt(32);
-					guiHumansMultimap.put(event.getGui(), new MovingHuman(h, size, size, new Vec3i(random.nextInt(res.getScaledWidth() - size), random.nextInt(res.getScaledHeight() - size), 0), new Vec3d(random.nextDouble(), random.nextDouble(), 0), 1 + random.nextInt(9), CollisionPhysics.values()[random.nextInt(CollisionPhysics.values().length)]));
-				}
+				regenHumans(event.getGui());
 			}
 		}
 	}
@@ -236,6 +248,17 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 					add(new ButtonGuiElement("Link", nextX, nextY, 64, 64, 2, 2, link.url.toString()){
 
 						@Override
+						public void drawGuiPost(IGuiElementsHandler handler, GuiScreen gui, int mouseX, int mouseY){
+
+						}
+
+						@Override
+						public void drawGuiPostPost(IGuiElementsHandler handler, GuiScreen gui, int mouseX, int mouseY){
+							if(inside(mouseX, mouseY))
+								drawTooltipWithBackground(fontRendererObj, mouseX, mouseY, false, true, link.url.toString());
+						}
+
+						@Override
 						public void onButtonPressed(){
 							super.onButtonPressed();
 							handleComponentClick(new TextComponentString("").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link.url.toString()))));
@@ -243,6 +266,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
 					});
 					add(new TexturedRectangleGuiElement("Link Texture", nextX, nextY, 64, 64, 2, 2, getCachedIcon(link.getIcon(data))));
+					nextX += 68;
 				}
 			}
 		}

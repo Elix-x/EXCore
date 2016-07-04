@@ -67,6 +67,9 @@ public class ElementalGuiScreen extends BasicGuiScreen implements IGuiElementsHa
 		for(IGuiElement<ElementalGuiScreen> element : elements){
 			element.drawGuiPost(this, this, mouseX, mouseY);
 		}
+		for(IGuiElement<ElementalGuiScreen> element : elements){
+			element.drawGuiPostPost(this, this, mouseX, mouseY);
+		}
 	}
 
 	@Override
