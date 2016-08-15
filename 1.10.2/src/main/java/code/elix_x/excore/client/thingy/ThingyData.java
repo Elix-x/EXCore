@@ -6,13 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import code.elix_x.excore.utils.color.RGBA;
 import jline.internal.InputStreamReader;
+import net.minecraft.util.text.ITextComponent;
 
 public class ThingyData {
 
-	private static final Gson gson = new Gson();
+	private static final Gson gson = new GsonBuilder().registerTypeAdapter(ITextComponent.class, new ITextComponent.Serializer()).create();
 
 	public static ThingyData read(URL url) throws IOException{
 		return gson.fromJson(new InputStreamReader(url.openStream()), ThingyData.class);
@@ -31,7 +33,7 @@ public class ThingyData {
 
 		String name;
 		String category;
-		String bio;
+		List<ITextComponent> bio;
 		URL icon;
 		List<Link> links;
 

@@ -4,13 +4,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
 
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 
 public class Thingy extends Thread {
-
-	private ThingyData data;
-
-	private ThingyDisplay display;
 
 	public Thingy(){
 		super("Excore Thingy Display");
@@ -18,6 +15,7 @@ public class Thingy extends Thread {
 
 	@Override
 	public void run(){
+		final ThingyData data;
 		try{
 			URL url = new URL("https://gist.githubusercontent.com/elix-x/be82bef4a24490c404d69e5bf9c24896/raw/thingy.json");
 			data = ThingyData.read(url);
@@ -25,8 +23,17 @@ public class Thingy extends Thread {
 			e.printStackTrace();
 			return;
 		}
-		display = new ThingyDisplay(this, data, new Random("Elix_x".hashCode()), 250);
+		final ThingyDisplay display = new ThingyDisplay(data, new Random(Minecraft.getMinecraft().getSession().getUsername().hashCode()), 5000);
 		MinecraftForge.EVENT_BUS.register(display);
+
+		Minecraft.getMinecraft().addScheduledTask(new Runnable(){
+
+			@Override
+			public void run(){
+				display.cacheIcons();
+			}
+
+		});
 	}
 
 }

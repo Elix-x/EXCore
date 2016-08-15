@@ -26,14 +26,17 @@ import code.elix_x.excore.utils.client.gui.elements.ColoredRectangleGuiElement;
 import code.elix_x.excore.utils.client.gui.elements.GuiElement;
 import code.elix_x.excore.utils.client.gui.elements.IGuiElementsHandler;
 import code.elix_x.excore.utils.client.gui.elements.TexturedRectangleGuiElement;
+import code.elix_x.excore.utils.client.gui.elementsl.GlintRectangleGuiElement;
 import code.elix_x.excore.utils.color.RGBA;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.event.ClickEvent;
@@ -43,7 +46,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
-	private final Thingy thingy;
 	private final ThingyData data;
 
 	private final Random random;
@@ -51,7 +53,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
 	private Multimap<GuiScreen, MovingHuman> guiHumansMultimap = HashMultimap.create();
 
-	private LoadingCache<URL, ResourceLocation> cachedIcons = CacheBuilder.newBuilder().maximumSize(10).build(new CacheLoader<URL, ResourceLocation>(){
+	private LoadingCache<URL, ResourceLocation> cachedIcons = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<URL, ResourceLocation>(){
 
 		@Override
 		public ResourceLocation load(URL url) throws Exception{
@@ -60,8 +62,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
 	});
 
-	public ThingyDisplay(Thingy thingy, ThingyData data, Random random, int chance){
-		this.thingy = thingy;
+	ThingyDisplay(ThingyData data, Random random, int chance){
 		this.data = data;
 		this.random = random;
 		this.chance = chance;
@@ -74,6 +75,12 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 			}
 
 		});
+	}
+
+	void cacheIcons(){
+		for(Human human : data.humans){
+			Minecraft.getMinecraft().getTextureManager().loadTexture(getCachedIcon(human.icon), new SimpleTexture(getCachedIcon(human.icon)));
+		}
 	}
 
 	private ResourceLocation getCachedIcon(final URL url){
@@ -238,9 +245,13 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 		protected void addElements(){
 			add(new ColoredRectangleGuiElement("Shadow", 0, 0, width, height, 0, 0, new RGBA(0, 0, 0, 200)));
 			add(new TexturedRectangleGuiElement("Texture", xPos + 64, yPos, 128, 128, 0, 0, icon));
+			if(human.getCategory(data).glint)
+				add(new GlintRectangleGuiElement("Texture", xPos + 64, yPos, 128, 128, 0, 0, human.getCategory(data).color));
 			nextY += 128 + 2;
-			add(new CenteredStringGuiElement("Bio", xPos + 128, nextY, 2, 2, human.bio, fontRendererObj, human.getCategory(data).color));
-			nextY += 2 + 8 + 2;
+			for(ITextComponent bio : human.bio){
+				add(new CenteredStringGuiElement("Bio", xPos + 128, nextY, 2, 2, bio.getFormattedText(), fontRendererObj, human.getCategory(data).color));
+				nextY += 2 + 8 + 2;
+			}
 			List<Link> links = human.links;
 			if(links != null && links.size() > 0){
 				int nextX = xPos + 128 - (links.size() * 68) / 2;
@@ -269,6 +280,9 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 					nextX += 68;
 				}
 			}
+
+			parent.setGuiSize(width, height);
+			parent.initGui();
 		}
 
 		@Override

@@ -49,7 +49,7 @@ public class ElementalGuiScreen extends BasicGuiScreen implements IGuiElementsHa
 		nextY = yPos;
 		addElements();
 		for(IGuiElement<ElementalGuiScreen> element : elements)
-			element.initGui(this, parent);
+			element.initGui(this, this);
 	}
 
 	protected void addElements(){

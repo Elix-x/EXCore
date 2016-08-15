@@ -14,7 +14,7 @@ public class EXCore implements IMod<EXCore, IProxy<EXCore>> {
 
 	public static final String MODID = "excore";
 	public static final String NAME = "EXCore";
-	public static final String VERSION = "1.6.1";
+	public static final String VERSION = "1.6.2";
 
 	public static final String SPLIT_VERSION = "2.0";
 
