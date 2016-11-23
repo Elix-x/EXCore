@@ -1,0 +1,16 @@
+[
+{
+  "modid": "excore",
+  "name": "EXCore",
+  "description": "Elix'x Core",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Elix_x"],
+  "credits": "Elix_x",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
