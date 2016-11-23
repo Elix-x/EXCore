@@ -1,17 +1,3 @@
-def modName = modName
-def isCoreMod = isCoreMod.toBoolean()
-def javaVersion = javaVersion
-def mcpVersion = mcpVersion
-def forgeVersion = forgeVersion
-
-def modNameNS = modName.replaceAll("\\s", "")
-def modNameNSL = modNameNS.toLowerCase()
-def modPackage = "code.elix_x.${modNameNSL}"
-def mainModClass = "${modPackage}.${modNameNS}"
-def mainCoreClass = isCoreMod ? "${modPackage}.core.${modNameNS}Core" : null
-
-def versionP = "public static final String VERSION = \".*\";"
-
 // For those who want the bleeding edge
 buildscript {
     repositories {
@@ -28,19 +14,15 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
+sourceCompatibility = java_version
+targetCompatibility = java_version
 
-group = modPackage // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = name
 
-archivesBaseName = modNameNS
-
-new File("src/main/java/" + mainModClass.replace(".", "/") + ".java").eachLine { line ->
-	line = line.trim()
-	def matcher = line =~ versionP
-	if(matcher.matches()){
-		version = line - "public static final String VERSION = \"" - "\";"
-	}
+version = "${version_major}.${version_minor}.${version_patch}"
+if(version_channel != 'release') version += "-$version_channel$build"
+jar {
+	classifier = minecraft_version
 }
 
 /*
@@ -50,22 +32,12 @@ plugins {
 }
 */
 minecraft {
-	mappings = mcpVersion
-    version = forgeVersion
+	mappings = mcp_version
+    version = "$minecraft_version-$forge_version"
     runDir = "run"
     
-    makeObfSourceJar = false
-	
-	if(mainCoreClass != null) coreMod = mainCoreClass
+    makeObfSourceJar = true
 }
-
-dependencies {
-	compile files(System.getenv("EXCORE_HOME") + "/${project.minecraft.version}/bin/"){
-		 builtBy 'compileExcore'
-	}
-}
-
-task compileExcore()
 
 processResources {
     // this will ensure that this task is redone when the versions change.
@@ -85,45 +57,3 @@ processResources {
         exclude 'mcmod.info'
     }
 }
-
-task buildDev(type: Jar){
-	from "bin"
-	include "**/${modNameNSL}/**"
-}
-
-task buildAll(dependsOn: ["build", "buildDev"])
-
-jar.archiveName = "${archivesBaseName}-${version}-${project.minecraft.version}.jar"
-buildDev.archiveName = "${archivesBaseName}-${version}-${project.minecraft.version}-DEV.jar"
-
-if(mainCoreClass != null){
-	jar.manifest.attributes 'FMLCorePluginContainsFMLMod': 'true'
-	buildDev.manifest.attributes 'FMLCorePlugin': mainCoreClass, 'FMLCorePluginContainsFMLMod': 'true'
-}
-
-File modFolder = new File(System.getenv("MODS_EXPORT_HOME") + "/" + modName + "/")
-modFolder.mkdirs()
-
-File obfFolder = new File(modFolder, project.minecraft.version)
-obfFolder.mkdirs()
-
-File devFolder = new File(modFolder, "DEV/" + project.minecraft.version)
-devFolder.mkdirs()
-
-task moveObf(type: Copy){
-	from("build/libs"){
-		include jar.archiveName
-	}
-	into obfFolder
-}
-
-task moveDev(type: Copy){
-	from("build/libs"){
-		include buildDev.archiveName
-	}
-	into devFolder
-}
-
-task moveAll(dependsOn: ["moveObf", "moveDev"])
-
-task buildMoveAll(dependsOn: ["buildAll", "moveAll"])
