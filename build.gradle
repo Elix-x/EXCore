@@ -6,7 +6,6 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-		
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
@@ -14,8 +13,16 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
+repositories {
+	maven { url "https://elix-x.github.io/maven2" }
+}
+
 sourceCompatibility = java_version
 targetCompatibility = java_version
+
+dependencies {
+	compile 'code.elix_x.excomms:EXComms:0.0.2-alpha'
+}
 
 archivesBaseName = name
 
