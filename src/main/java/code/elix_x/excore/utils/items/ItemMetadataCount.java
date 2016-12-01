@@ -18,7 +18,7 @@ public class ItemMetadataCount extends ItemCount {
 	}
 
 	public ItemMetadataCount(ItemStack itemstack){
-		this(itemstack.getItem(), itemstack.stackSize, itemstack.getItemDamage());
+		this(itemstack.getItem(), itemstack.getCount(), itemstack.getItemDamage());
 	}
 
 	@Override

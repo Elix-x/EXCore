@@ -3,6 +3,7 @@ package code.elix_x.excore.utils.items;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -32,7 +33,7 @@ public class ItemStackStringTranslator {
 					id = idMeta[0];
 					meta = Integer.parseInt(idMeta[1]);
 				}
-				Item item = GameRegistry.findItem(modid, id);
+				Item item = Item.REGISTRY.getObject(new ResourceLocation(modid, id));
 				if(item != null){
 					return new ItemStack(item, 1, meta);
 				}

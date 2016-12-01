@@ -4,7 +4,7 @@ import java.lang.reflect.Array;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import code.elix_x.excore.utils.color.RGBA;
+import code.elix_x.excomms.color.RGBA;
 import net.minecraft.client.gui.GuiScreen;
 
 public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<H>>> extends RectangularGuiElement<H> {

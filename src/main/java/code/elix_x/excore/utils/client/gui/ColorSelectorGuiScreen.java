@@ -1,8 +1,8 @@
 package code.elix_x.excore.utils.client.gui;
 
+import code.elix_x.excomms.color.RGBA;
 import code.elix_x.excore.utils.client.gui.elements.ColoredRectangleGuiElement;
 import code.elix_x.excore.utils.client.gui.elements.IntegralSliderGuiElement;
-import code.elix_x.excore.utils.color.RGBA;
 import net.minecraft.client.gui.GuiScreen;
 
 public class ColorSelectorGuiScreen extends ElementalGuiScreen {

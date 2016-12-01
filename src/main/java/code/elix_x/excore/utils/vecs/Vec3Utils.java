@@ -2,8 +2,9 @@ package code.elix_x.excore.utils.vecs;
 
 import java.util.Random;
 
-import code.elix_x.excore.utils.arrays.SpecialArrayUtils;
-import code.elix_x.excore.utils.random.AdvancedRandomUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
+import code.elix_x.excomms.random.RandomUtils;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -40,13 +41,13 @@ public class Vec3Utils {
 		double[] xs = getAllX(vecs);
 		double[] ys = getAllY(vecs);
 		double[] zs = getAllZ(vecs);
-		double minX = SpecialArrayUtils.min(xs);
-		double maxX = SpecialArrayUtils.max(xs);
-		double minY = SpecialArrayUtils.min(ys);
-		double maxY = SpecialArrayUtils.max(ys);
-		double minZ = SpecialArrayUtils.min(zs);
-		double maxZ = SpecialArrayUtils.max(zs);
-		return new Vec3d(AdvancedRandomUtils.nextDouble(random, minX, maxX), AdvancedRandomUtils.nextDouble(random, minY, maxY), AdvancedRandomUtils.nextDouble(random, minZ, maxZ));
+		double minX = NumberUtils.min(xs);
+		double maxX = NumberUtils.max(xs);
+		double minY = NumberUtils.min(ys);
+		double maxY = NumberUtils.max(ys);
+		double minZ = NumberUtils.min(zs);
+		double maxZ = NumberUtils.max(zs);
+		return new Vec3d(RandomUtils.nextDouble(random, minX, maxX), RandomUtils.nextDouble(random, minY, maxY), RandomUtils.nextDouble(random, minZ, maxZ));
 	}
 
 	public static double[] getAllX(Vec3d... vecs){

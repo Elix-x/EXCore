@@ -15,7 +15,7 @@ public class ItemStackRenderer {
 	}
 
 	public static List<String> getTooltip(Minecraft minecraft, ItemStack itemstack){
-		List<String> list = itemstack.getTooltip(minecraft.thePlayer, minecraft.gameSettings.advancedItemTooltips);
+		List<String> list = itemstack.getTooltip(minecraft.player, minecraft.gameSettings.advancedItemTooltips);
 		for(int k = 0; k < list.size(); ++k){
 			if(k == 0){
 				list.set(k, itemstack.getRarity().rarityColor + list.get(k));

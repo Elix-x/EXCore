@@ -2,7 +2,7 @@ package code.elix_x.excore.utils.client.gui.elements;
 
 import org.lwjgl.opengl.GL11;
 
-import code.elix_x.excore.utils.color.RGBA;
+import code.elix_x.excomms.color.RGBA;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;

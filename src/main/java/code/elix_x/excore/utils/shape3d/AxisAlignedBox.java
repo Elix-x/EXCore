@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import code.elix_x.excore.utils.math.AdvancedMathUtils;
+import code.elix_x.excomms.math.MathUtils;
 import code.elix_x.excore.utils.pos.BlockPos;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -26,7 +26,7 @@ public class AxisAlignedBox extends Shape3D {
 	}
 
 	public AxisAlignedBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ){
-		super(AdvancedMathUtils.average(minX, maxX), AdvancedMathUtils.average(minY, maxY), AdvancedMathUtils.average(minZ, maxZ));
+		super(MathUtils.average(minX, maxX), MathUtils.average(minY, maxY), MathUtils.average(minZ, maxZ));
 		this.minX = minX;
 		this.minY = minY;
 		this.minZ = minZ;

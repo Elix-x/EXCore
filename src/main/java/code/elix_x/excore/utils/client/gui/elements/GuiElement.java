@@ -4,8 +4,8 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Rectangle;
 
+import code.elix_x.excomms.color.RGBA;
 import code.elix_x.excore.utils.client.render.ItemStackRenderer;
-import code.elix_x.excore.utils.color.RGBA;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
@@ -140,10 +140,10 @@ public abstract class GuiElement<H extends IGuiElementsHandler<? extends IGuiEle
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-		vertexbuffer.pos(element.getX(), bottom(element), zLevel).tex(tl.field_189982_i, br.field_189983_j).endVertex();
-		vertexbuffer.pos(right(element), bottom(element), zLevel).tex(br.field_189982_i, br.field_189983_j).endVertex();
-		vertexbuffer.pos(right(element), element.getY(), zLevel).tex(br.field_189982_i, tl.field_189983_j).endVertex();
-		vertexbuffer.pos(element.getX(), element.getY(), zLevel).tex(tl.field_189982_i, tl.field_189983_j).endVertex();
+		vertexbuffer.pos(element.getX(), bottom(element), zLevel).tex(tl.x, br.y).endVertex();
+		vertexbuffer.pos(right(element), bottom(element), zLevel).tex(br.x, br.y).endVertex();
+		vertexbuffer.pos(right(element), element.getY(), zLevel).tex(br.x, tl.y).endVertex();
+		vertexbuffer.pos(element.getX(), element.getY(), zLevel).tex(tl.x, tl.y).endVertex();
 		tessellator.draw();
 		GlStateManager.disableBlend();
 	}

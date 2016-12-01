@@ -2,7 +2,7 @@ package code.elix_x.excore.utils.client.gui.elements;
 
 import java.lang.reflect.Array;
 
-import code.elix_x.excore.utils.color.RGBA;
+import code.elix_x.excomms.color.RGBA;
 import net.minecraft.client.gui.GuiScreen;
 
 public class GridGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<H>>> extends RectangularGuiElement<H> {

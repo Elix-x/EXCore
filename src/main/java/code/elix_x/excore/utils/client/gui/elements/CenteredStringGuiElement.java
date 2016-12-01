@@ -1,6 +1,7 @@
 package code.elix_x.excore.utils.client.gui.elements;
 
-import code.elix_x.excore.utils.color.RGBA;
+
+import code.elix_x.excomms.color.RGBA;
 import net.minecraft.client.gui.FontRenderer;
 
 public class CenteredStringGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<H>>> extends StringGuiElement<H> {

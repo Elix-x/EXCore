@@ -14,6 +14,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import code.elix_x.excomms.color.RGBA;
 import code.elix_x.excore.client.debug.AdvancedDebugTools;
 import code.elix_x.excore.client.debug.AdvancedDebugTools.DebugTool;
 import code.elix_x.excore.client.thingy.ThingyData.Human;
@@ -27,7 +28,6 @@ import code.elix_x.excore.utils.client.gui.elements.GuiElement;
 import code.elix_x.excore.utils.client.gui.elements.IGuiElementsHandler;
 import code.elix_x.excore.utils.client.gui.elements.TexturedRectangleGuiElement;
 import code.elix_x.excore.utils.client.gui.elementsl.GlintRectangleGuiElement;
-import code.elix_x.excore.utils.color.RGBA;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;

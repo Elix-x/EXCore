@@ -1,6 +1,7 @@
 package code.elix_x.excore.utils.client.gui.elements;
 
-import code.elix_x.excore.utils.color.RGBA;
+
+import code.elix_x.excomms.color.RGBA;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 

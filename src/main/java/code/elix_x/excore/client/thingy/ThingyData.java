@@ -8,7 +8,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import code.elix_x.excore.utils.color.RGBA;
+import code.elix_x.excomms.color.RGBA;
 import jline.internal.InputStreamReader;
 import net.minecraft.util.text.ITextComponent;
 

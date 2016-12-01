@@ -6,7 +6,8 @@ import java.util.Map.Entry;
 
 import org.lwjgl.input.Keyboard;
 
-import code.elix_x.excore.utils.reflection.AdvancedReflectionHelper.AField;
+import code.elix_x.excomms.reflection.ReflectionHelper.AClass;
+import code.elix_x.excomms.reflection.ReflectionHelper.AField;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.debug.DebugRenderer;
@@ -65,18 +66,18 @@ public class AdvancedDebugTools {
 	public static class VanillaDebugTool implements DebugTool {
 
 		private final String name;
-		private final AField<DebugRenderer, Boolean> field;
+		private final AField<DebugRenderer, Object> field;
 
 		public VanillaDebugTool(String name, String... names){
 			this.name = name;
-			this.field = new AField(DebugRenderer.class, names).setAccessible(true);
+			this.field = new AClass<DebugRenderer>(DebugRenderer.class).getDeclaredField(names).setAccessible(true);
 		}
 
 		@Override
 		public void toggle(){
 			boolean b;
-			field.set(Minecraft.getMinecraft().debugRenderer, b = !field.get(Minecraft.getMinecraft().debugRenderer));
-			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage((new TextComponentString("")).appendSibling((new TextComponentString("[Advanced Debug]: ")).setStyle((new Style()).setColor(TextFormatting.GOLD).setBold(Boolean.valueOf(true)))).appendText(String.format("%s: %s", this.name, (b ? "shown" : "hidden"))));
+			field.set(Minecraft.getMinecraft().debugRenderer, b = !(Boolean)field.get(Minecraft.getMinecraft().debugRenderer));
+			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage((new TextComponentString("")).appendSibling((new TextComponentString("[Advanced Debug]: ")).setStyle((new Style()).setColor(TextFormatting.GOLD).setBold(true))).appendText(String.format("%s: %s", this.name, (b ? "shown" : "hidden"))));
 		}
 
 	}

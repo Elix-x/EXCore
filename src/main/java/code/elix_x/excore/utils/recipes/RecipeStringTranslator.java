@@ -8,6 +8,7 @@ import code.elix_x.excore.utils.items.ItemStackStringTranslator;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -87,7 +88,7 @@ public class RecipeStringTranslator {
 				}
 
 				@Override
-				public ItemStack[] getRemainingItems(InventoryCrafting inventory){
+				public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inventory){
 					return null;
 				}
 
@@ -165,7 +166,7 @@ public class RecipeStringTranslator {
 				}
 
 				@Override
-				public ItemStack[] getRemainingItems(InventoryCrafting inventory){
+				public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inventory){
 					return null;
 				}
 

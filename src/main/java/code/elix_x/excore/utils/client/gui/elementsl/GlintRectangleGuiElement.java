@@ -3,10 +3,10 @@ package code.elix_x.excore.utils.client.gui.elementsl;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Rectangle;
 
+import code.elix_x.excomms.color.RGBA;
 import code.elix_x.excore.utils.client.gui.elements.IGuiElement;
 import code.elix_x.excore.utils.client.gui.elements.IGuiElementsHandler;
 import code.elix_x.excore.utils.client.gui.elements.RectangularGuiElement;
-import code.elix_x.excore.utils.color.RGBA;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;

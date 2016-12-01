@@ -316,7 +316,7 @@ public interface NBTEncoder<T, NT extends NBTBase> {
 
 		@Override
 		public ItemStack fromNBT(MBT mbt, NBTTagCompound nbt, Class<ItemStack> clazz, Class... tsclasses){
-			return ItemStack.loadItemStackFromNBT(nbt);
+			return new ItemStack(nbt);
 		}
 
 	};

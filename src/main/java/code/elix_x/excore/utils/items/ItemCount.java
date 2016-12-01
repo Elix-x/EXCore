@@ -20,7 +20,7 @@ public class ItemCount {
 	}
 
 	public ItemCount(ItemStack itemstack){
-		this(itemstack.getItem(), itemstack.stackSize);
+		this(itemstack.getItem(), itemstack.getCount());
 	}
 
 	public ItemStack toItemstack(){
