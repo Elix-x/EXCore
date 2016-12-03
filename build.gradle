@@ -11,11 +11,12 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-
 repositories {
 	maven { url "https://elix-x.github.io/maven2" }
+	mavenCentral()
 }
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven'
 
 sourceCompatibility = java_version
 targetCompatibility = java_version
@@ -24,12 +25,21 @@ dependencies {
 	compile 'code.elix_x.excomms:EXComms:0.0.2-alpha'
 }
 
-archivesBaseName = name
+def theName = name
 
+archivesBaseName = name
 version = "${version_major}.${version_minor}.${version_patch}"
 if(version_channel != 'release') version += "-$version_channel$build"
+group = 'code.elix_x.excore'
 jar {
-	classifier = minecraft_version
+	classifier = "$minecraft_version-obf"
+	from {
+        zipTree((configurations.runtime - configurations.provided).find{ it.getName().startsWith("EXComms")})
+    } {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
 }
 
 /*
@@ -64,3 +74,64 @@ processResources {
         exclude 'mcmod.info'
     }
 }
+
+task generatePom {
+    doLast {
+		def pomFile = "$buildDir/libs/$archivesBaseName-$version-${minecraft_version}.pom"
+        pom {
+            project {
+                name(theName)
+				description 'Elix\'x Common Utilities for Minecraft 1.11 and Java 8+'
+				url "https://github.com/Elix-x/${theName}"
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+				developers {
+					developer {
+						name 'Elix X'
+						email 'elix.x.ggl@gmail.com'
+						url 'https://github.com/Elix-x'
+					}
+				}
+				scm {
+					connection "scm:git:git://github.com/Elix-x/${theName}.git"
+					developerConnection "scm:git:ssh://github.com:Elix-x/${theName}.git"
+					url "https://github.com/Elix-x/${theName}/tree/master"
+				}
+            }
+        }.writeTo(pomFile)
+		ant.checksum file: pomFile
+		ant.checksum(file: pomFile, algorithm: 'sha')
+    }
+}
+
+task deobfJar(type: Jar, dependsOn: "jar"){
+	classifier = "$minecraft_version"
+	from "build/source/main"
+}
+
+task sourcesJar(type: Jar){
+	classifier = "$minecraft_version-sources"
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar, dependsOn: 'javadoc'){
+	classifier = "$minecraft_version-javadoc"
+	from "$buildDir/docs/javadoc"
+}
+
+tasks.withType(Jar){ task ->
+    task.doLast {
+		ant.checksum file: task.archivePath
+		ant.checksum(file: task.archivePath, algorithm: 'SHA')
+	}
+}
+
+task postBuild(dependsOn: ['deobfJar', 'sourcesJar', 'javadocJar', 'generatePom']){
+
+}
+
+assemble.finalizedBy postBuild
