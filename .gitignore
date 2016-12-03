@@ -1,16 +1,15 @@
-﻿#Ignore EVERYTHING
-/*
+﻿# GRADLE
+.gradle
+build/
+bin/
 
-!src/
-!gradle/
+# Forge
+/run/
+*.launch
 
-!build.gradle
-!gradle.properties
-!gradlew
-!gradlew.bat
-
-!.gitignore
-
-#Don't ignore license
-!LICENCE
-!README.md
+# ECLIPSE
+.project
+.classpath
+.settings/
+eclipse/*
+!eclipse/codeformat.xml
