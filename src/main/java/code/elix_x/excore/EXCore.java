@@ -14,13 +14,11 @@ public class EXCore implements IMod<EXCore, IProxy<EXCore>> {
 
 	public static final String MODID = "excore";
 	public static final String NAME = "EXCore";
-	public static final String VERSION = "1.6.2";
+	public static final String VERSION = "2.0.0-alpha1";
 
-	public static final String SPLIT_VERSION = "2.0";
+	public static final String DEPENDENCY = MODID + "@[" + VERSION + ",)";
 
-	public static final String DEPENDENCY = MODID + "@[" + VERSION + "," + SPLIT_VERSION + ")";
-
-	public static final String MCVERSION = "1.10.2";
+	public static final String MCVERSION = "1.11";
 	public static final String MCVERSIONDEPENDENCY = "[" + MCVERSION + ",)";
 
 	@SidedProxy(modId = MODID, clientSide = "code.elix_x.excore.proxy.ClientProxy", serverSide = "code.elix_x.excore.proxy.ServerProxy")
