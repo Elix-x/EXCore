@@ -22,7 +22,7 @@ sourceCompatibility = java_version
 targetCompatibility = java_version
 
 dependencies {
-	compile 'code.elix_x.excomms:EXComms:0.0.2-alpha'
+	compile 'code.elix_x.excomms:EXComms:0.0.3-alpha'
 }
 
 def theName = name
