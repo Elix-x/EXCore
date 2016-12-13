@@ -34,9 +34,9 @@ public class AdvancedDebugTools {
 	}
 
 	static{
-		register(Keyboard.KEY_P, new VanillaDebugTool("Path Finding", "field_190080_f"));
-		register(Keyboard.KEY_W, new VanillaDebugTool("Water", "field_190081_g"));
-		register(Keyboard.KEY_H, new VanillaDebugTool("Height Map", "field_190082_h"));
+		register(Keyboard.KEY_P, new VanillaDebugTool("Path Finding", "pathfindingEnabled", "field_190080_f"));
+		register(Keyboard.KEY_W, new VanillaDebugTool("Water", "waterEnabled", "field_190081_g"));
+		register(Keyboard.KEY_H, new VanillaDebugTool("Height Map", "heightmapEnabled", "field_190082_h"));
 	}
 
 	@SubscribeEvent
@@ -66,17 +66,17 @@ public class AdvancedDebugTools {
 	public static class VanillaDebugTool implements DebugTool {
 
 		private final String name;
-		private final AField<DebugRenderer, Object> field;
+		private final AField<DebugRenderer, Boolean> field;
 
 		public VanillaDebugTool(String name, String... names){
 			this.name = name;
-			this.field = new AClass<DebugRenderer>(DebugRenderer.class).getDeclaredField(names).setAccessible(true);
+			this.field = new AClass<DebugRenderer>(DebugRenderer.class).<Boolean>getDeclaredField(names).setAccessible(true);
 		}
 
 		@Override
 		public void toggle(){
 			boolean b;
-			field.set(Minecraft.getMinecraft().debugRenderer, b = !(Boolean)field.get(Minecraft.getMinecraft().debugRenderer));
+			field.set(Minecraft.getMinecraft().debugRenderer, b = !field.get(Minecraft.getMinecraft().debugRenderer));
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage((new TextComponentString("")).appendSibling((new TextComponentString("[Advanced Debug]: ")).setStyle((new Style()).setColor(TextFormatting.GOLD).setBold(true))).appendText(String.format("%s: %s", this.name, (b ? "shown" : "hidden"))));
 		}
 
