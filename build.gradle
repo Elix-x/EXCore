@@ -53,6 +53,8 @@ minecraft {
     version = "$minecraft_version-$forge_version"
     runDir = "run"
     
+	replace("@VERSION@", project.version)
+	
     makeObfSourceJar = true
 }
 
@@ -110,7 +112,7 @@ task generatePom {
 
 task deobfJar(type: Jar, dependsOn: "jar"){
 	classifier = "$minecraft_version"
-	from "build/source/main"
+	from "build/classes/main", "build/resources/main"
 }
 
 task sourcesJar(type: Jar){
