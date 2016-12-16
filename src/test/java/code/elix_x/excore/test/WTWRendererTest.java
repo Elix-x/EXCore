@@ -22,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -79,21 +80,20 @@ public class WTWRendererTest {
 
 		@Override
 		public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(x, y, z);
-			WTWRenderer.renderNow(() -> {
+			WTWRenderer.render(() -> {
 				
-				renderStencil();
+				renderStencil(x, y, z);
 				
 			}, () -> {
 				
-				render();
+				render(x, y, z);
 				
 			});
-			GlStateManager.popMatrix();
 		}
 		
-		void renderStencil(){
+		void renderStencil(double x, double y, double z){
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(x, y, z);
 			GlStateManager.disableTexture2D();
 			GlStateManager.enableBlend();
 			Tessellator tess = Tessellator.getInstance();
@@ -106,9 +106,12 @@ public class WTWRendererTest {
 			tess.draw();
 			GlStateManager.disableBlend();
 			GlStateManager.enableTexture2D();
+			GlStateManager.popMatrix();
 		}
 		
-		void render(){
+		void render(double x, double y, double z){
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(x, y, z);
 			GlStateManager.pushMatrix();
 			GlStateManager.scale(10, 10, 1);
 			GlStateManager.translate(-0.5, -0.5, 10);
@@ -121,6 +124,7 @@ public class WTWRendererTest {
 			buff.pos(1, 1, 0).tex(1, 0).endVertex();
 			buff.pos(1, 0, 0).tex(1, 1).endVertex();
 			tess.draw();
+			GlStateManager.popMatrix();
 			GlStateManager.popMatrix();
 		}
 
