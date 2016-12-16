@@ -81,7 +81,7 @@ public class WTWRendererTest {
 		public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y, z);
-			WTWRenderer.render(() -> {
+			WTWRenderer.renderNow(() -> {
 				
 				renderStencil();
 				
