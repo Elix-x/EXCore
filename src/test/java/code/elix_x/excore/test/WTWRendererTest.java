@@ -98,11 +98,11 @@ public class WTWRendererTest {
 			GlStateManager.enableBlend();
 			Tessellator tess = Tessellator.getInstance();
 			VertexBuffer buff = tess.getBuffer();
-			buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-			buff.pos(0, 0, 0).color(1, 1, 1, 0.5f).endVertex();
-			buff.pos(0, 1, 0).color(1, 1, 1, 0.5f).endVertex();
-			buff.pos(1, 1, 0).color(1, 1, 1, 0.5f).endVertex();
-			buff.pos(1, 0, 0).color(1, 1, 1, 0.5f).endVertex();
+			buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+			buff.pos(0, 0, 0).endVertex();
+			buff.pos(0, 1, 0).endVertex();
+			buff.pos(1, 1, 0).endVertex();
+			buff.pos(1, 0, 0).endVertex();
 			tess.draw();
 			GlStateManager.disableBlend();
 			GlStateManager.enableTexture2D();

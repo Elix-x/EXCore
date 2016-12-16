@@ -1,7 +1,11 @@
 package code.elix_x.excore.utils.client.render.wtw;
 
+import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+import java.util.Stack;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -41,14 +45,14 @@ public class WTWRenderer {
 		GlStateManager.pushMatrix();
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 		GlStateManager.colorMask(false, false, false, false);
-		GL11.glDepthMask(false);
+		GlStateManager.depthMask(false);
 		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 255);
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
 		GL11.glStencilMask(255);
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
 		borders.run();
-		GL11.glDepthMask(true);
-		GL11.glColorMask(true, true, true, true);
+		GlStateManager.depthMask(true);
+		GlStateManager.colorMask(true, true, true, true);
 		GL11.glStencilMask(0);
 
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 255);
