@@ -49,7 +49,7 @@ public class WTWRenderer {
 		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 255);
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
 		GL11.glStencilMask(255);
-		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+		GlStateManager.clear(GL11.GL_STENCIL_BUFFER_BIT);
 		borders.run();
 		GlStateManager.depthMask(true);
 		GlStateManager.colorMask(true, true, true, true);
