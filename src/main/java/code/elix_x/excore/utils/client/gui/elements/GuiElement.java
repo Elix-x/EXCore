@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Rectangle;
 
 import code.elix_x.excomms.color.RGBA;
-import code.elix_x.excore.utils.client.render.ItemStackRenderer;
+import code.elix_x.excore.utils.client.render.item.ItemStackRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
