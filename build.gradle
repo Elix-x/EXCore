@@ -120,6 +120,7 @@ task sourcesJar(type: Jar){
     from sourceSets.main.allJava
 }
 
+javadoc.failOnError = false
 task javadocJar(type: Jar, dependsOn: 'javadoc'){
 	classifier = "$minecraft_version-javadoc"
 	from "$buildDir/docs/javadoc"
