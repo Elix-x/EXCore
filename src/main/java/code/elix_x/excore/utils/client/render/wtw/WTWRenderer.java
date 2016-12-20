@@ -1,11 +1,7 @@
 package code.elix_x.excore.utils.client.render.wtw;
 
-import java.util.Collections;
-import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
-import java.util.Stack;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -15,31 +11,59 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
+/**
+ * <h1>World Through World Renderer</h1><br>
+ * Allows rendering of another world through the current world using stencils.<br>
+ * It only has the basic functionality. What is outer world, what is inner and how they are rendered is up to users of this class.<br><br>
+ * <b>I am irresponsible for any conflicts caused by incorrect usage of this class!</b>
+ * @author Elix_x
+ *
+ */
 public class WTWRenderer {
 
 	private static Queue<Pair<Runnable, Runnable>> renderingQueue = new LinkedList<Pair<Runnable, Runnable>>();
 
-	static {
+	static{
 		MinecraftForge.EVENT_BUS.register(WTWRenderer.class);
 	}
 
-	@SubscribeEvent(priority= EventPriority.LOWEST)
+	/**
+	 * <b>INTERNAL - DO NOT USE!</b>
+	 */
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void renderLast(RenderWorldLastEvent event){
 		while(!renderingQueue.isEmpty()){
 			renderNow(renderingQueue.peek().getLeft(), renderingQueue.poll().getRight());
 		}
 	}
 
-	public static void render(Runnable borders, Runnable world){
-		renderingQueue.add(new ImmutablePair<Runnable, Runnable>(borders, world));
+	/**
+	 * Renders the world through another world, or more specifically, enqueues it for rendering. Everything will be rendered in last possible moment to avoid conflicts.<br>
+	 * How everything is drawn is completely up to users of this class.
+	 * 
+	 * @param tear
+	 *            Draw a tear in the world through which the other world can be seen. Only position vertex parameters are used, others are ignored (depth and color buffers stay unmodified).
+	 * @param world
+	 *            Draw the actual world on the other side of the tear. You can draw everything, only parts visible through the tear will stay.
+	 */
+	public static void render(Runnable tear, Runnable world){
+		renderingQueue.add(new ImmutablePair<Runnable, Runnable>(tear, world));
 	}
 
-	public static void renderNow(Runnable borders, Runnable world){
+	/**
+	 * Renders the world through another world <b>right now</b>. <b>I am irresponsible for all conflicts caused by usage in wrong time.</b>
+	 * 
+	 * @param tear
+	 *            Draw a tear in the world through which the other world can be seen. Only position vertex parameters are used, others are ignored (depth and color buffers stay unmodified).
+	 * @param world
+	 *            Draw the actual world on the other side of the tear. You can draw everything, only parts visible through the tear will stay.
+	 * @throws Exceptions
+	 *             if stencils aren't enabled.
+	 */
+	public static void renderNow(Runnable tear, Runnable world){
 		assert Minecraft.getMinecraft().getFramebuffer().isStencilEnabled() : "WTW Renderer can't work without stencils. Please enable them";
 
 		GlStateManager.pushMatrix();
@@ -50,7 +74,7 @@ public class WTWRenderer {
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
 		GL11.glStencilMask(255);
 		GlStateManager.clear(GL11.GL_STENCIL_BUFFER_BIT);
-		borders.run();
+		tear.run();
 		GlStateManager.depthMask(true);
 		GlStateManager.colorMask(true, true, true, true);
 		GL11.glStencilMask(0);
