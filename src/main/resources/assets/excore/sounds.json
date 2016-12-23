@@ -1,0 +1,11 @@
+{
+    "misc.xmas_time": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "excore:misc/xmas_time",
+                "stream": true
+            }
+        ]
+    }
+}
