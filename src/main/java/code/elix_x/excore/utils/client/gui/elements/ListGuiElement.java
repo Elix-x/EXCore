@@ -37,7 +37,7 @@ public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	protected int clickTimeThreshold = 250;
 	protected int clickDistanceThreshold = 2;
 
-	private long prevClickTime;
+	private long prevClickTime = -1;
 
 	private int prevGrabY = -1;
 	private int prevGrabScrollDistance = -1;
@@ -101,6 +101,10 @@ public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 
 	public void checkScrollDistance(){
 		scrollDistance = inverted ? Math.min(Math.max(scrollDistance, -maxScrollDistance()), 0) : Math.max(Math.min(scrollDistance, maxScrollDistance()), 0);
+	}
+
+	public int getScrollDistance(){
+		return scrollDistance;
 	}
 
 	public void setScrollDistance(int scrollDistance){
@@ -241,10 +245,9 @@ public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	}
 
 	protected boolean handleMouseEventPost(H handler, GuiScreen gui, int mouseX, int mouseY, boolean down, int key){
-		for(int i = 0; i < elements.length; i++){
+		for(int i = 0; i < elements.length; i++)
 			if(elements[i] != null && elements[i].handleMouseEvent(handler, gui, i, calcX(), calcRelY(i), mouseX, mouseY, down, key))
 				return true;
-		}
 		return false;
 	}
 
