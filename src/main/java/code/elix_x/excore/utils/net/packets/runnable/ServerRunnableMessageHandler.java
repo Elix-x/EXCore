@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package code.elix_x.excore.utils.packets.runnable;
+package code.elix_x.excore.utils.net.packets.runnable;
 
 import org.apache.commons.lang3.tuple.Pair;
 

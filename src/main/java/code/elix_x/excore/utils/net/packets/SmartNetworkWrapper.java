@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package code.elix_x.excore.utils.packets;
+package code.elix_x.excore.utils.net.packets;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +23,9 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Function;
 
-import code.elix_x.excore.utils.packets.runnable.ClientRunnableMessageHandler;
-import code.elix_x.excore.utils.packets.runnable.RunnableMessageHandler;
-import code.elix_x.excore.utils.packets.runnable.ServerRunnableMessageHandler;
+import code.elix_x.excore.utils.net.packets.runnable.ClientRunnableMessageHandler;
+import code.elix_x.excore.utils.net.packets.runnable.RunnableMessageHandler;
+import code.elix_x.excore.utils.net.packets.runnable.ServerRunnableMessageHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
