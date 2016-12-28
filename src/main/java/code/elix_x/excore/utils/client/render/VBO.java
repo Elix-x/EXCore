@@ -1,5 +1,7 @@
 package code.elix_x.excore.utils.client.render;
 
+import java.nio.ByteBuffer;
+
 import org.lwjgl.opengl.GL15;
 
 public class VBO {
@@ -12,6 +14,10 @@ public class VBO {
 
 	public void bind(){
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
+	}
+
+	public void data(ByteBuffer buffer, int usage){
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, usage);
 	}
 
 	public void unbind(){
