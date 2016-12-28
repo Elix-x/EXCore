@@ -22,17 +22,19 @@ sourceCompatibility = java_version
 targetCompatibility = java_version
 
 dependencies {
-	compile 'code.elix_x.excomms:EXComms:0.0.3-alpha'
+	compile "code.elix_x.excomms:EXComms:$excomms_version"
 }
 
 def theName = name
+def theDescription = description
 
 archivesBaseName = name
 version = "${version_major}.${version_minor}.${version_patch}"
 if(version_channel != 'release') version += "-$version_channel$build"
-group = 'code.elix_x.excore'
+version += "-$minecraft_version"
+group = group
 jar {
-	classifier = "$minecraft_version-obf"
+	classifier = "obf"
 	from {
         zipTree((configurations.runtime - configurations.provided).find{ it.getName().startsWith("EXComms")})
     } {
@@ -55,7 +57,7 @@ minecraft {
     
 	replace("@VERSION@", project.version)
 	
-    makeObfSourceJar = true
+    makeObfSourceJar = false
 }
 
 processResources {
@@ -79,14 +81,18 @@ processResources {
 
 task generatePom {
     doLast {
-		def pomFile = "$buildDir/libs/$archivesBaseName-$version-${minecraft_version}.pom"
+		def pomFile = "$buildDir/libs/$archivesBaseName-${version}.pom"
         pom {
             project {
-                name(theName)
-				description 'Elix\'x Common Utilities for Minecraft 1.11 and Java 8+'
+                name theName
+				description theDescription
 				url "https://github.com/Elix-x/${theName}"
                 licenses {
                     license {
+                        name 'Creative Commons Attribution-NonCommercial 4.0 International Public License'
+                        url 'https://creativecommons.org/licenses/by-nc/4.0/legalcode'
+                    }
+					license {
                         name 'The Apache Software License, Version 2.0'
                         url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
@@ -111,17 +117,18 @@ task generatePom {
 }
 
 task deobfJar(type: Jar, dependsOn: "jar"){
-	classifier = "$minecraft_version"
+	classifier = ""
 	from "build/classes/main", "build/resources/main"
 }
 
 task sourcesJar(type: Jar){
-	classifier = "$minecraft_version-sources"
+	classifier = "sources"
     from sourceSets.main.allJava
 }
 
+javadoc.failOnError = false
 task javadocJar(type: Jar, dependsOn: 'javadoc'){
-	classifier = "$minecraft_version-javadoc"
+	classifier = "javadoc"
 	from "$buildDir/docs/javadoc"
 }
 

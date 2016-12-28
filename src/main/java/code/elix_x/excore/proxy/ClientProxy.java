@@ -8,6 +8,7 @@ import code.elix_x.excore.client.debug.AdvancedDebugTools;
 import code.elix_x.excore.client.resource.WebResourcePack;
 import code.elix_x.excore.client.thingy.Thingy;
 import code.elix_x.excore.utils.proxy.IProxy;
+import code.elix_x.excore.xmas.XMasSpecial;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,6 +22,7 @@ public class ClientProxy implements IProxy<EXCore> {
 	public void preInit(FMLPreInitializationEvent event){
 		((List<IResourcePack>) new AClass<Minecraft>(Minecraft.class).getDeclaredField("defaultResourcePacks", "field_110449_ao").setAccessible(true).get(Minecraft.getMinecraft())).add(new WebResourcePack());
 		MinecraftForge.EVENT_BUS.register(new AdvancedDebugTools());
+		MinecraftForge.EVENT_BUS.register(new XMasSpecial());
 	}
 
 	@Override

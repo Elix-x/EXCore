@@ -24,4 +24,4 @@ CHANGELOG=$(sed ':a;N;$!ba;s/\n/\\n/g' <<< "$CHANGELOG")
 CHANGELOG=$(sed 's/\"/\\\"/g' <<< "$CHANGELOG")
 
 OBFFILE=$(ls build/libs/*-obf.jar)
-curl --header "X-Api-Token: $CURSEFORGEACCESSTOKEN" --form "file=@$OBFFILE;filename=$NAME-$TRAVIS_BRANCH-$MINECRAFTVERSION.jar" --form metadata="{\"displayName\": \"$NAME-$TRAVIS_BRANCH-$MINECRAFTVERSION\", \"changelog\":\"$CHANGELOG\", \"changelogType\": \"markdown\", \"gameVersions\": $GAMEVERSIONS, \"releaseType\": \"$VERSIONCHANNEL\"}" https://minecraft.curseforge.com/api/projects/$PROJECTID/upload-file
+curl --header "X-Api-Token: $CURSEFORGEACCESSTOKEN" --form "file=@$OBFFILE;filename=$NAME-$TRAVIS_BRANCH.jar" --form metadata="{\"displayName\": \"$NAME-$TRAVIS_BRANCH\", \"changelog\":\"$CHANGELOG\", \"changelogType\": \"markdown\", \"gameVersions\": $GAMEVERSIONS, \"releaseType\": \"$VERSIONCHANNEL\"}" https://minecraft.curseforge.com/api/projects/$PROJECTID/upload-file
