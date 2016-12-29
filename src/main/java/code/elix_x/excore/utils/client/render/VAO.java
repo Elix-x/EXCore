@@ -19,12 +19,12 @@ public class VAO {
 		GL30.glBindVertexArray(vaoId);
 	}
 
-	public void vboSeparate(VBO vbo, VertexFormatElement format){
-		GL20.glVertexAttribPointer(0, format.getElementCount(), format.getType().getGlConstant(), format.getUsage() == EnumUsage.NORMAL, 0, 0);
+	public void vboSeparate(VBO vbo, int vboIndex, VertexFormatElement format){
+		GL20.glVertexAttribPointer(vboIndex, format.getElementCount(), format.getType().getGlConstant(), false, 0, 0);
 	}
 
-	public void vboSingle(VBO vbo, VertexFormat format, VertexFormatElement elementFormat){
-		GL20.glVertexAttribPointer(0, elementFormat.getElementCount(), elementFormat.getType().getGlConstant(), elementFormat.getUsage() == EnumUsage.NORMAL, format.getIntegerSize(), format.getOffset(elementFormat.getIndex()));
+	public void vboSingle(VBO vbo, int vboIndex, VertexFormat format, VertexFormatElement elementFormat){
+		GL20.glVertexAttribPointer(vboIndex, elementFormat.getElementCount(), elementFormat.getType().getGlConstant(), false, format.getIntegerSize(), format.getOffset(format.getElements().indexOf(elementFormat)));
 	}
 
 	public void unbind(){
