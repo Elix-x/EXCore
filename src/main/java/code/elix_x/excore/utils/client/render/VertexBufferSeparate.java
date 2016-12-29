@@ -48,12 +48,12 @@ public class VertexBufferSeparate extends VertexBuffer {
 					bytebuf.get(new byte[vertexBuffer.getVertexFormat().getElement(e).getSize()]);
 					continue;
 				} else{
-					ee++;
 					ByteBuffer buffer = byteBuffers[ee];
 					VertexFormatElement element = this.format.getElement(ee);
 					byte[] bytes = new byte[element.getSize()];
 					bytebuf.get(bytes);
 					buffer.put(bytes);
+					ee++;
 				}
 			}
 		}
@@ -62,8 +62,9 @@ public class VertexBufferSeparate extends VertexBuffer {
 			VBO vbo = vbos[b];
 			ByteBuffer buffer = byteBuffers[b];
 			VertexFormatElement formatElement = format.getElement(b);
+			buffer.flip();
 			vbo.bind();
-			vbo.data(bytebuf, GL15.GL_STATIC_DRAW);
+			vbo.data(buffer, GL15.GL_STATIC_DRAW);
 			vao.vboSeparate(vbo, indexMap[b], formatElement);
 			vbo.unbind();
 		}
@@ -84,6 +85,14 @@ public class VertexBufferSeparate extends VertexBuffer {
 			GL20.glDisableVertexAttribArray(i);
 		}
 		super.renderPost();
+	}
+	
+	@Override
+	public void cleanUp(){
+		for(VBO vbo : vbos){
+			vbo.cleanUp();
+		}
+		super.cleanUp();
 	}
 
 }

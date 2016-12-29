@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 
-public abstract class VertexBuffer {
+public class VertexBuffer {
 
 	public static <B extends Buffer> B createBuffer(int vertexCount, VertexFormatElement element){
 		switch(element.getType()){
@@ -48,7 +48,7 @@ public abstract class VertexBuffer {
 		this.vao = new VAO();
 	}
 
-	public void draw(){
+	public final void draw(){
 		renderPre();
 		GL11.glDrawArrays(drawMode, 0, vertexCount);
 		renderPost();
@@ -60,6 +60,10 @@ public abstract class VertexBuffer {
 
 	protected void renderPost(){
 		vao.unbind();
+	}
+
+	public void cleanUp(){
+		vao.cleanUp();
 	}
 
 }
