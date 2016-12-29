@@ -1,4 +1,4 @@
-package code.elix_x.excore.utils.client.render;
+package code.elix_x.excore.utils.client.render.vao;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -6,10 +6,11 @@ import java.nio.ByteBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
+import code.elix_x.excore.utils.client.render.IVertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 
-public class VertexBuffer {
+public class VertexBuffer implements IVertexBuffer {
 
 	public static <B extends Buffer> B createBuffer(int vertexCount, VertexFormatElement element){
 		switch(element.getType()){

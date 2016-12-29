@@ -2,8 +2,8 @@ package code.elix_x.excore.test;
 
 import org.lwjgl.opengl.GL11;
 
-import code.elix_x.excore.utils.client.render.VertexBufferSeparate;
-import code.elix_x.excore.utils.client.render.VertexBufferSingle;
+import code.elix_x.excore.utils.client.render.vao.VertexBufferSeparate;
+import code.elix_x.excore.utils.client.render.vao.VertexBufferSingle;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -73,7 +73,7 @@ public class VAOTest {
 	@SideOnly(Side.CLIENT)
 	public static class TestTileEntityRenderer extends TileEntitySpecialRenderer {
 
-		private code.elix_x.excore.utils.client.render.VertexBuffer buffer;
+		private code.elix_x.excore.utils.client.render.vao.VertexBuffer buffer;
 		
 		@Override
 		public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage){

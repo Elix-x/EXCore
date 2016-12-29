@@ -1,8 +1,9 @@
-package code.elix_x.excore.utils.client.render;
+package code.elix_x.excore.utils.client.render.vao;
 
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import code.elix_x.excore.utils.client.render.vbo.VBO;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
