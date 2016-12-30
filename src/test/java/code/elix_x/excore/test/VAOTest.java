@@ -2,8 +2,8 @@ package code.elix_x.excore.test;
 
 import org.lwjgl.opengl.GL11;
 
-import code.elix_x.excore.utils.client.render.vao.VertexBufferSeparate;
-import code.elix_x.excore.utils.client.render.vao.VertexBufferSingle;
+import code.elix_x.excore.utils.client.render.IVertexBuffer;
+import code.elix_x.excore.utils.client.render.vbo.VertexBufferSingleVBO;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -73,15 +73,16 @@ public class VAOTest {
 	@SideOnly(Side.CLIENT)
 	public static class TestTileEntityRenderer extends TileEntitySpecialRenderer {
 
-		private code.elix_x.excore.utils.client.render.vao.VertexBuffer buffer;
+		private IVertexBuffer buffer;
 		
 		@Override
 		public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y, z);
-			GlStateManager.disableTexture2D();
+			GlStateManager.translate(0, 1, 0);
+//			GlStateManager.disableTexture2D();
 			bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			GlStateManager.enableBlend();
+//			GlStateManager.enableBlend();
 			/*Tessellator tessellator = Tessellator.getInstance();
 			VertexBuffer vb = tessellator.getBuffer();
 			vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
@@ -97,25 +98,26 @@ public class VAOTest {
 			vb.pos(1, 0, 0).tex(0, 1).endVertex();*/
 			if(buffer == null){
 				VertexBuffer buffer = new VertexBuffer(16);
-				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-				buffer.pos(0, 0, 0).color(1f, 1f, 1f, 0.5f).endVertex();
-				buffer.pos(1, 0, 0).color(1f, 1f, 1f, 0.5f).endVertex();
-				buffer.pos(1, 1, 0).color(1f, 1f, 1f, 0.5f).endVertex();
-				buffer.pos(0, 1, 0).color(1f, 1f, 1f, 0.5f).endVertex();
+				/*buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+				buffer.pos(0, 0, 0).color(0f, 1f, 0f, 0.5f).endVertex();
+				buffer.pos(1, 0, 0).color(0f, 1f, 0f, 0.5f).endVertex();
+				buffer.pos(1, 1, 0).color(0f, 1f, 0f, 0.5f).endVertex();
+				buffer.pos(0, 1, 0).color(0f, 1f, 0f, 0.5f).endVertex();*/
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+				Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(te.getWorld().getBlockState(te.getPos().down()), te.getPos().down(), te.getWorld(), buffer);
 				/*buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 				buffer.pos(0, 0, 0).tex(1, 1).endVertex();
 				buffer.pos(0, 1, 0).tex(1, 0).endVertex();
 				buffer.pos(1, 1, 0).tex(0, 0).endVertex();
 				buffer.pos(1, 0, 0).tex(0, 1).endVertex();*/
 				buffer.finishDrawing();
-				this.buffer = new VertexBufferSingle(buffer);
-				System.out.println("Uploaded");
+				this.buffer = new VertexBufferSingleVBO(buffer);
 			}
 			buffer.draw();
-//			buffer.cleanUp();
-//			buffer = null;
-			GlStateManager.disableBlend();
-			GlStateManager.enableTexture2D();
+			buffer.cleanUp();
+			buffer = null;
+//			GlStateManager.disableBlend();
+//			GlStateManager.enableTexture2D();
 			GlStateManager.popMatrix();
 		}
 
