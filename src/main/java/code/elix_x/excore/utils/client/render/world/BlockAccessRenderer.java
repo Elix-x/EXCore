@@ -7,8 +7,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.VertexBufferUploader;
+import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexBuffer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -23,14 +24,13 @@ public class BlockAccessRenderer {
 	private final AxisAlignedBB shape;
 
 	private final FloatBuffer modelviewMatrix = GLAllocation.createDirectFloatBuffer(16);
-	private final VertexBuffer[] vertexBuffers = new VertexBuffer[BlockRenderLayer.values().length];
-	private final VertexBufferUploader uploader = new VertexBufferUploader();
+	private final VertexBuffer.State[] vertexBuffers = new VertexBuffer.State[BlockRenderLayer.values().length];
+	private final WorldVertexBufferUploader uploader = new WorldVertexBufferUploader();
 	private boolean needsUpdate = true;
 
 	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape){
 		this.world = world;
 		this.shape = shape;
-		Arrays.fill(vertexBuffers, new VertexBuffer(DefaultVertexFormats.BLOCK));
 	}
 
 	public void markDirty(){
@@ -42,12 +42,16 @@ public class BlockAccessRenderer {
 			rebuildBuffers();
 			needsUpdate = false;
 		}
+		for(BlockRenderLayer layer : BlockRenderLayer.values()){
+			VertexBuffer buffer = new VertexBuffer(0);
+			buffer.setVertexState(vertexBuffers[layer.ordinal()]);
+			uploader.draw(buffer);
+		}
 	}
 
 	protected void rebuildBuffers(){
-		cleanUp();
 		for(BlockRenderLayer layer : BlockRenderLayer.values()){
-			net.minecraft.client.renderer.VertexBuffer buffer = new net.minecraft.client.renderer.VertexBuffer(16);
+			VertexBuffer buffer = new VertexBuffer(16);
 			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			for(int x = (int) shape.minX; x < shape.maxX; x++){
 				for(int y = (int) shape.minY; y < shape.maxY; y++){
@@ -59,21 +63,7 @@ public class BlockAccessRenderer {
 					}
 				}
 			}
-			VertexBuffer vbo = new VertexBuffer(buffer.getVertexFormat());
-			vbo.bufferData(buffer.getByteBuffer());
-			vertexBuffers[layer.ordinal()] = vbo;
-		}
-		for(BlockRenderLayer layer : BlockRenderLayer.values()){
-			VertexBuffer buffer = vertexBuffers[layer.ordinal()];
-			buffer.bindBuffer();
-			//TODO: DRAW
-			buffer.unbindBuffer();
-		}
-	}
-
-	protected void cleanUp(){
-		for(VertexBuffer buffer : vertexBuffers){
-			buffer.deleteGlBuffers();
+			vertexBuffers[layer.ordinal()] = buffer.getVertexState();
 		}
 	}
 
