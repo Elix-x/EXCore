@@ -1,5 +1,12 @@
 package code.elix_x.excore.utils.client.render.vbo;
 
+import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_NORMAL_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
+import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
+import static org.lwjgl.opengl.GL11.glDisableClientState;
+import static org.lwjgl.opengl.GL11.glEnableClientState;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 
 import java.nio.ByteBuffer;
@@ -15,6 +22,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraftforge.fml.common.FMLLog;
 
 public class VertexBufferSingleVBO implements IVertexBuffer {
 
@@ -44,8 +52,16 @@ public class VertexBufferSingleVBO implements IVertexBuffer {
 	protected void renderPre(){
 //		vbo.bind();
 		vbo.bindBuffer();
-		boolean b = true;
+		boolean b = false;
 		if(b){
+			GlStateManager.glEnableClientState(32884);
+            OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+            GlStateManager.glEnableClientState(32888);
+            OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
+            GlStateManager.glEnableClientState(32888);
+            OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+            GlStateManager.glEnableClientState(32886);
+            
 			GlStateManager.glVertexPointer(3, 5126, 28, 0);
 	        GlStateManager.glColorPointer(4, 5121, 28, 12);
 	        GlStateManager.glTexCoordPointer(2, 5126, 28, 16);
@@ -57,16 +73,20 @@ public class VertexBufferSingleVBO implements IVertexBuffer {
 			switch(element.getUsage()){
 				case POSITION:
 					GL11.glVertexPointer(element.getElementCount(), element.getType().getGlConstant(), format.getNextOffset(), format.getOffset(i));
+					glEnableClientState(GL_VERTEX_ARRAY);
 					break;
 				case NORMAL:
 					GL11.glNormalPointer(element.getType().getGlConstant(), format.getNextOffset(), format.getOffset(i));
+					glEnableClientState(GL_NORMAL_ARRAY);
 					break;
 				case COLOR:
 					GL11.glColorPointer(element.getElementCount(), element.getType().getGlConstant(), format.getNextOffset(), format.getOffset(i));
+					glEnableClientState(GL_COLOR_ARRAY);
 					break;
 				case UV:
-					OpenGlHelper.setClientActiveTexture(element == DefaultVertexFormats.TEX_2S ? OpenGlHelper.lightmapTexUnit :OpenGlHelper.defaultTexUnit);
+					OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + element.getIndex());
 					GL11.glTexCoordPointer(element.getElementCount(), element.getType().getGlConstant(), format.getNextOffset(), format.getOffset(i));
+					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 					break;
 				case PADDING:
 					break;
@@ -88,8 +108,39 @@ public class VertexBufferSingleVBO implements IVertexBuffer {
 	}
 
 	protected void renderPost(){
-//		vbo.unbind();
 		vbo.unbindBuffer();
+		for (VertexFormatElement vertexformatelement : format.getElements())
+        {
+            VertexFormatElement.EnumUsage vertexformatelement$enumusage = vertexformatelement.getUsage();
+            int i = vertexformatelement.getIndex();
+
+            switch (vertexformatelement$enumusage)
+            {
+                case POSITION:
+                    glDisableClientState(GL_VERTEX_ARRAY);
+                    break;
+                case NORMAL:
+                    glDisableClientState(GL_NORMAL_ARRAY);
+                    break;
+                case COLOR:
+                    glDisableClientState(GL_COLOR_ARRAY);
+                    // is this really needed?
+                    GlStateManager.resetColor();
+                    break;
+                case UV:
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + vertexformatelement.getIndex());
+                    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+                    break;
+                case PADDING:
+                    break;
+                case GENERIC:
+                    glDisableVertexAttribArray(vertexformatelement.getIndex());
+                default:
+                    FMLLog.severe("Unimplemented vanilla attribute upload: %s", vertexformatelement$enumusage.getDisplayName());
+            }
+        }
+//		vbo.unbind();
 	}
 
 	@Override
