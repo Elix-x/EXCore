@@ -8,8 +8,16 @@ public class VBO {
 
 	private final int vboId;
 
+	public VBO(int vboId){
+		this.vboId = vboId;
+	}
+
 	public VBO(){
-		this.vboId = GL15.glGenBuffers();
+		this(GL15.glGenBuffers());
+	}
+
+	public int getVboId(){
+		return vboId;
 	}
 
 	public void bind(){
