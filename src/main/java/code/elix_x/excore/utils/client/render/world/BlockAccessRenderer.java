@@ -2,18 +2,18 @@ package code.elix_x.excore.utils.client.render.world;
 
 import java.nio.FloatBuffer;
 
+import code.elix_x.excore.utils.client.render.IVertexBuffer;
+import code.elix_x.excore.utils.client.render.OpenGLHelper;
+import code.elix_x.excore.utils.client.render.vbo.VertexBufferSingleVBO;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.VertexBufferUploader;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import scala.actors.threadpool.Arrays;
 
 public class BlockAccessRenderer {
 
@@ -23,14 +23,12 @@ public class BlockAccessRenderer {
 	private final AxisAlignedBB shape;
 
 	private final FloatBuffer modelviewMatrix = GLAllocation.createDirectFloatBuffer(16);
-	private final VertexBuffer[] vertexBuffers = new VertexBuffer[BlockRenderLayer.values().length];
-	private final VertexBufferUploader uploader = new VertexBufferUploader();
+	private final IVertexBuffer[] vertexBuffers = new IVertexBuffer[BlockRenderLayer.values().length];
 	private boolean needsUpdate = true;
 
 	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape){
 		this.world = world;
 		this.shape = shape;
-		Arrays.fill(vertexBuffers, new VertexBuffer(DefaultVertexFormats.BLOCK));
 	}
 
 	public void markDirty(){
@@ -59,21 +57,18 @@ public class BlockAccessRenderer {
 					}
 				}
 			}
-			VertexBuffer vbo = new VertexBuffer(buffer.getVertexFormat());
-			vbo.bufferData(buffer.getByteBuffer());
-			vertexBuffers[layer.ordinal()] = vbo;
+			vertexBuffers[layer.ordinal()] = new VertexBufferSingleVBO(buffer).setModifyClientStates(false);
 		}
+		OpenGLHelper.enableClientState(DefaultVertexFormats.BLOCK);
 		for(BlockRenderLayer layer : BlockRenderLayer.values()){
-			VertexBuffer buffer = vertexBuffers[layer.ordinal()];
-			buffer.bindBuffer();
-			//TODO: DRAW
-			buffer.unbindBuffer();
+			vertexBuffers[layer.ordinal()].draw();
 		}
+		OpenGLHelper.disableClientState(DefaultVertexFormats.BLOCK);
 	}
 
 	protected void cleanUp(){
-		for(VertexBuffer buffer : vertexBuffers){
-			buffer.deleteGlBuffers();
+		for(IVertexBuffer buffer : vertexBuffers){
+			if(buffer != null) buffer.cleanUp();
 		}
 	}
 
