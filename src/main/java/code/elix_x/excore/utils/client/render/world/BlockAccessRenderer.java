@@ -65,8 +65,8 @@ public class BlockAccessRenderer {
 		BlockRenderLayer prev = MinecraftForgeClient.getRenderLayer();
 		for(BlockRenderLayer layer : BlockRenderLayer.values()){
 			net.minecraft.client.renderer.VertexBuffer buffer = Tessellator.getInstance().getBuffer();
-			//TODO Resize. And translate on center?
-			buffer.setTranslation(shapeResult.minX - shape.minX, shapeResult.minY - shape.minY, shapeResult.minZ - shape.minZ);
+			//TODO Resize
+			buffer.setTranslation(shapeResult.getCenter().xCoord - shape.getCenter().xCoord, shapeResult.getCenter().yCoord - shape.getCenter().yCoord, shapeResult.getCenter().zCoord - shape.getCenter().zCoord);
 			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			for(int x = (int) shape.minX; x < shape.maxX; x++){
 				for(int y = (int) shape.minY; y < shape.maxY; y++){
