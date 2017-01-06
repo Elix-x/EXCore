@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -38,6 +39,14 @@ public class BlockAccessRenderer {
 		this.shapeResult = shapeResult;
 	}
 
+	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, Vec3d posResult){
+		this(world, shape, shape.move(posResult.subtract(shape.getCenter())));
+	}
+
+	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape){
+		this(world, shape, shape);
+	}
+
 	public void markDirty(){
 		needsUpdate = true;
 	}
@@ -52,7 +61,7 @@ public class BlockAccessRenderer {
 		RenderHelper.disableStandardItemLighting();
 		Minecraft.getMinecraft().entityRenderer.enableLightmap();
 		for(BlockRenderLayer layer : BlockRenderLayer.values()){
-			//TODO layer specific GL setups
+			// TODO layer specific GL setups
 			vertexBuffers[layer.ordinal()].draw();
 		}
 		Minecraft.getMinecraft().entityRenderer.disableLightmap();
@@ -65,7 +74,7 @@ public class BlockAccessRenderer {
 		BlockRenderLayer prev = MinecraftForgeClient.getRenderLayer();
 		for(BlockRenderLayer layer : BlockRenderLayer.values()){
 			net.minecraft.client.renderer.VertexBuffer buffer = Tessellator.getInstance().getBuffer();
-			//TODO Resize
+			// TODO Resize
 			buffer.setTranslation(shapeResult.getCenter().xCoord - shape.getCenter().xCoord, shapeResult.getCenter().yCoord - shape.getCenter().yCoord, shapeResult.getCenter().zCoord - shape.getCenter().zCoord);
 			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			for(int x = (int) shape.minX; x < shape.maxX; x++){
