@@ -26,14 +26,16 @@ public class BlockAccessRenderer {
 	// Shapes API has to be rewritten to support IBlockAccesses
 	// private final Shape3D shape;
 	private final AxisAlignedBB shape;
+	private final AxisAlignedBB shapeResult;
 
 	private final FloatBuffer modelviewMatrix = GLAllocation.createDirectFloatBuffer(16);
 	private final IVertexBuffer[] vertexBuffers = new IVertexBuffer[BlockRenderLayer.values().length];
 	private boolean needsUpdate = true;
 
-	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape){
+	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult){
 		this.world = world;
 		this.shape = shape;
+		this.shapeResult = shapeResult;
 	}
 
 	public void markDirty(){
@@ -63,6 +65,8 @@ public class BlockAccessRenderer {
 		BlockRenderLayer prev = MinecraftForgeClient.getRenderLayer();
 		for(BlockRenderLayer layer : BlockRenderLayer.values()){
 			net.minecraft.client.renderer.VertexBuffer buffer = Tessellator.getInstance().getBuffer();
+			//TODO Resize. And translate on center?
+			buffer.setTranslation(shapeResult.minX - shape.minX, shapeResult.minY - shape.minY, shapeResult.minZ - shape.minZ);
 			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			for(int x = (int) shape.minX; x < shape.maxX; x++){
 				for(int y = (int) shape.minY; y < shape.maxY; y++){
