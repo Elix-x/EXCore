@@ -62,7 +62,6 @@ public class VBOTest {
 	@SideOnly(Side.CLIENT)
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
-		Minecraft.getMinecraft().getFramebuffer().enableStencil();
 		ClientRegistry.bindTileEntitySpecialRenderer(TestTileEntity.class, new TestTileEntityRenderer());
 	}
 
