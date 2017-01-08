@@ -2,6 +2,8 @@ package code.elix_x.excore.utils.client.render.world;
 
 import java.nio.FloatBuffer;
 
+import org.lwjgl.opengl.GL11;
+
 import code.elix_x.excore.utils.client.render.IVertexBuffer;
 import code.elix_x.excore.utils.client.render.OpenGLHelper;
 import code.elix_x.excore.utils.client.render.vbo.VertexBufferSingleVBO;
@@ -73,23 +75,25 @@ public class BlockAccessRenderer {
 		cleanUp();
 		BlockRenderLayer prev = MinecraftForgeClient.getRenderLayer();
 		for(BlockRenderLayer layer : BlockRenderLayer.values()){
+			ForgeHooksClient.setRenderLayer(layer);
 			net.minecraft.client.renderer.VertexBuffer buffer = Tessellator.getInstance().getBuffer();
+			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 			// TODO Resize
 			buffer.setTranslation(shapeResult.getCenter().xCoord - shape.getCenter().xCoord, shapeResult.getCenter().yCoord - shape.getCenter().yCoord, shapeResult.getCenter().zCoord - shape.getCenter().zCoord);
 			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-			for(int x = (int) shape.minX; x < shape.maxX; x++){
-				for(int y = (int) shape.minY; y < shape.maxY; y++){
-					for(int z = (int) shape.minZ; z < shape.maxZ; z++){
+			for(int x = (int) Math.floor(shape.minX); x < shape.maxX + 1; x++){
+				for(int y = (int) Math.floor(shape.minY); y < shape.maxY + 1; y++){
+ 					for(int z = (int) Math.floor(shape.minZ); z < shape.maxZ + 1; z++){
 						BlockPos pos = new BlockPos(x, y, z);
 						IBlockState state = world.getBlockState(pos);
 						if(state.getBlock().canRenderInLayer(state, layer)){
-							ForgeHooksClient.setRenderLayer(layer);
 							blockRenderer.renderBlock(state, pos, world, buffer);
 						}
 					}
 				}
 			}
 			buffer.finishDrawing();
+			buffer.setTranslation(0, 0, 0);
 			vertexBuffers[layer.ordinal()] = new VertexBufferSingleVBO(buffer).setModifyClientStates(false);
 		}
 		ForgeHooksClient.setRenderLayer(prev);
