@@ -124,4 +124,53 @@ public class DefaultUnpackedVertex {
 	public void setUnknown(VertexFormatElement element, float[] data){
 		unknown.put(element, data);
 	}
+
+	public PackedVertex pack(VertexFormat format){
+		float[][] data = new float[format.getElementCount()][];
+		elements: for(int i = 0; i < data.length; i++){
+			VertexFormatElement element = format.getElement(i);
+			float[] edata = data[i] = new float[element.getElementCount()];
+			switch(element.getUsage()){
+				case POSITION:
+					if(element.getType() == EnumType.FLOAT && element.getElementCount() == 3){
+						edata[0] = pos.x;
+						edata[1] = pos.y;
+						edata[2] = pos.z;
+						continue elements;
+					} else break;
+				case COLOR:
+					if(element.getType() == EnumType.UBYTE && element.getElementCount() == 4){
+						edata[0] = color.getRI();
+						edata[1] = color.getGI();
+						edata[2] = color.getBI();
+						edata[3] = color.getAI();
+						continue elements;
+					} else break;
+				case UV:
+					if(element.getType() == EnumType.FLOAT && element.getElementCount() == 2){
+						edata[0] = texture.x;
+						edata[1] = texture.y;
+						continue elements;
+					} else if(element.getType() == EnumType.SHORT && element.getElementCount() == 2){
+						edata[0] = (short) lightmap.getX();
+						edata[1] = (short) lightmap.getY();
+						continue elements;
+					} else break;
+				case NORMAL:
+					if(element.getType() == EnumType.BYTE && element.getElementCount() == 3){
+						edata[0] = (byte) normal.getX();
+						edata[1] = (byte) normal.getY();
+						edata[2] = (byte) normal.getZ();
+						continue elements;
+					} else break;
+				case PADDING:
+					continue elements;
+				default:
+					break;
+			}
+			if(unknown.containsKey(element)) System.arraycopy(unknown.get(element), 0, edata, 0, edata.length);
+		}
+		return new PackedVertex(format, data);
+	}
+
 }
