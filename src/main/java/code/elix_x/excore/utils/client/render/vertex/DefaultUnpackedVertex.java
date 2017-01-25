@@ -32,6 +32,43 @@ public class DefaultUnpackedVertex {
 		this.normal = normal;
 	}
 
+	public DefaultUnpackedVertex(VertexFormat format, float[][] data){
+		elements: for(int i = 0; i < data.length; i++){
+			VertexFormatElement element = format.getElement(i);
+			float[] edata = data[i];
+			switch(element.getUsage()){
+				case POSITION:
+					if(element.getType() == EnumType.FLOAT && element.getElementCount() == 3){
+						pos = new Vector3f(edata[0], edata[1], edata[2]);
+						continue elements;
+					} else break;
+				case COLOR:
+					if(element.getType() == EnumType.UBYTE && element.getElementCount() == 4){
+						color = new RGBA((int) edata[0], (int) edata[0], (int) edata[0], (int) edata[0]);
+						continue elements;
+					} else break;
+				case UV:
+					if(element.getType() == EnumType.FLOAT && element.getElementCount() == 2){
+						texture = new Vector2f(edata[0], edata[1]);
+						continue elements;
+					} else if(element.getType() == EnumType.SHORT && element.getElementCount() == 2){
+						lightmap = new Vec3i((short) edata[0], (short) edata[1], 0);
+						continue elements;
+					} else break;
+				case NORMAL:
+					if(element.getType() == EnumType.BYTE && element.getElementCount() == 3){
+						normal = new Vec3i((byte) edata[0], (byte) edata[1], (byte) edata[2]);
+						continue elements;
+					} else break;
+				case PADDING:
+					continue elements;
+				default:
+					break;
+			}
+			unknown.put(element, edata);
+		}
+	}
+
 	public Vector3f getPos(){
 		return pos;
 	}

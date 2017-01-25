@@ -26,4 +26,8 @@ public class PackedVertex {
 		return data[format.getElements().indexOf(element)];
 	}
 
+	public DefaultUnpackedVertex unpack(){
+		return new DefaultUnpackedVertex(format, data);
+	}
+
 }
