@@ -6,19 +6,19 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
-public class Vertices {
+public class PackedVertices {
 
 	private final int mode;
 	private final VertexFormat format;
-	private final ImmutableList<Vertex> vertices;
+	private final ImmutableList<PackedVertex> vertices;
 
-	public Vertices(int mode, VertexFormat format, Vertex... vertices){
+	public PackedVertices(int mode, VertexFormat format, PackedVertex... vertices){
 		this.mode = mode;
 		this.format = format;
 		this.vertices = ImmutableList.copyOf(vertices);
 	}
 
-	public Vertices(int mode, VertexFormat format, List<Vertex> vertices){
+	public PackedVertices(int mode, VertexFormat format, List<PackedVertex> vertices){
 		this.mode = mode;
 		this.format = format;
 		this.vertices = ImmutableList.copyOf(vertices);
@@ -32,7 +32,7 @@ public class Vertices {
 		return format;
 	}
 
-	public List<Vertex> getVertices(){
+	public List<PackedVertex> getVertices(){
 		return vertices;
 	}
 
