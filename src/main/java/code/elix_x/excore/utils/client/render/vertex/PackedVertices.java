@@ -36,6 +36,13 @@ public class PackedVertices {
 		return vertices;
 	}
 
+	public float[][][] getData(){
+		float[][][] data = new float[vertices.size()][][];
+		for(int v = 0; v < data.length; v++)
+			data[v] = vertices.get(v).getData();
+		return data;
+	}
+
 	public DefaultUnpackedVertices unpack(){
 		return new DefaultUnpackedVertices(format, vertices);
 	}
