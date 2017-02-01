@@ -1,7 +1,8 @@
 package code.elix_x.excore.utils.client.render.model;
 
 import java.util.List;
-import java.util.Map;
+
+import com.google.common.collect.ListMultimap;
 
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
@@ -11,14 +12,14 @@ import net.minecraft.util.EnumFacing;
 public class UnpackedSimpleBakedModel {
 
 	private List<UnpackedBakedQuad> generalQuads;
-	private Map<EnumFacing, List<UnpackedBakedQuad>> faceQuads;
+	private ListMultimap<EnumFacing, UnpackedBakedQuad> faceQuads;
 	private boolean ambientOcclusion;
 	private boolean gui3d;
 	private TextureAtlasSprite texture;
 	private ItemCameraTransforms cameraTransforms;
 	private ItemOverrideList itemOverrideList;
 
-	public UnpackedSimpleBakedModel(List<UnpackedBakedQuad> generalQuads, Map<EnumFacing, List<UnpackedBakedQuad>> faceQuads, boolean ambientOcclusion, boolean gui3d, TextureAtlasSprite texture, ItemCameraTransforms cameraTransforms, ItemOverrideList itemOverrideList){
+	public UnpackedSimpleBakedModel(List<UnpackedBakedQuad> generalQuads, ListMultimap<EnumFacing, UnpackedBakedQuad> faceQuads, boolean ambientOcclusion, boolean gui3d, TextureAtlasSprite texture, ItemCameraTransforms cameraTransforms, ItemOverrideList itemOverrideList){
 		this.generalQuads = generalQuads;
 		this.faceQuads = faceQuads;
 		this.ambientOcclusion = ambientOcclusion;
@@ -36,11 +37,11 @@ public class UnpackedSimpleBakedModel {
 		this.generalQuads = generalQuads;
 	}
 
-	public Map<EnumFacing, List<UnpackedBakedQuad>> getFaceQuads(){
+	public ListMultimap<EnumFacing, UnpackedBakedQuad> getFaceQuads(){
 		return faceQuads;
 	}
 
-	public void setFaceQuads(Map<EnumFacing, List<UnpackedBakedQuad>> faceQuads){
+	public void setFaceQuads(ListMultimap<EnumFacing, UnpackedBakedQuad> faceQuads){
 		this.faceQuads = faceQuads;
 	}
 
