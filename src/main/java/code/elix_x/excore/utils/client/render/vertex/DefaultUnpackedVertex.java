@@ -7,6 +7,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import code.elix_x.excomms.color.RGBA;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
@@ -14,13 +15,27 @@ import net.minecraft.util.math.Vec3i;
 
 public class DefaultUnpackedVertex {
 
+	/**
+	 * Unpacked version of {@linkplain DefaultVertexFormats#POSITION_3F}
+	 */
 	private Vector3f pos;
+	/**
+	 * Unpacked version of {@linkplain DefaultVertexFormats#COLOR_4UB}
+	 */
 	private RGBA color;
+	/**
+	 * Unpacked version of {@linkplain DefaultVertexFormats#TEX_2F}
+	 */
 	private Vector2f texture;
 	/**
+	 * Unpacked version of {@linkplain DefaultVertexFormats#TEX_2S}<br><br>
 	 * Note: Only {@linkplain Vec3i#x} and {@linkplain Vec3i#y} are used, and as valid shorts.
 	 */
 	private Vec3i lightmap;
+	/**
+	 * Unpacked version of {@linkplain DefaultVertexFormats#NORMAL_3B}<br><br>
+	 * Note: All fields of {@linkplain Vec3i} are valid bytes.
+	 */
 	private Vec3i normal;
 	private Map<VertexFormatElement, float[]> unknown = new HashMap<>();
 
