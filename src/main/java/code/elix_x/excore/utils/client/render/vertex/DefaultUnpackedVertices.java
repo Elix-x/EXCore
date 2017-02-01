@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import net.minecraft.client.renderer.vertex.VertexFormat;
+
 public class DefaultUnpackedVertices {
 
 	private List<DefaultUnpackedVertex> vertices;
@@ -22,6 +24,10 @@ public class DefaultUnpackedVertices {
 
 	public void setVertices(List<DefaultUnpackedVertex> vertices){
 		this.vertices = vertices;
+	}
+
+	public PackedVertices pack(int mode, VertexFormat format){
+		return new PackedVertices(mode, format, Lists.transform(vertices, vertex -> vertex.pack(format)));
 	}
 
 }
