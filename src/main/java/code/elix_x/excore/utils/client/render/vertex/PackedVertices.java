@@ -24,6 +24,16 @@ public class PackedVertices {
 		this.vertices = ImmutableList.copyOf(vertices);
 	}
 
+	public PackedVertices(int mode, VertexFormat format, float[][][] vertexData){
+		this.mode = mode;
+		this.format = format;
+		ImmutableList.Builder<PackedVertex> verticesBuilder = ImmutableList.builder();
+		for(float[][] vertex : vertexData){
+			verticesBuilder.add(new PackedVertex(format, vertex));
+		}
+		this.vertices = verticesBuilder.build();
+	}
+
 	public int getMode(){
 		return mode;
 	}
