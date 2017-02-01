@@ -17,24 +17,22 @@ public class UnpackedBakedQuad {
 	private int tintIndex;
 	private EnumFacing face;
 	private TextureAtlasSprite sprite;
-	private VertexFormat format;
 	private boolean applyDiffuseLighting;
 
-	public UnpackedBakedQuad(DefaultUnpackedVertices vertices, int tintIndex, EnumFacing face, TextureAtlasSprite sprite, VertexFormat format, boolean applyDiffuseLighting){
+	public UnpackedBakedQuad(DefaultUnpackedVertices vertices, int tintIndex, EnumFacing face, TextureAtlasSprite sprite, boolean applyDiffuseLighting){
 		this.vertices = vertices;
 		this.tintIndex = tintIndex;
 		this.face = face;
 		this.sprite = sprite;
-		this.format = format;
 		this.applyDiffuseLighting = applyDiffuseLighting;
 	}
 
-	public UnpackedBakedQuad(PackedVertices vertices, int tintIndex, EnumFacing face, TextureAtlasSprite sprite, VertexFormat format, boolean applyDiffuseLighting){
-		this(vertices.unpack(), tintIndex, face, sprite, format, applyDiffuseLighting);
+	public UnpackedBakedQuad(PackedVertices vertices, int tintIndex, EnumFacing face, TextureAtlasSprite sprite, boolean applyDiffuseLighting){
+		this(vertices.unpack(), tintIndex, face, sprite, applyDiffuseLighting);
 	}
 
-	public UnpackedBakedQuad(float[][][] vertexData, int tintIndex, EnumFacing face, TextureAtlasSprite sprite, VertexFormat format, boolean applyDiffuseLighting){
-		this(new PackedVertices(GL11.GL_QUADS, format, vertexData), tintIndex, face, sprite, format, applyDiffuseLighting);
+	public UnpackedBakedQuad(float[][][] vertexData, VertexFormat format, int tintIndex, EnumFacing face, TextureAtlasSprite sprite, boolean applyDiffuseLighting){
+		this(new PackedVertices(GL11.GL_QUADS, format, vertexData), tintIndex, face, sprite, applyDiffuseLighting);
 	}
 
 	public DefaultUnpackedVertices getVertices(){
@@ -69,14 +67,6 @@ public class UnpackedBakedQuad {
 		this.sprite = sprite;
 	}
 
-	public VertexFormat getFormat(){
-		return format;
-	}
-
-	public void setFormat(VertexFormat format){
-		this.format = format;
-	}
-
 	public boolean isApplyDiffuseLighting(){
 		return applyDiffuseLighting;
 	}
@@ -85,14 +75,14 @@ public class UnpackedBakedQuad {
 		this.applyDiffuseLighting = applyDiffuseLighting;
 	}
 
-	public BakedQuad pack(){
+	public BakedQuad pack(VertexFormat format){
 		return new net.minecraftforge.client.model.pipeline.UnpackedBakedQuad(vertices.pack(GL11.GL_QUADS, format).getData(), tintIndex, face, sprite, applyDiffuseLighting, format);
 	}
 
 	private static final AField<net.minecraftforge.client.model.pipeline.UnpackedBakedQuad, float[][][]> unpackedData = new AClass<>(net.minecraftforge.client.model.pipeline.UnpackedBakedQuad.class).<float[][][]> getDeclaredField("unpackedData").setAccessible(true);
 
 	public static UnpackedBakedQuad unpack(net.minecraftforge.client.model.pipeline.UnpackedBakedQuad quad){
-		return new UnpackedBakedQuad(unpackedData.get(quad), quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.getFormat(), quad.shouldApplyDiffuseLighting());
+		return new UnpackedBakedQuad(unpackedData.get(quad), quad.getFormat(), quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting());
 	}
 
 }
