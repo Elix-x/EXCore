@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad.Builder;
 
 public class UnpackedBakedQuad {
 
@@ -83,6 +84,20 @@ public class UnpackedBakedQuad {
 
 	public static UnpackedBakedQuad unpack(net.minecraftforge.client.model.pipeline.UnpackedBakedQuad quad){
 		return new UnpackedBakedQuad(unpackedData.get(quad), quad.getFormat(), quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting());
+	}
+
+	// TODO - Move to functional models utils class once created.
+	@Deprecated
+	public static net.minecraftforge.client.model.pipeline.UnpackedBakedQuad unpackForge(BakedQuad quad){
+		if(quad instanceof net.minecraftforge.client.model.pipeline.UnpackedBakedQuad)
+			return (net.minecraftforge.client.model.pipeline.UnpackedBakedQuad) quad;
+		Builder builder = new Builder(quad.getFormat());
+		quad.pipe(builder);
+		return builder.build();
+	}
+
+	public static UnpackedBakedQuad unpack(BakedQuad quad){
+		return unpack(unpackForge(quad));
 	}
 
 }
