@@ -36,4 +36,8 @@ public class PackedVertices {
 		return vertices;
 	}
 
+	public DefaultUnpackedVertices unpack(){
+		return new DefaultUnpackedVertices(format, vertices);
+	}
+
 }

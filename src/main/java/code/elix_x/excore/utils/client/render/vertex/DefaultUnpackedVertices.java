@@ -18,6 +18,10 @@ public class DefaultUnpackedVertices {
 		this.vertices = Lists.newArrayList(vertices);
 	}
 
+	public DefaultUnpackedVertices(VertexFormat format, List<PackedVertex> vertices){
+		this(Lists.transform(vertices, vertex -> vertex.unpack()));
+	}
+
 	public List<DefaultUnpackedVertex> getVertices(){
 		return vertices;
 	}
