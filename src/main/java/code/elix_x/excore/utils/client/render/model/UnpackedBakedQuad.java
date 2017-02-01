@@ -1,6 +1,9 @@
 package code.elix_x.excore.utils.client.render.model;
 
+import org.lwjgl.opengl.GL11;
+
 import code.elix_x.excore.utils.client.render.vertex.DefaultUnpackedVertices;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
@@ -69,6 +72,10 @@ public class UnpackedBakedQuad {
 
 	public void setApplyDiffuseLighting(boolean applyDiffuseLighting){
 		this.applyDiffuseLighting = applyDiffuseLighting;
+	}
+
+	public BakedQuad pack(){
+		return new net.minecraftforge.client.model.pipeline.UnpackedBakedQuad(vertices.pack(GL11.GL_QUADS, format).getData(), tintIndex, face, sprite, applyDiffuseLighting, format);
 	}
 
 }
