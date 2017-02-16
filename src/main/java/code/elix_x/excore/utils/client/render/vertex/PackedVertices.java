@@ -1,12 +1,13 @@
 package code.elix_x.excore.utils.client.render.vertex;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
-public class PackedVertices {
+public class PackedVertices implements Iterable<PackedVertex> {
 
 	private final int mode;
 	private final VertexFormat format;
@@ -44,6 +45,11 @@ public class PackedVertices {
 
 	public List<PackedVertex> getVertices(){
 		return vertices;
+	}
+
+	@Override
+	public Iterator<PackedVertex> iterator(){
+		return vertices.iterator();
 	}
 
 	public float[][][] getData(){

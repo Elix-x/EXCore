@@ -1,12 +1,13 @@
 package code.elix_x.excore.utils.client.render.vertex;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
-public class DefaultUnpackedVertices {
+public class DefaultUnpackedVertices implements Iterable<DefaultUnpackedVertex> {
 
 	private List<DefaultUnpackedVertex> vertices;
 
@@ -28,6 +29,11 @@ public class DefaultUnpackedVertices {
 
 	public void setVertices(List<DefaultUnpackedVertex> vertices){
 		this.vertices = vertices;
+	}
+
+	@Override
+	public Iterator<DefaultUnpackedVertex> iterator(){
+		return vertices.iterator();
 	}
 
 	public PackedVertices pack(int mode, VertexFormat format){
