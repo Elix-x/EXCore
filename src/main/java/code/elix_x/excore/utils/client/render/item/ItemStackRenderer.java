@@ -44,7 +44,7 @@ public class ItemStackRenderer {
 	public static FontRenderer getFontRenderer(Minecraft minecraft, ItemStack itemstack){
 		FontRenderer fontRenderer = itemstack.getItem().getFontRenderer(itemstack);
 		if(fontRenderer == null){
-			fontRenderer = minecraft.fontRendererObj;
+			fontRenderer = minecraft.fontRenderer;
 		}
 		return fontRenderer;
 	}
