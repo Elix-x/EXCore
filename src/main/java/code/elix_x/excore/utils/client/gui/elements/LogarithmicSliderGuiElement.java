@@ -92,9 +92,9 @@ public class LogarithmicSliderGuiElement<H extends IGuiElementsHandler<? extends
 		drawTexturedRect(new Rectangle(xPos + borderX + (int) (this.value * (float) (this.width - sliderWidth)), yPos + borderY, sliderWidth / 2, height), new Rectangle(0, 66, 4, 20), 256, 256);
 		drawTexturedRect(new Rectangle(xPos + borderX + (int) (this.value * (float) (this.width - sliderWidth)) + sliderWidth / 2, yPos + borderY, sliderWidth / 2, height), new Rectangle(196, 66, 4, 20), 256, 256);
 		if(displayValue){
-			int w = gui.mc.fontRendererObj.getStringWidth(String.valueOf(getValue()));
+			int w = gui.mc.fontRenderer.getStringWidth(String.valueOf(getValue()));
 			Rectangle r = smartPos(toRectangle(), new Rectangle(xPos + borderX + (int) (value * (float) (this.width - sliderWidth)), yPos + borderY, sliderWidth, height), new Rectangle(xPos + borderX + (width - w) / 2, yPos + borderY + (height - 8) / 2, w, 8), false, false);
-			drawStringFull(gui.mc.fontRendererObj, String.valueOf(getValue()), r.getX(), yPos + borderY + (height - 8) / 2, textColor);
+			drawStringFull(gui.mc.fontRenderer, String.valueOf(getValue()), r.getX(), yPos + borderY + (height - 8) / 2, textColor);
 		}
 	}
 

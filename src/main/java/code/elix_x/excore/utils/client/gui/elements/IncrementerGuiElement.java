@@ -71,7 +71,7 @@ public class IncrementerGuiElement<H extends IGuiElementsHandler<? extends IGuiE
 
 	@Override
 	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY){
-		drawStringFull(gui.mc.fontRendererObj, String.valueOf(getValue()), xPos + borderX, yPos + borderY + height - 8, new RGBA(1f, 1f, 1f, 1f));
+		drawStringFull(gui.mc.fontRenderer, String.valueOf(getValue()), xPos + borderX, yPos + borderY + height - 8, new RGBA(1f, 1f, 1f, 1f));
 		new GuiButtonExt(0, xPos + borderX + numberWidth, yPos + borderY, buttonsWidth, height / 2, "▲").drawButton(gui.mc, mouseX, mouseY);
 		new GuiButtonExt(0, xPos + borderX + numberWidth, yPos + borderY + height / 2, buttonsWidth, height / 2, "▼").drawButton(gui.mc, mouseX, mouseY);
 	}
