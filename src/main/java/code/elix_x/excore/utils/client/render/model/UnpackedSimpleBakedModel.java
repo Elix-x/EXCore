@@ -42,6 +42,15 @@ public class UnpackedSimpleBakedModel {
 		this.generalQuads = generalQuads;
 	}
 
+	public List<UnpackedBakedQuad> getFaceQuads(EnumFacing facing){
+		return faceQuads.get(facing);
+	}
+
+	public void setFaceQuads(EnumFacing facing, List<UnpackedBakedQuad> faceQuads){
+		this.faceQuads.removeAll(facing);
+		this.faceQuads.putAll(facing, faceQuads);
+	}
+
 	public ListMultimap<EnumFacing, UnpackedBakedQuad> getFaceQuads(){
 		return faceQuads;
 	}
