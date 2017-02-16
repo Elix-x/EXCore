@@ -214,7 +214,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 		@Override
 		public void drawGuiPostPost(ThingyDisplay handler, GuiScreen gui, int mouseX, int mouseY){
 			if(inside(mouseX, mouseY))
-				drawTooltipWithBackground(Minecraft.getMinecraft().fontRendererObj, mouseX, mouseY, false, true, human.name);
+				drawTooltipWithBackground(Minecraft.getMinecraft().fontRenderer, mouseX, mouseY, false, true, human.name);
 		}
 
 		@Override
@@ -249,7 +249,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 				add(new GlintRectangleGuiElement("Texture", xPos + 64, yPos, 128, 128, 0, 0, human.getCategory(data).color));
 			nextY += 128 + 2;
 			for(ITextComponent bio : human.bio){
-				add(new CenteredStringGuiElement("Bio", xPos + 128, nextY, 2, 2, bio.getFormattedText(), fontRendererObj, human.getCategory(data).color));
+				add(new CenteredStringGuiElement("Bio", xPos + 128, nextY, 2, 2, bio.getFormattedText(), fontRenderer, human.getCategory(data).color));
 				nextY += 2 + 8 + 2;
 			}
 			List<Link> links = human.links;
@@ -266,7 +266,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 						@Override
 						public void drawGuiPostPost(IGuiElementsHandler handler, GuiScreen gui, int mouseX, int mouseY){
 							if(inside(mouseX, mouseY))
-								drawTooltipWithBackground(fontRendererObj, mouseX, mouseY, false, true, link.url.toString());
+								drawTooltipWithBackground(fontRenderer, mouseX, mouseY, false, true, link.url.toString());
 						}
 
 						@Override

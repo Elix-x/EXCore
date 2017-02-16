@@ -31,7 +31,7 @@ public class ServerRunnableMessageHandler<REQ extends IMessage, REPLY extends IM
 
 	@Override
 	public IThreadListener getThreadListener(MessageContext ctx){
-		return ctx.getServerHandler().playerEntity.mcServer;
+		return ctx.getServerHandler().player.mcServer;
 	}
 
 }
