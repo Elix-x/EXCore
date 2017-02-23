@@ -15,6 +15,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import code.elix_x.excomms.color.RGBA;
+import code.elix_x.excomms.reflection.ReflectionHelper.AClass;
+import code.elix_x.excomms.reflection.ReflectionHelper.AField;
 import code.elix_x.excore.client.debug.AdvancedDebugTools;
 import code.elix_x.excore.client.debug.AdvancedDebugTools.DebugTool;
 import code.elix_x.excore.client.thingy.ThingyData.Human;
@@ -46,6 +48,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
+	private static final AField<ResourceLocation, String> resourcePath = new AClass<>(ResourceLocation.class).<String>getDeclaredField("resourcePath", "field_110625_b").setAccessible(true).setFinal(false);
+
 	private final ThingyData data;
 
 	private final Random random;
@@ -57,7 +61,9 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
 		@Override
 		public ResourceLocation load(URL url) throws Exception{
-			return new ResourceLocation("http://www", url.toString());
+			ResourceLocation loc = new ResourceLocation("http://www", url.toString());
+			resourcePath.set(loc, url.toString());
+			return loc;
 		}
 
 	});
