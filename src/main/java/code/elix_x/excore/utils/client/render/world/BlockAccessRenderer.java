@@ -11,6 +11,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -37,7 +38,7 @@ public class BlockAccessRenderer {
 
 	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult){
 		this.world = world;
-		this.shape = shape;
+		this.shape = shape.expandXyz(0.5).offset(0.5, 0.5, 0.5);
 		this.shapeResult = shapeResult;
 	}
 
@@ -62,10 +63,17 @@ public class BlockAccessRenderer {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		RenderHelper.disableStandardItemLighting();
 		Minecraft.getMinecraft().entityRenderer.enableLightmap();
+		GlStateManager.pushMatrix();
+		double scaleX = (shapeResult.maxX - shapeResult.minX) / (shape.maxX - shape.minX);
+		double scaleY = (shapeResult.maxY - shapeResult.minY) / (shape.maxY - shape.minY);
+		double scaleZ = (shapeResult.maxZ - shapeResult.minZ) / (shape.maxZ - shape.minZ);
+		GlStateManager.scale(scaleX, scaleY, scaleZ);
+		GlStateManager.translate(shapeResult.getCenter().xCoord / scaleX, shapeResult.getCenter().yCoord / scaleY, shapeResult.getCenter().zCoord / scaleZ);
 		for(BlockRenderLayer layer : BlockRenderLayer.values()){
 			// TODO layer specific GL setups
 			vertexBuffers[layer.ordinal()].draw();
 		}
+		GlStateManager.popMatrix();
 		Minecraft.getMinecraft().entityRenderer.disableLightmap();
 		RenderHelper.enableStandardItemLighting();
 		OpenGLHelper.disableClientState(DefaultVertexFormats.BLOCK);
@@ -78,12 +86,11 @@ public class BlockAccessRenderer {
 			ForgeHooksClient.setRenderLayer(layer);
 			net.minecraft.client.renderer.VertexBuffer buffer = Tessellator.getInstance().getBuffer();
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-			// TODO Resize
-			buffer.setTranslation(shapeResult.getCenter().xCoord - shape.getCenter().xCoord, shapeResult.getCenter().yCoord - shape.getCenter().yCoord, shapeResult.getCenter().zCoord - shape.getCenter().zCoord);
+			buffer.setTranslation(-shape.getCenter().xCoord, -shape.getCenter().yCoord, -shape.getCenter().zCoord);
 			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-			for(int x = (int) Math.floor(shape.minX); x < shape.maxX + 1; x++){
-				for(int y = (int) Math.floor(shape.minY); y < shape.maxY + 1; y++){
- 					for(int z = (int) Math.floor(shape.minZ); z < shape.maxZ + 1; z++){
+			for(int x = (int) Math.floor(shape.minX); x < shape.maxX; x++){
+				for(int y = (int) Math.floor(shape.minY); y < shape.maxY; y++){
+ 					for(int z = (int) Math.floor(shape.minZ); z < shape.maxZ; z++){
 						BlockPos pos = new BlockPos(x, y, z);
 						IBlockState state = world.getBlockState(pos);
 						if(state.getBlock().canRenderInLayer(state, layer)){

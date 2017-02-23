@@ -113,7 +113,7 @@ public class BlockAccessRendererTest {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y, z);
 			if(te.bar == null){
-				te.bar = new BlockAccessRenderer(te.getWorld(), new AxisAlignedBB(te.getPos().add(-6, -1, -1), te.getPos().add(-4, 1, 1)), new Vec3d(0, 0, 0));
+				te.bar = new BlockAccessRenderer(te.getWorld(), new AxisAlignedBB(te.getPos().add(-6, -1, -1), te.getPos().add(-4, 1, 1)), new AxisAlignedBB(0, 0, 0, 1, 1, 1));
 			}
 			te.bar.render();
 			te.bar.markDirty();
