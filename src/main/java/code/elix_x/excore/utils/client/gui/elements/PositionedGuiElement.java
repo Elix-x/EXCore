@@ -15,31 +15,28 @@
  *******************************************************************************/
 package code.elix_x.excore.utils.client.gui.elements;
 
-public abstract class PositionedGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<H>>> extends GuiElement<H> {
+import net.minecraft.client.gui.GuiScreen;
 
-	protected int xPos;
-	protected int yPos;
+public abstract class PositionedGuiElement<E extends PositionedGuiElement<E, H, P>, H extends IGuiElementsHandler<E>, P extends GuiElementPosition<E, H, P>> extends GuiElement<H> {
 
-	public PositionedGuiElement(String name, int xPos, int yPos){
+	protected P position;
+
+	public PositionedGuiElement(String name, P position) {
 		super(name);
-		this.xPos = xPos;
-		this.yPos = yPos;
+		this.position = position;
 	}
 
+	@Override
+	public void initGui(H handler, GuiScreen gui){
+		position.initGui((E) this, gui);
+	}
+	
 	public int getXPos(){
-		return xPos;
+		return position.getX();
 	}
 
 	public int getYPos(){
-		return yPos;
-	}
-
-	public void setXPos(int xPos){
-		this.xPos = xPos;
-	}
-
-	public void setYPos(int yPos){
-		this.yPos = yPos;
+		return position.getY();
 	}
 
 }

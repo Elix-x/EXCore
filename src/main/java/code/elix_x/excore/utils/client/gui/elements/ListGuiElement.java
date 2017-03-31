@@ -163,7 +163,7 @@ public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 			setScrollDistance(prevGrabScrollDistance - (mouseY - prevGrabY));
 		}
 		scissorsPre();
-		scisors(toRectangle());
+		scisors(toBoundsRectangle());
 		for(int i = 0; i < elements.length; i++){
 			if(elements[i] != null) elements[i].drawGuiPre(handler, gui, i, calcX(), calcRelY(i), mouseX, mouseY);
 		}
@@ -173,7 +173,7 @@ public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	@Override
 	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY){
 		scissorsPre();
-		scisors(toRectangle());
+		scisors(toBoundsRectangle());
 		for(int i = 0; i < elements.length; i++){
 			if(elements[i] != null) elements[i].drawBackground(handler, gui, i, calcX(), calcRelY(i), mouseX, mouseY);
 		}
@@ -183,7 +183,7 @@ public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	@Override
 	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY){
 		scissorsPre();
-		scisors(toRectangle());
+		scisors(toBoundsRectangle());
 		fill(backgroundColor);
 		for(int i = 0; i < elements.length; i++){
 			if(elements[i] != null) elements[i].drawGuiPost(handler, gui, i, calcX(), calcRelY(i), mouseX, mouseY);
@@ -194,7 +194,7 @@ public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	@Override
 	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY){
 		scissorsPre();
-		scisors(toRectangle());
+		scisors(toBoundsRectangle());
 		for(int i = 0; i < elements.length; i++){
 			if(elements[i] != null) elements[i].drawGuiPostPost(handler, gui, i, calcX(), calcRelY(i), mouseX, mouseY);
 		}

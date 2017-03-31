@@ -214,7 +214,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 			resetButton();
 
 			Minecraft.getMinecraft().renderEngine.bindTexture(icon);
-			drawTexturedRect(toRectangle(), new Vec2f(0, 0), new Vec2f(1, 1));
+			drawTexturedRect(toBoundsRectangle(), new Vec2f(0, 0), new Vec2f(1, 1));
 		}
 
 		@Override

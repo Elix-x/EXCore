@@ -18,10 +18,9 @@ package code.elix_x.excore.utils.client.gui.elements;
 import org.lwjgl.util.Rectangle;
 
 import code.elix_x.excomms.color.RGBA;
+import code.elix_x.excore.utils.client.gui.GuiHelper;
 
-
-
-public abstract class RectangularGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<H>>> extends PositionedGuiElement<H> {
+public abstract class RectangularGuiElement<E extends RectangularGuiElement<E, H, P>, H extends IGuiElementsHandler<E>, P extends GuiElementPositionAndSize<E, H, P>> extends PositionedGuiElement<E, H, P> {
 
 	protected int width;
 	protected int height;
@@ -29,44 +28,16 @@ public abstract class RectangularGuiElement<H extends IGuiElementsHandler<? exte
 	protected int borderX;
 	protected int borderY;
 
-	public RectangularGuiElement(String name, int xPos, int yPos, int width, int height, int borderX, int borderY){
-		super(name, xPos, yPos);
-		this.width = width;
-		this.height = height;
-		this.borderX = borderX;
-		this.borderY = borderY;
+	public RectangularGuiElement(String name, P position){
+		super(name, position);
 	}
 
 	public int getWidth(){
-		return borderX + width + borderX;
+		return position.getWidth();
 	}
 
 	public int getHeight(){
-		return borderY + height + borderY;
-	}
-
-	public void setWidth(int width){
-		this.width = width;
-	}
-
-	public void setHeight(int height){
-		this.height = height;
-	}
-
-	public int getBorderX(){
-		return borderX;
-	}
-
-	public void setBorderX(int borderX){
-		this.borderX = borderX;
-	}
-
-	public int getBorderY(){
-		return borderY;
-	}
-
-	public void setBorderY(int borderY){
-		this.borderY = borderY;
+		return position.getHeight();
 	}
 
 	public int getRight(){
@@ -77,33 +48,24 @@ public abstract class RectangularGuiElement<H extends IGuiElementsHandler<? exte
 		return getYPos() + getHeight();
 	}
 
-	public void centerX(){
-		xPos = (screenWidth() - getWidth()) / 2;
-	}
-
-	public void centerY(){
-		yPos = (screenHeight() - getHeight()) / 2;
-	}
-
-	public void center(){
-		centerX();
-		centerY();
-	}
-
 	public boolean inside(int x, int y){
-		return getXPos() <= x && x <= getRight() && getYPos() <= y && y <= getBottom();
+		return toInnerRectangle().contains(x, y);
 	}
 
 	public Rectangle toRectangle(){
-		return new Rectangle(getXPos(), getYPos(), getWidth(), getHeight());
+		return position.toBoundsRectangle();
 	}
 
 	public Rectangle toInnerRectangle(){
-		return new Rectangle(getXPos() + getBorderX(), getYPos() + getBorderY(), getWidth() - getBorderX() * 2, getHeight() - getBorderY() * 2);
+		return position.toInnerRectangle();
 	}
 
 	public void fill(RGBA color){
-		drawColoredRect(toRectangle(), color);
+		GuiHelper.drawColoredRect(toInnerRectangle(), color);
+	}
+
+	public void fillWithinBouds(RGBA color){
+		GuiHelper.drawColoredRect(toRectangle(), color);
 	}
 
 }

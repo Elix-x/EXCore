@@ -25,4 +25,6 @@ public interface IGuiElementsHandler<E extends IGuiElement<? extends IGuiElement
 
 	public void looseFocus();
 
+//	public Rectangle screen();
+
 }
