@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 
 import code.elix_x.excore.utils.net.packets.runnable.ClientRunnableMessageHandler;
 import code.elix_x.excore.utils.net.packets.runnable.RunnableMessageHandler;
