@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import code.elix_x.excore.utils.items.ItemStackStringTranslator;
+import code.elix_x.excore.utils.items.ItemStackStringSerializer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -30,7 +30,13 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class RecipeStringTranslator {
 
-	public static String[] validateFromConfig(String... recipe){
+	public final ItemStackStringSerializer stackSerializer;
+
+	public RecipeStringTranslator(ItemStackStringSerializer stackSerializer){
+		this.stackSerializer = stackSerializer;
+	}
+
+	public String[] validateFromConfig(String... recipe){
 		recipe = ArrayUtils.clone(recipe);
 		if(!isEmpty(recipe) && isShaped(recipe)){
 			for(int i = 0; i < getDefinitionsBegining(recipe); i++){
@@ -40,23 +46,28 @@ public class RecipeStringTranslator {
 		return recipe;
 	}
 
-	public static boolean isEmpty(String... srecipe){
+	public boolean isValidStack(String stack){
+		Object o = stackSerializer.fromStringAdvanced(stack);
+		return !(o instanceof ItemStack && ((ItemStack) o).isEmpty());
+	}
+
+	public boolean isEmpty(String... srecipe){
 		return ArrayUtils.isEmpty(srecipe);
 	}
 
-	public static boolean isShaped(String... recipe){
-		return !ItemStackStringTranslator.isValidItemstackAdvanced(recipe[0]);
+	public boolean isShaped(String... recipe){
+		return isValidStack(recipe[0]);
 	}
 
-	public static int getDefinitionsBegining(String... recipe){
+	public int getDefinitionsBegining(String... recipe){
 		int i;
 		for(i = 0; i < recipe.length; i++){
-			if(recipe[i].length() == 1 && ItemStackStringTranslator.isValidItemstackAdvanced(recipe[i + 1])) break;
+			if(recipe[i].length() == 1 && isValidStack(recipe[i + 1])) break;
 		}
 		return i;
 	}
 
-	public static Object[] fromString(String... srecipe){
+	public Object[] fromString(String... srecipe){
 		Object[] recipe = new Object[srecipe.length];
 		if(isShaped(srecipe)){
 			int i = getDefinitionsBegining(srecipe);
@@ -67,18 +78,18 @@ public class RecipeStringTranslator {
 				if(srecipe[j].length() == 1){
 					recipe[j] = srecipe[j].charAt(0);
 				} else{
-					recipe[j] = ItemStackStringTranslator.fromStringAdvanced(srecipe[j]);
+					recipe[j] = stackSerializer.fromStringAdvanced(srecipe[j]);
 				}
 			}
 		} else{
 			for(int i = 0; i < srecipe.length; i++){
-				recipe[i] = ItemStackStringTranslator.fromStringAdvanced(srecipe[i]);
+				recipe[i] = stackSerializer.fromStringAdvanced(srecipe[i]);
 			}
 		}
 		return recipe;
 	}
 
-	public static IRecipe fromString(ItemStack result, String... srecipe){
+	public IRecipe fromString(ItemStack result, String... srecipe){
 		if(isEmpty(srecipe)){
 			return new IRecipe(){
 
@@ -115,20 +126,19 @@ public class RecipeStringTranslator {
 		}
 	}
 
-	public static boolean isShaped(Map<String, ?> map, String... recipe){
-		return !(map.containsKey(recipe[0]) || ItemStackStringTranslator.isValidItemstackAdvanced(recipe[0]));
+	public boolean isShaped(Map<String, ?> map, String... recipe){
+		return !(map.containsKey(recipe[0]) || isValidStack(recipe[0]));
 	}
 
-	public static int getDefinitionsBegining(Map<String, ?> map, String... recipe){
+	public int getDefinitionsBegining(Map<String, ?> map, String... recipe){
 		int i;
 		for(i = 0; i < recipe.length; i++){
-			if(recipe[i].length() == 1 && (map.containsKey(recipe[i + 1]) || ItemStackStringTranslator.isValidItemstackAdvanced(recipe[i + 1])))
-				break;
+			if(recipe[i].length() == 1 && (map.containsKey(recipe[i + 1]) || isValidStack(recipe[i + 1]))) break;
 		}
 		return i;
 	}
 
-	public static Object[] fromString(Map<String, ?> map, String... srecipe){
+	public Object[] fromString(Map<String, ?> map, String... srecipe){
 		Object[] recipe = new Object[srecipe.length];
 		if(isShaped(map, srecipe)){
 			int i = getDefinitionsBegining(map, srecipe);
@@ -141,7 +151,7 @@ public class RecipeStringTranslator {
 				} else if(map.containsKey(srecipe[j])){
 					recipe[j] = map.get(srecipe[j]);
 				} else{
-					recipe[j] = ItemStackStringTranslator.fromStringAdvanced(srecipe[j]);
+					recipe[j] = stackSerializer.fromStringAdvanced(srecipe[j]);
 				}
 			}
 		} else{
@@ -149,14 +159,14 @@ public class RecipeStringTranslator {
 				if(map.containsKey(srecipe[i])){
 					recipe[i] = map.get(srecipe[i]);
 				} else{
-					recipe[i] = ItemStackStringTranslator.fromStringAdvanced(srecipe[i]);
+					recipe[i] = stackSerializer.fromStringAdvanced(srecipe[i]);
 				}
 			}
 		}
 		return recipe;
 	}
 
-	public static IRecipe fromString(ItemStack result, Map<String, ?> map, String... srecipe){
+	public IRecipe fromString(ItemStack result, Map<String, ?> map, String... srecipe){
 		if(isEmpty(srecipe)){
 			return new IRecipe(){
 
@@ -193,11 +203,11 @@ public class RecipeStringTranslator {
 		}
 	}
 
-	public static boolean isShaped(Object... recipe){
+	public boolean isShaped(Object... recipe){
 		return recipe[0] instanceof String;
 	}
 
-	public static String[] toString(Object... recipe){
+	public String[] toString(Object... recipe){
 		String[] srecipe = new String[recipe.length];
 		if(isShaped(recipe)){
 			int i = 0;
@@ -211,18 +221,18 @@ public class RecipeStringTranslator {
 				if(recipe[j] instanceof Character){
 					srecipe[j] = "" + recipe[j];
 				} else{
-					srecipe[j] = ItemStackStringTranslator.toStringAdvanced(recipe[j]);
+					srecipe[j] = stackSerializer.toStringAdvanced(recipe[j]);
 				}
 			}
 		} else{
 			for(int i = 0; i < recipe.length; i++){
-				srecipe[i] = ItemStackStringTranslator.toStringAdvanced(recipe[i]);
+				srecipe[i] = stackSerializer.toStringAdvanced(recipe[i]);
 			}
 		}
 		return srecipe;
 	}
 
-	public static String[] toString(IRecipe recipe){
+	public String[] toString(IRecipe recipe){
 		if(recipe instanceof ShapedOreRecipe){
 			return toString(((ShapedOreRecipe) recipe).getInput());
 		} else if(recipe instanceof ShapelessOreRecipe){
@@ -232,11 +242,11 @@ public class RecipeStringTranslator {
 		}
 	}
 
-	public static boolean isShaped(Map<?, String> map, Object... recipe){
+	public boolean isShaped(Map<?, String> map, Object... recipe){
 		return recipe[0] instanceof String && !map.containsKey(recipe[0]);
 	}
 
-	public static String[] toString(Map<?, String> map, Object... recipe){
+	public String[] toString(Map<?, String> map, Object... recipe){
 		String[] srecipe = new String[recipe.length];
 		if(isShaped(map, recipe)){
 			int i = 0;
@@ -252,7 +262,7 @@ public class RecipeStringTranslator {
 				} else if(map.containsKey(recipe[j])){
 					srecipe[j] = map.get(recipe[j]);
 				} else{
-					srecipe[j] = ItemStackStringTranslator.toStringAdvanced(recipe[j]);
+					srecipe[j] = stackSerializer.toStringAdvanced(recipe[j]);
 				}
 			}
 		} else{
@@ -260,14 +270,14 @@ public class RecipeStringTranslator {
 				if(map.containsKey(recipe[i])){
 					srecipe[i] = map.get(recipe[i]);
 				} else{
-					srecipe[i] = ItemStackStringTranslator.toStringAdvanced(recipe[i]);
+					srecipe[i] = stackSerializer.toStringAdvanced(recipe[i]);
 				}
 			}
 		}
 		return srecipe;
 	}
 
-	public static String[] toString(IRecipe recipe, Map<?, String> map){
+	public String[] toString(IRecipe recipe, Map<?, String> map){
 		if(recipe instanceof ShapedOreRecipe){
 			return toString(map, ((ShapedOreRecipe) recipe).getInput());
 		} else if(recipe instanceof ShapelessOreRecipe){
