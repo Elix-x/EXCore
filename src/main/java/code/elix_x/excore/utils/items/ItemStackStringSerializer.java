@@ -23,7 +23,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class ItemStackStringTranslator {
+/**
+ * Item stack string serializer can be used to serialize and deserialize item stacks (and ore dictionary entries) with their string representation.
+ * 
+ * @author Elix_x
+ *
+ */
+public class ItemStackStringSerializer {
 
 	public static final String EMPTY = "EMPTY";
 	public static final String OREDICT = "OREDICT";
@@ -32,13 +38,25 @@ public class ItemStackStringTranslator {
 	public final String oredict;
 	public final int defaultMetadata;
 
-	public ItemStackStringTranslator(String empty, String oredict, int defaultMetadata){
+	/**
+	 * @param empty
+	 *            keyword to use for empty stacks
+	 * @param oredict
+	 *            keyword to identify ore dictionary entries
+	 * @param defaultMetadata
+	 *            default item stack metadata
+	 */
+	public ItemStackStringSerializer(String empty, String oredict, int defaultMetadata){
 		this.empty = empty;
 		this.oredict = oredict;
 		this.defaultMetadata = defaultMetadata;
 	}
 
-	public ItemStackStringTranslator(int defaultMetadata){
+	/**
+	 * @param defaultMetadata
+	 *            default item stack metadata
+	 */
+	public ItemStackStringSerializer(int defaultMetadata){
 		this(EMPTY, OREDICT, defaultMetadata);
 	}
 
