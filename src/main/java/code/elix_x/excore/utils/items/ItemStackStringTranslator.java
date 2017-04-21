@@ -19,49 +19,45 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class ItemStackStringTranslator {
 
-	public static final String NULL = "NULL";
-	public static final String OREDICT = "oreDict";
+	public static final String EMPTY = "EMPTY";
+	public static final String OREDICT = "OREDICT";
 
-	public static String toString(ItemStack itemstack){
-		return itemstack == null ? NULL : (Item.REGISTRY.getNameForObject(itemstack.getItem())) + (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE ? "" : "/" + itemstack.getItemDamage());
+	public final String empty;
+	public final String oredict;
+	public final int defaultMetadata;
+
+	public ItemStackStringTranslator(String empty, String oredict, int defaultMetadata){
+		this.empty = empty;
+		this.oredict = oredict;
+		this.defaultMetadata = defaultMetadata;
 	}
 
-	public static ItemStack fromString(String string){
-		if(string.equals(NULL)){
-			return null;
-		} else{
-			try{
-				if(string.split(":").length == 1){
-					string = "minecraft:" + string;
-				}
-				String[] modidId = string.split(":");
-				String modid = modidId[0];
-				String id = modidId[1];
-				String[] idMeta = id.split("/");
-				int meta = OreDictionary.WILDCARD_VALUE;
-				if(idMeta.length == 2){
-					id = idMeta[0];
-					meta = Integer.parseInt(idMeta[1]);
-				}
-				Item item = Item.REGISTRY.getObject(new ResourceLocation(modid, id));
-				if(item != null){
-					return new ItemStack(item, 1, meta);
-				}
-			} catch(Exception e){
-				throw new IllegalArgumentException("Could not initalize item stack. Invalid argument was given: " + string, e);
-			}
-			throw new IllegalArgumentException("Could not initalize item stack. Invalid argument was given: " + string);
+	public ItemStackStringTranslator(int defaultMetadata){
+		this(EMPTY, OREDICT, defaultMetadata);
+	}
+
+	public String toString(ItemStack itemstack){
+		return itemstack.isEmpty() ? empty : (Item.REGISTRY.getNameForObject(itemstack.getItem())) + (itemstack.getItemDamage() == defaultMetadata ? "" : "/" + itemstack.getItemDamage());
+	}
+
+	public ItemStack fromString(String string){
+		ResourceLocation id = new ResourceLocation(string);
+		int meta = defaultMetadata;
+		if(id.getResourcePath().contains("/")){
+			String[] idMeta = id.getResourcePath().split("/");
+			id = new ResourceLocation(id.getResourceDomain(), idMeta[0]);
+			meta = Integer.parseInt(idMeta[1]);
 		}
+		return new ItemStack(Item.REGISTRY.getObject(id), 1, meta);
 	}
 
-	public static String toStringAdvanced(Object o){
+	public String toStringAdvanced(Object o){
 		if(o == null){
-			return NULL;
+			return empty;
 		} else if(o instanceof ItemStack){
 			return toString((ItemStack) o);
 		} else if(o instanceof ItemCount){
@@ -71,42 +67,24 @@ public class ItemStackStringTranslator {
 		} else if(o instanceof Block){
 			return toString(new ItemStack((Block) o, 1, OreDictionary.WILDCARD_VALUE));
 		} else if(o instanceof String){
-			return OREDICT + ":" + o;
+			return oredict + ":" + o;
 		} else{
 			throw new IllegalArgumentException("Illegal argument: " + o);
 		}
 	}
 
-	public static Object fromStringAdvanced(String s){
-		if(s.equals(NULL)){
+	public Object fromStringAdvanced(String s){
+		if(s.equals(empty)){
 			return null;
 		} else{
 			if(s.split(":").length == 1){
 				s = "minecraft:" + s;
 			}
-			if(s.split(":")[0].equals(OREDICT)){
+			if(s.split(":")[0].equals(oredict)){
 				return s.split(":")[1];
 			} else{
 				return fromString(s);
 			}
-		}
-	}
-
-	public static boolean isValidItemstack(String s){
-		try{
-			ItemStackStringTranslator.fromString(s);
-			return true;
-		} catch(IllegalArgumentException e){
-			return false;
-		}
-	}
-
-	public static boolean isValidItemstackAdvanced(String s){
-		try{
-			ItemStackStringTranslator.fromStringAdvanced(s);
-			return true;
-		} catch(IllegalArgumentException e){
-			return false;
 		}
 	}
 
