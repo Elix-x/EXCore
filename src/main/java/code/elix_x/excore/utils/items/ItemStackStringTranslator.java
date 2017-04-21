@@ -15,6 +15,9 @@
  *******************************************************************************/
 package code.elix_x.excore.utils.items;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -40,11 +43,31 @@ public class ItemStackStringTranslator {
 		this(EMPTY, OREDICT, defaultMetadata);
 	}
 
-	public String toString(ItemStack itemstack){
+	/**
+	 * Serialize item stack as string.<br>
+	 * Supports empty stacks.<br>
+	 * Does not support NBT.
+	 * @param itemstack stack to serialize
+	 * @return serialized version of stack
+	 */
+	@Nonnull
+	public String toString(@Nonnull ItemStack itemstack){
 		return itemstack.isEmpty() ? empty : (Item.REGISTRY.getNameForObject(itemstack.getItem())) + (itemstack.getItemDamage() == defaultMetadata ? "" : "/" + itemstack.getItemDamage());
 	}
 
-	public ItemStack fromString(String string){
+	/**
+	 * Deserialize given string into item stack.<br>
+	 * Supports empty stacks.<br>
+	 * Does not support NBT.<br>
+	 * Supports <tt>null</tt> string.<br>
+	 * If input is invalid, an empty item stack will be returned.
+	 * 
+	 * @param string string representation of item stack to deserialize
+	 * @return item stack result of deserialization
+	 */
+	@Nonnull
+	public ItemStack fromString(@Nullable String string){
+		if(string == null) return ItemStack.EMPTY;
 		ResourceLocation id = new ResourceLocation(string);
 		int meta = defaultMetadata;
 		if(id.getResourcePath().contains("/")){
