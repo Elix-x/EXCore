@@ -28,11 +28,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-public class RecipeStringTranslator {
+public class RecipeStringSerializer {
 
 	public final ItemStackStringSerializer stackSerializer;
 
-	public RecipeStringTranslator(ItemStackStringSerializer stackSerializer){
+	public RecipeStringSerializer(ItemStackStringSerializer stackSerializer){
 		this.stackSerializer = stackSerializer;
 	}
 
