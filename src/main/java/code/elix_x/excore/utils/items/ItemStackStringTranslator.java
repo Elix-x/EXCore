@@ -22,7 +22,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class ItemStackStringTranslator {
 
@@ -47,7 +46,9 @@ public class ItemStackStringTranslator {
 	 * Serialize item stack as string.<br>
 	 * Supports empty stacks.<br>
 	 * Does not support NBT.
-	 * @param itemstack stack to serialize
+	 * 
+	 * @param itemstack
+	 *            stack to serialize
 	 * @return serialized version of stack
 	 */
 	@Nonnull
@@ -62,7 +63,8 @@ public class ItemStackStringTranslator {
 	 * Supports <tt>null</tt> string.<br>
 	 * If input is invalid, an empty item stack will be returned.
 	 * 
-	 * @param string string representation of item stack to deserialize
+	 * @param string
+	 *            string representation of item stack to deserialize
 	 * @return item stack result of deserialization
 	 */
 	@Nonnull
@@ -78,35 +80,50 @@ public class ItemStackStringTranslator {
 		return new ItemStack(Item.REGISTRY.getObject(id), 1, meta);
 	}
 
-	public String toStringAdvanced(Object o){
-		if(o == null){
-			return empty;
-		} else if(o instanceof ItemStack){
+	/**
+	 * Advanced serialization method<br>
+	 * Supports everything {@linkplain #toString(ItemStack)} does.<br>
+	 * Supports {@linkplain Item}.<br>
+	 * Supports {@linkplain Block}<br>
+	 * Supports ore dictionary ({@linkplain String}).
+	 * 
+	 * @param o
+	 *            object to serialize
+	 * @return serialzied version of object
+	 */
+	@Nonnull
+	public String toStringAdvanced(@Nullable Object o){
+		if(o instanceof ItemStack){
 			return toString((ItemStack) o);
-		} else if(o instanceof ItemCount){
-			return toString(((ItemCount) o).toItemstack());
 		} else if(o instanceof Item){
-			return toString(new ItemStack((Item) o, 1, OreDictionary.WILDCARD_VALUE));
+			return toString(new ItemStack((Item) o, 1, defaultMetadata));
 		} else if(o instanceof Block){
-			return toString(new ItemStack((Block) o, 1, OreDictionary.WILDCARD_VALUE));
+			return toString(new ItemStack((Block) o, 1, defaultMetadata));
 		} else if(o instanceof String){
 			return oredict + ":" + o;
 		} else{
-			throw new IllegalArgumentException("Illegal argument: " + o);
+			return empty;
 		}
 	}
 
-	public Object fromStringAdvanced(String s){
-		if(s.equals(empty)){
-			return null;
+	/**
+	 * Advanced deserialization method - to use on objects serialized with {@linkplain #toStringAdvanced(Object)}. Supports everything {@linkplain #fromString(String)} does.<br>
+	 * Supports ore dictionary (returns {@linkplain String}).
+	 * 
+	 * @param s
+	 *            serialized form of something
+	 * @return Deserialzied string, either {@linkplain ItemStack} or {@linkplain String} (if it is ore dictionary entry)
+	 */
+	@Nonnull
+	public <T> T fromStringAdvanced(@Nullable String s){
+		if(s == null || s.equals(empty)){
+			return (T) ItemStack.EMPTY;
 		} else{
-			if(s.split(":").length == 1){
-				s = "minecraft:" + s;
-			}
-			if(s.split(":")[0].equals(oredict)){
-				return s.split(":")[1];
+			String[] split = s.split(":");
+			if(split.length == 2 && split[0].equals(oredict)){
+				return (T) split[1];
 			} else{
-				return fromString(s);
+				return (T) fromString(s);
 			}
 		}
 	}
