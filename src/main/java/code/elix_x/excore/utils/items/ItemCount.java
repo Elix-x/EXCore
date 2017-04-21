@@ -18,7 +18,6 @@ package code.elix_x.excore.utils.items;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class ItemCount {
 
@@ -38,8 +37,8 @@ public class ItemCount {
 		this(itemstack.getItem(), itemstack.getCount());
 	}
 
-	public ItemStack toItemstack(){
-		return new ItemStack(item, count, OreDictionary.WILDCARD_VALUE);
+	public ItemStack toItemstack(int meta){
+		return new ItemStack(item, count, meta);
 	}
 
 	@Override
