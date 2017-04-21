@@ -17,9 +17,8 @@ package code.elix_x.excore.utils.nbt;
 
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;

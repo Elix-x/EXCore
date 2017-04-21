@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
 
-import code.elix_x.excore.EXCore;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -24,7 +23,7 @@ public class Thingy extends Thread {
 			e.printStackTrace();
 			return;
 		}
-		final ThingyDisplay display = new ThingyDisplay(data, new Random(Minecraft.getMinecraft().getSession().getUsername().hashCode()), EXCore.foolsTime ? 50 : 5000);
+		final ThingyDisplay display = new ThingyDisplay(data, new Random(Minecraft.getMinecraft().getSession().getUsername().hashCode()), 5000);
 		MinecraftForge.EVENT_BUS.register(display);
 
 		Minecraft.getMinecraft().addScheduledTask(new Runnable(){

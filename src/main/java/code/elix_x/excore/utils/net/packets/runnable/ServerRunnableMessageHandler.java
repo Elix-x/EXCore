@@ -17,7 +17,7 @@ package code.elix_x.excore.utils.net.packets.runnable;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
