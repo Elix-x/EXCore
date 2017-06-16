@@ -2,8 +2,17 @@ language: java
 jdk:
   - oraclejdk8
   
+env:
+  global:
+    - GITWEBPAGES_USER="Elix-x"
+    - GITWEBPAGES_NAME="EXCore"
+    - GITWEBPAGES_GROUP="сode/elix_x/excore"
+    - CURSEFORGE_NAME="EXCore"
+    - CURSEFORGE_PROJECTID="233180"
+
 before_install:
   - chmod +x install.sh
+  - chmod +x githubreleases.sh
   - chmod +x gitwebpages.sh
   - chmod +x curseforge.sh
   - export GRADLE_HOME=$(./install.sh "https://downloads.gradle.org/distributions/" "gradle-3.2.1-bin.zip" "gradle-3.2.1")
@@ -22,16 +31,31 @@ cache:
     - "$HOME/.gradle/wrapper/"
 
 deploy:
+  - provider: script
+    script: /bin/bash ./githubreleases.sh "obfuscate"
+    skip_cleanup: true
+    on:
+      tags: true
   - provider: releases
     api_key:
       secure: $GITACCESSTOKEN
     file_glob: true
-    file: "./build/libs/*.jar | grep -v obf"
+    file: "build/libs/*.jar"
     skip_cleanup: true
     on:
       tags: true
   - provider: script
-    script: /bin/sh ./gitwebpages.sh
+    script: /bin/bash ./githubreleases.sh "deobfuscate"
+    skip_cleanup: true
+    on:
+      tags: true
+  - provider: script
+    script: ls build/libs/*
+    skip_cleanup: true
+    on:
+      tags: true
+  - provider: script
+    script: /bin/bash ./gitwebpages.sh
     skip_cleanup: true
     on:
       tags: true

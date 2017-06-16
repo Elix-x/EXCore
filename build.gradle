@@ -8,7 +8,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 repositories {
@@ -22,7 +22,9 @@ sourceCompatibility = java_version
 targetCompatibility = java_version
 
 dependencies {
-	compile "code.elix_x.excomms:EXComms:$excomms_version"
+	compile("code.elix_x.excomms:EXComms:$excomms_version"){
+		exclude group: "com.google.guava"
+	}
 }
 
 def theName = name

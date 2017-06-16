@@ -15,24 +15,23 @@
  *******************************************************************************/
 package code.elix_x.excore.utils.client.gui.elements;
 
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.Rectangle;
-
 import code.elix_x.excomms.color.RGBA;
 import code.elix_x.excore.utils.client.render.item.ItemStackRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.Rectangle;
 
 public abstract class GuiElement<H extends IGuiElementsHandler<? extends IGuiElement<H>>> implements IGuiElement<H> {
 
@@ -130,7 +129,7 @@ public abstract class GuiElement<H extends IGuiElementsHandler<? extends IGuiEle
 
 	public static void drawColoredRect(Rectangle element, RGBA color, double zLevel){
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexbuffer = tessellator.getBuffer();
+		BufferBuilder vertexbuffer = tessellator.getBuffer();
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -151,7 +150,7 @@ public abstract class GuiElement<H extends IGuiElementsHandler<? extends IGuiEle
 
 	public static void drawTexturedRect(Rectangle element, Vec2f tl, Vec2f br, double zLevel){
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexbuffer = tessellator.getBuffer();
+		BufferBuilder vertexbuffer = tessellator.getBuffer();
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);

@@ -83,7 +83,7 @@ public class AxisAlignedBox extends Shape3D {
 
 	@Override
 	public boolean isInside(World world, Vec3d vec){
-		return toAxisAlignedBB().isVecInside(vec);
+		return toAxisAlignedBB().contains(vec);
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class AxisAlignedBox extends Shape3D {
 
 	@Override
 	public boolean intersectsWith(World world, Shape3D shape){
-		return toAxisAlignedBB().intersectsWith(shape.getBounds().toAxisAlignedBB());
+		return toAxisAlignedBB().intersects(shape.getBounds().toAxisAlignedBB());
 	}
 
 	@Override

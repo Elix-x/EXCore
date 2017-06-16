@@ -25,13 +25,13 @@ public interface IGuiElement<H extends IGuiElementsHandler<? extends IGuiElement
 
 	public void initGui(H handler, GuiScreen gui);
 
-	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY);
+	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks);
 
-	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY);
+	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks);
 
-	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY);
+	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks);
 
-	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY);
+	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks);
 
 	public boolean handleKeyboardEvent(H handler, GuiScreen gui, boolean down, int key, char c);
 

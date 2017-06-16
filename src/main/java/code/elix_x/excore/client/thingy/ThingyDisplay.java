@@ -131,10 +131,10 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 	@SubscribeEvent
 	public void draw(GuiScreenEvent.DrawScreenEvent.Post event){
 		for(MovingHuman human : guiHumansMultimap.get(event.getGui())){
-			human.drawGuiPost(this, event.getGui(), event.getMouseX(), event.getMouseY());
+			human.drawGuiPost(this, event.getGui(), event.getMouseX(), event.getMouseY(), event.getRenderPartialTicks());
 		}
 		for(MovingHuman human : guiHumansMultimap.get(event.getGui())){
-			human.drawGuiPostPost(this, event.getGui(), event.getMouseX(), event.getMouseY());
+			human.drawGuiPostPost(this, event.getGui(), event.getMouseX(), event.getMouseY(), event.getRenderPartialTicks());
 		}
 	}
 
@@ -200,15 +200,15 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 				pos = pos.add(motion);
 			}
 
-			if(pos.xCoord + sizeX < 0 || res.getScaledWidth() < pos.xCoord || pos.yCoord + sizeY < 0 || res.getScaledHeight() < pos.yCoord){
+			if(pos.x + sizeX < 0 || res.getScaledWidth() < pos.x || pos.y + sizeY < 0 || res.getScaledHeight() < pos.y){
 				pos = new Vec3d(random.nextInt(res.getScaledWidth() - sizeX), random.nextInt(res.getScaledHeight() - sizeY), 0);
 			}
 
-			this.pos = new Vec3i(pos.xCoord, pos.yCoord, pos.zCoord);
+			this.pos = new Vec3i(pos.x, pos.y, pos.z);
 		}
 
 		@Override
-		public void drawGuiPost(ThingyDisplay handler, GuiScreen gui, int mouseX, int mouseY){
+		public void drawGuiPost(ThingyDisplay handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 			xPos = this.pos.getX();
 			yPos = this.pos.getY();
 			resetButton();
@@ -218,7 +218,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 		}
 
 		@Override
-		public void drawGuiPostPost(ThingyDisplay handler, GuiScreen gui, int mouseX, int mouseY){
+		public void drawGuiPostPost(ThingyDisplay handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 			if(inside(mouseX, mouseY))
 				drawTooltipWithBackground(Minecraft.getMinecraft().fontRenderer, mouseX, mouseY, false, true, human.name);
 		}
@@ -249,13 +249,13 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
 		@Override
 		protected void addElements(){
-			add(new ColoredRectangleGuiElement("Shadow", 0, 0, width, height, 0, 0, new RGBA(0, 0, 0, 200)));
-			add(new TexturedRectangleGuiElement("Texture", xPos + 64, yPos, 128, 128, 0, 0, icon));
+			add(new ColoredRectangleGuiElement<>("Shadow", 0, 0, width, height, 0, 0, new RGBA(0, 0, 0, 200)));
+			add(new TexturedRectangleGuiElement<>("Texture", xPos + 64, yPos, 128, 128, 0, 0, icon));
 			if(human.getCategory(data).glint)
-				add(new GlintRectangleGuiElement("Texture", xPos + 64, yPos, 128, 128, 0, 0, human.getCategory(data).color));
+				add(new GlintRectangleGuiElement<>("Texture", xPos + 64, yPos, 128, 128, 0, 0, human.getCategory(data).color));
 			nextY += 128 + 2;
 			for(ITextComponent bio : human.bio){
-				add(new CenteredStringGuiElement("Bio", xPos + 128, nextY, 2, 2, bio.getFormattedText(), fontRenderer, human.getCategory(data).color));
+				add(new CenteredStringGuiElement<>("Bio", xPos + 128, nextY, 2, 2, bio.getFormattedText(), fontRenderer, human.getCategory(data).color));
 				nextY += 2 + 8 + 2;
 			}
 			List<Link> links = human.links;
@@ -265,12 +265,12 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 					add(new ButtonGuiElement("Link", nextX, nextY, 64, 64, 2, 2, link.url.toString()){
 
 						@Override
-						public void drawGuiPost(IGuiElementsHandler handler, GuiScreen gui, int mouseX, int mouseY){
+						public void drawGuiPost(IGuiElementsHandler handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 
 						}
 
 						@Override
-						public void drawGuiPostPost(IGuiElementsHandler handler, GuiScreen gui, int mouseX, int mouseY){
+						public void drawGuiPostPost(IGuiElementsHandler handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 							if(inside(mouseX, mouseY))
 								drawTooltipWithBackground(fontRenderer, mouseX, mouseY, false, true, link.url.toString());
 						}
@@ -282,7 +282,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 						}
 
 					});
-					add(new TexturedRectangleGuiElement("Link Texture", nextX, nextY, 64, 64, 2, 2, getCachedIcon(link.getIcon(data))));
+					add(new TexturedRectangleGuiElement<>("Link Texture", nextX, nextY, 64, 64, 2, 2, getCachedIcon(link.getIcon(data))));
 					nextX += 68;
 				}
 			}
@@ -306,13 +306,13 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 			@Override
 			public Vec3d apply(Random random, ScaledResolution res, Vec3d pos, int sizeX, int sizeY, Vec3d motion){
 				Vec3d norm = null;
-				if(pos.xCoord <= 0){
+				if(pos.x <= 0){
 					norm = new Vec3d(1, 0, 0);
-				} else if(pos.xCoord >= res.getScaledWidth() - sizeX){
+				} else if(pos.x >= res.getScaledWidth() - sizeX){
 					norm = new Vec3d(-1, 0, 0);
-				} else if(pos.yCoord <= 0){
+				} else if(pos.y <= 0){
 					norm = new Vec3d(0, 1, 0);
-				} else if(pos.yCoord >= res.getScaledHeight() - sizeY){
+				} else if(pos.y >= res.getScaledHeight() - sizeY){
 					norm = new Vec3d(0, -1, 0);
 				}
 				if(norm != null){
@@ -327,13 +327,13 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 			@Override
 			public Vec3d apply(Random random, ScaledResolution res, Vec3d pos, int sizeX, int sizeY, Vec3d motion){
 				Vec3d norm = null;
-				if(pos.xCoord <= 0){
+				if(pos.x <= 0){
 					norm = new Vec3d(1, 0, 0);
-				} else if(pos.xCoord >= res.getScaledWidth() - sizeX){
+				} else if(pos.x >= res.getScaledWidth() - sizeX){
 					norm = new Vec3d(-1, 0, 0);
-				} else if(pos.yCoord <= 0){
+				} else if(pos.y <= 0){
 					norm = new Vec3d(0, 1, 0);
-				} else if(pos.yCoord >= res.getScaledHeight() - sizeY){
+				} else if(pos.y >= res.getScaledHeight() - sizeY){
 					norm = new Vec3d(0, -1, 0);
 				}
 				if(norm != null){
@@ -341,7 +341,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 					float angle = -25 + random.nextInt(50);
 					float cos = (float) Math.cos(Math.toRadians(angle));
 					float sin = (float) Math.sin(Math.toRadians(angle));
-					return new Vec3d(motion.xCoord * cos - motion.yCoord * sin, motion.xCoord * sin + motion.yCoord * cos, motion.zCoord);
+					return new Vec3d(motion.x * cos - motion.y * sin, motion.x * sin + motion.y * cos, motion.z);
 				}
 				return motion;
 			}
@@ -354,7 +354,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 				float angle = -25 + random.nextInt(50);
 				float cos = (float) Math.cos(Math.toRadians(angle));
 				float sin = (float) Math.sin(Math.toRadians(angle));
-				return REFLECTION.apply(random, res, pos, sizeX, sizeY, new Vec3d(motion.xCoord * cos - motion.yCoord * sin, motion.xCoord * sin + motion.yCoord * cos, motion.zCoord));
+				return REFLECTION.apply(random, res, pos, sizeX, sizeY, new Vec3d(motion.x * cos - motion.y * sin, motion.x * sin + motion.y * cos, motion.z));
 			}
 
 		};
@@ -362,7 +362,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 		public abstract Vec3d apply(Random random, ScaledResolution res, Vec3d pos, int sizeX, int sizeY, Vec3d motion);
 
 		private static Vec3d mul(Vec3d vec, double d){
-			return new Vec3d(vec.xCoord * d, vec.yCoord * d, vec.zCoord * d);
+			return new Vec3d(vec.x * d, vec.y * d, vec.z * d);
 		}
 
 	}

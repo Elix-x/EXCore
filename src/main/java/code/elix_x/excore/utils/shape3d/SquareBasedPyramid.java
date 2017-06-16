@@ -76,38 +76,38 @@ public class SquareBasedPyramid extends Shape3D {
 				Vec3d vec = vecs[i];
 
 				Vec3d vec2 = vec2s[i];
-				vec = vec.addVector(vec2.xCoord, vec2.yCoord, vec2.zCoord);
+				vec = vec.addVector(vec2.x, vec2.y, vec2.z);
 
 				if(minX == 0){
-					minX = vec.xCoord;
+					minX = vec.x;
 				} else{
-					minX = Math.min(minX, vec.xCoord);
+					minX = Math.min(minX, vec.x);
 				}
 				if(minY == 0){
-					minY = vec.yCoord;
+					minY = vec.y;
 				} else{
-					minY = Math.min(minY, vec.yCoord);
+					minY = Math.min(minY, vec.y);
 				}
 				if(minZ == 0){
-					minZ = vec.zCoord;
+					minZ = vec.z;
 				} else{
-					minZ = Math.min(minZ, vec.zCoord);
+					minZ = Math.min(minZ, vec.z);
 				}
 
 				if(maxX == 0){
-					maxX = vec.xCoord;
+					maxX = vec.x;
 				} else{
-					maxX = Math.max(maxX, vec.xCoord);
+					maxX = Math.max(maxX, vec.x);
 				}
 				if(maxY == 0){
-					maxY = vec.yCoord;
+					maxY = vec.y;
 				} else{
-					maxY = Math.max(maxY, vec.yCoord);
+					maxY = Math.max(maxY, vec.y);
 				}
 				if(maxZ == 0){
-					maxZ = vec.zCoord;
+					maxZ = vec.z;
 				} else{
-					maxZ = Math.max(maxZ, vec.zCoord);
+					maxZ = Math.max(maxZ, vec.z);
 				}
 
 				vecs[i] = vec;
@@ -151,38 +151,38 @@ public class SquareBasedPyramid extends Shape3D {
 				Vec3d vec = vecs[i];
 
 				Vec3d vec2 = vec2s[i];
-				vec = vec.addVector(vec2.xCoord, vec2.yCoord, vec2.zCoord);
+				vec = vec.addVector(vec2.x, vec2.y, vec2.z);
 
 				if(minX == 0){
-					minX = vec.xCoord;
+					minX = vec.x;
 				} else{
-					minX = Math.min(minX, vec.xCoord);
+					minX = Math.min(minX, vec.x);
 				}
 				if(minY == 0){
-					minY = vec.yCoord;
+					minY = vec.y;
 				} else{
-					minY = Math.min(minY, vec.yCoord);
+					minY = Math.min(minY, vec.y);
 				}
 				if(minZ == 0){
-					minZ = vec.zCoord;
+					minZ = vec.z;
 				} else{
-					minZ = Math.min(minZ, vec.zCoord);
+					minZ = Math.min(minZ, vec.z);
 				}
 
 				if(maxX == 0){
-					maxX = vec.xCoord;
+					maxX = vec.x;
 				} else{
-					maxX = Math.max(maxX, vec.xCoord);
+					maxX = Math.max(maxX, vec.x);
 				}
 				if(maxY == 0){
-					maxY = vec.yCoord;
+					maxY = vec.y;
 				} else{
-					maxY = Math.max(maxY, vec.yCoord);
+					maxY = Math.max(maxY, vec.y);
 				}
 				if(maxZ == 0){
-					maxZ = vec.zCoord;
+					maxZ = vec.z;
 				} else{
-					maxZ = Math.max(maxZ, vec.zCoord);
+					maxZ = Math.max(maxZ, vec.z);
 				}
 
 				vecs[i] = vec;
@@ -229,38 +229,38 @@ public class SquareBasedPyramid extends Shape3D {
 				Vec3d vec = vecs[i];
 
 				Vec3d vec2 = vec2s[i];
-				vec = vec.addVector(vec2.xCoord, vec2.yCoord, vec2.zCoord);
+				vec = vec.addVector(vec2.x, vec2.y, vec2.z);
 
 				if(minX == 0){
-					minX = vec.xCoord;
+					minX = vec.x;
 				} else{
-					minX = Math.min(minX, vec.xCoord);
+					minX = Math.min(minX, vec.x);
 				}
 				if(minY == 0){
-					minY = vec.yCoord;
+					minY = vec.y;
 				} else{
-					minY = Math.min(minY, vec.yCoord);
+					minY = Math.min(minY, vec.y);
 				}
 				if(minZ == 0){
-					minZ = vec.zCoord;
+					minZ = vec.z;
 				} else{
-					minZ = Math.min(minZ, vec.zCoord);
+					minZ = Math.min(minZ, vec.z);
 				}
 
 				if(maxX == 0){
-					maxX = vec.xCoord;
+					maxX = vec.x;
 				} else{
-					maxX = Math.max(maxX, vec.xCoord);
+					maxX = Math.max(maxX, vec.x);
 				}
 				if(maxY == 0){
-					maxY = vec.yCoord;
+					maxY = vec.y;
 				} else{
-					maxY = Math.max(maxY, vec.yCoord);
+					maxY = Math.max(maxY, vec.y);
 				}
 				if(maxZ == 0){
-					maxZ = vec.zCoord;
+					maxZ = vec.z;
 				} else{
-					maxZ = Math.max(maxZ, vec.zCoord);
+					maxZ = Math.max(maxZ, vec.z);
 				}
 
 				vecs[i] = vec;

@@ -1,5 +1,10 @@
 package code.elix_x.excore;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import code.elix_x.excore.utils.mod.IMod;
 import code.elix_x.excore.utils.proxy.IProxy;
 import net.minecraftforge.common.ForgeVersion;
