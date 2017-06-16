@@ -63,8 +63,7 @@ public class ElementalGuiScreen extends BasicGuiScreen implements IGuiElementsHa
 		elements.clear();
 		nextY = yPos;
 		addElements();
-		for(IGuiElement<ElementalGuiScreen> element : elements)
-			element.initGui(this, this);
+		for(IGuiElement<ElementalGuiScreen> element : elements) element.initGui(this, this);
 	}
 
 	protected void addElements(){
@@ -73,18 +72,10 @@ public class ElementalGuiScreen extends BasicGuiScreen implements IGuiElementsHa
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks){
-		for(IGuiElement<ElementalGuiScreen> element : elements){
-			element.drawGuiPre(this, this, mouseX, mouseY);
-		}
-		for(IGuiElement<ElementalGuiScreen> element : elements){
-			element.drawBackground(this, this, mouseX, mouseY);
-		}
-		for(IGuiElement<ElementalGuiScreen> element : elements){
-			element.drawGuiPost(this, this, mouseX, mouseY);
-		}
-		for(IGuiElement<ElementalGuiScreen> element : elements){
-			element.drawGuiPostPost(this, this, mouseX, mouseY);
-		}
+		for(IGuiElement<ElementalGuiScreen> element : elements) element.drawGuiPre(this, this, mouseX, mouseY, partialTicks);
+		for(IGuiElement<ElementalGuiScreen> element : elements) element.drawBackground(this, this, mouseX, mouseY, partialTicks);
+		for(IGuiElement<ElementalGuiScreen> element : elements) element.drawGuiPost(this, this, mouseX, mouseY, partialTicks);
+		for(IGuiElement<ElementalGuiScreen> element : elements) element.drawGuiPostPost(this, this, mouseX, mouseY, partialTicks);
 	}
 
 	@Override

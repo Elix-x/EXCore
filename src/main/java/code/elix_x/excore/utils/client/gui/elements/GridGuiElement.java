@@ -161,7 +161,7 @@ public class GridGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	}
 
 	@Override
-	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 		for(int x = 0; x < elements.length; x++){
 			GridElement[] es = elements[x];
 			for(int y = 0; y < es.length; y++){
@@ -172,7 +172,7 @@ public class GridGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	}
 
 	@Override
-	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 		for(int x = 0; x < elements.length; x++){
 			GridElement[] es = elements[x];
 			for(int y = 0; y < es.length; y++){
@@ -183,7 +183,7 @@ public class GridGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	}
 
 	@Override
-	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 		fill(backgroundColor);
 		for(int x = 0; x < elements.length; x++){
 			GridElement[] es = elements[x];
@@ -195,7 +195,7 @@ public class GridGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	}
 
 	@Override
-	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 		for(int x = 0; x < elements.length; x++){
 			GridElement[] es = elements[x];
 			for(int y = 0; y < es.length; y++){

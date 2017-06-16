@@ -60,24 +60,24 @@ public class IncrementerGuiElement<H extends IGuiElementsHandler<? extends IGuiE
 	}
 
 	@Override
-	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 
 	}
 
 	@Override
-	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 
 	}
 
 	@Override
-	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 		drawStringFull(gui.mc.fontRenderer, String.valueOf(getValue()), xPos + borderX, yPos + borderY + height - 8, new RGBA(1f, 1f, 1f, 1f));
-		new GuiButtonExt(0, xPos + borderX + numberWidth, yPos + borderY, buttonsWidth, height / 2, "▲").drawButton(gui.mc, mouseX, mouseY);
-		new GuiButtonExt(0, xPos + borderX + numberWidth, yPos + borderY + height / 2, buttonsWidth, height / 2, "▼").drawButton(gui.mc, mouseX, mouseY);
+		new GuiButtonExt(0, xPos + borderX + numberWidth, yPos + borderY, buttonsWidth, height / 2, "▲").drawButton(gui.mc, mouseX, mouseY, partialTicks);
+		new GuiButtonExt(0, xPos + borderX + numberWidth, yPos + borderY + height / 2, buttonsWidth, height / 2, "▼").drawButton(gui.mc, mouseX, mouseY, partialTicks);
 	}
 
 	@Override
-	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 
 	}
 

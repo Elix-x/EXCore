@@ -48,22 +48,22 @@ public class TextFieldGuiElement<H extends IGuiElementsHandler<? extends IGuiEle
 	}
 
 	@Override
-	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 
 	}
 
 	@Override
-	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 
 	}
 
 	@Override
-	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 		textField.drawTextBox();
 	}
 
 	@Override
-	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 
 	}
 

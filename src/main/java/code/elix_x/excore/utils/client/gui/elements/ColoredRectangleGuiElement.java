@@ -54,17 +54,17 @@ public class ColoredRectangleGuiElement<H extends IGuiElementsHandler<? extends 
 	}
 
 	@Override
-	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 
 	}
 
 	@Override
-	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 
 	}
 
 	@Override
-	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 		Tessellator tessellator = Tessellator.getInstance();
 		VertexBuffer vertexbuffer = tessellator.getBuffer();
 		GlStateManager.enableBlend();
@@ -83,7 +83,7 @@ public class ColoredRectangleGuiElement<H extends IGuiElementsHandler<? extends 
 	}
 
 	@Override
-	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 
 	}
 

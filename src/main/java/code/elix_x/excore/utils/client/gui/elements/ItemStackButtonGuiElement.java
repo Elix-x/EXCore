@@ -36,8 +36,8 @@ public class ItemStackButtonGuiElement<H extends IGuiElementsHandler<? extends I
 	}
 
 	@Override
-	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY){
-		super.drawGuiPost(handler, gui, mouseX, mouseY);
+	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
+		super.drawGuiPost(handler, gui, mouseX, mouseY, partialTicks);
 		renderItemStackPre();
 		renderItemStack(itemstack, getXPos() + (getWidth() - 16) / 2, getYPos() + (getHeight() - 16) / 2);
 		renderItemStackPost();
