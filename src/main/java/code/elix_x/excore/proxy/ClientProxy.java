@@ -19,8 +19,8 @@ public class ClientProxy implements IProxy<EXCore> {
 
 	@Override
 	public void preInit(FMLPreInitializationEvent event){
-		((List<IResourcePack>) new AClass<Minecraft>(Minecraft.class).getDeclaredField("defaultResourcePacks", "field_110449_ao").setAccessible(true).get(Minecraft.getMinecraft())).add(new WebResourcePack());
-		MinecraftForge.EVENT_BUS.register(new AdvancedDebugTools());
+		new AClass<>(Minecraft.class).<List<IResourcePack>>getDeclaredField("defaultResourcePacks", "field_110449_ao").setAccessible(true).get(Minecraft.getMinecraft()).add(new WebResourcePack());
+		AdvancedDebugTools.clinit();
 	}
 
 	@Override

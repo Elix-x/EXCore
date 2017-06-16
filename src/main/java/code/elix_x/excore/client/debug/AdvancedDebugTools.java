@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
 import code.elix_x.excomms.reflection.ReflectionHelper.AClass;
@@ -34,13 +35,19 @@ public class AdvancedDebugTools {
 	}
 
 	static{
-		register(Keyboard.KEY_P, new VanillaDebugTool("Path Finding", "pathfindingEnabled", "field_190080_f"));
-		register(Keyboard.KEY_W, new VanillaDebugTool("Water", "waterEnabled", "field_190081_g"));
-		register(Keyboard.KEY_H, new VanillaDebugTool("Height Map", "heightmapEnabled", "field_190082_h"));
+		MinecraftForge.EVENT_BUS.register(AdvancedDebugTools.class);
+
+		register(Keyboard.KEY_P, new VanillaDebugTool("Path Finding", "pathfinding", "field_190080_f"));
+		register(Keyboard.KEY_W, new VanillaDebugTool("Water", "water", "field_190081_g"));
+		register(Keyboard.KEY_H, new VanillaDebugTool("Height Map", "heightMap", "field_190082_h"));
+	}
+
+	public static void clinit(){
+
 	}
 
 	@SubscribeEvent
-	public void keyPressed(KeyInputEvent event){
+	public static void keyPressed(KeyInputEvent event){
 		if(Keyboard.getEventKey() == Keyboard.KEY_F3 && GuiScreen.isAltKeyDown()){
 			for(Entry<Integer, DebugTool> e : debugTools.entrySet()){
 				if(Keyboard.isKeyDown(e.getKey())) e.getValue().toggle();
@@ -49,7 +56,7 @@ public class AdvancedDebugTools {
 	}
 
 	@SubscribeEvent
-	public void guiKeyPressed(GuiScreenEvent.KeyboardInputEvent event){
+	public static void guiKeyPressed(GuiScreenEvent.KeyboardInputEvent event){
 		if(Keyboard.getEventKey() == Keyboard.KEY_F3 && GuiScreen.isAltKeyDown()){
 			for(Entry<Integer, DebugTool> e : guiDebugTools.entrySet()){
 				if(Keyboard.isKeyDown(e.getKey())) e.getValue().toggle();
@@ -70,7 +77,7 @@ public class AdvancedDebugTools {
 
 		public VanillaDebugTool(String name, String... names){
 			this.name = name;
-			this.field = new AClass<DebugRenderer>(DebugRenderer.class).<Boolean>getDeclaredField(names).setAccessible(true);
+			this.field = new AClass<>(DebugRenderer.class).<Boolean>getDeclaredField(names).setAccessible(true);
 		}
 
 		@Override
