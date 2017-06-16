@@ -47,10 +47,6 @@ public class EXCore implements IMod<EXCore, IProxy<EXCore>> {
 		proxy.init(event);
 	}
 
-	private String fromHex(String hex){
-		return new String(ArrayUtils.toPrimitive(Arrays.stream(hex.split(" ")).map(byt -> Byte.decode("0x" + byt)).collect(Collectors.toList()).toArray(new Byte[0])));
-	}
-
 	@Override
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
