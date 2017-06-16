@@ -15,17 +15,16 @@
  *******************************************************************************/
 package code.elix_x.excore.utils.client.gui.elements;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.Rectangle;
-
 import code.elix_x.excomms.color.RGBA;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.Rectangle;
 
 public class GlintRectangleGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<H>>> extends RectangularGuiElement<H> {
 
@@ -94,7 +93,7 @@ public class GlintRectangleGuiElement<H extends IGuiElementsHandler<? extends IG
 		GlStateManager.rotate(-50.0F, 0.0F, 0.0F, 1.0F);
 
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexbuffer = tessellator.getBuffer();
+		BufferBuilder vertexbuffer = tessellator.getBuffer();
 		vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
 		vertexbuffer.pos(element.getX(), bottom(element), 0).tex(0, 1).color(color.getRF(), color.getGF(), color.getBF(), color.getAF()).endVertex();
 		vertexbuffer.pos(right(element), bottom(element), 0).tex(0, 1).color(color.getRF(), color.getGF(), color.getBF(), color.getAF()).endVertex();
