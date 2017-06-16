@@ -27,7 +27,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.VertexBufferUploader;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec2f;
@@ -130,16 +130,16 @@ public abstract class GuiElement<H extends IGuiElementsHandler<? extends IGuiEle
 
 	public static void drawColoredRect(Rectangle element, RGBA color, double zLevel){
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexbuffer = tessellator.getBuffer();
+		VertexBufferUploader VertexBufferUploader = tessellator.getBuffer();
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		GlStateManager.color(color.getRF(), color.getGF(), color.getBF(), color.getAF());
-		vertexbuffer.begin(7, DefaultVertexFormats.POSITION);
-		vertexbuffer.pos(element.getX(), bottom(element), zLevel).endVertex();
-		vertexbuffer.pos(right(element), bottom(element), zLevel).endVertex();
-		vertexbuffer.pos(right(element), element.getY(), zLevel).endVertex();
-		vertexbuffer.pos(element.getX(), element.getY(), zLevel).endVertex();
+		VertexBufferUploader.begin(7, DefaultVertexFormats.POSITION);
+		VertexBufferUploader.pos(element.getX(), bottom(element), zLevel).endVertex();
+		VertexBufferUploader.pos(right(element), bottom(element), zLevel).endVertex();
+		VertexBufferUploader.pos(right(element), element.getY(), zLevel).endVertex();
+		VertexBufferUploader.pos(element.getX(), element.getY(), zLevel).endVertex();
 		tessellator.draw();
 		GlStateManager.enableTexture2D();
 		GlStateManager.disableBlend();
@@ -151,14 +151,14 @@ public abstract class GuiElement<H extends IGuiElementsHandler<? extends IGuiEle
 
 	public static void drawTexturedRect(Rectangle element, Vec2f tl, Vec2f br, double zLevel){
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexbuffer = tessellator.getBuffer();
+		VertexBufferUploader VertexBufferUploader = tessellator.getBuffer();
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-		vertexbuffer.pos(element.getX(), bottom(element), zLevel).tex(tl.x, br.y).endVertex();
-		vertexbuffer.pos(right(element), bottom(element), zLevel).tex(br.x, br.y).endVertex();
-		vertexbuffer.pos(right(element), element.getY(), zLevel).tex(br.x, tl.y).endVertex();
-		vertexbuffer.pos(element.getX(), element.getY(), zLevel).tex(tl.x, tl.y).endVertex();
+		VertexBufferUploader.begin(7, DefaultVertexFormats.POSITION_TEX);
+		VertexBufferUploader.pos(element.getX(), bottom(element), zLevel).tex(tl.x, br.y).endVertex();
+		VertexBufferUploader.pos(right(element), bottom(element), zLevel).tex(br.x, br.y).endVertex();
+		VertexBufferUploader.pos(right(element), element.getY(), zLevel).tex(br.x, tl.y).endVertex();
+		VertexBufferUploader.pos(element.getX(), element.getY(), zLevel).tex(tl.x, tl.y).endVertex();
 		tessellator.draw();
 		GlStateManager.disableBlend();
 	}
