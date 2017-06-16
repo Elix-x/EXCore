@@ -131,10 +131,10 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 	@SubscribeEvent
 	public void draw(GuiScreenEvent.DrawScreenEvent.Post event){
 		for(MovingHuman human : guiHumansMultimap.get(event.getGui())){
-			human.drawGuiPost(this, event.getGui(), event.getMouseX(), event.getMouseY());
+			human.drawGuiPost(this, event.getGui(), event.getMouseX(), event.getMouseY(), event.getRenderPartialTicks());
 		}
 		for(MovingHuman human : guiHumansMultimap.get(event.getGui())){
-			human.drawGuiPostPost(this, event.getGui(), event.getMouseX(), event.getMouseY());
+			human.drawGuiPostPost(this, event.getGui(), event.getMouseX(), event.getMouseY(), event.getRenderPartialTicks());
 		}
 	}
 
@@ -208,7 +208,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 		}
 
 		@Override
-		public void drawGuiPost(ThingyDisplay handler, GuiScreen gui, int mouseX, int mouseY){
+		public void drawGuiPost(ThingyDisplay handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 			xPos = this.pos.getX();
 			yPos = this.pos.getY();
 			resetButton();
@@ -218,7 +218,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 		}
 
 		@Override
-		public void drawGuiPostPost(ThingyDisplay handler, GuiScreen gui, int mouseX, int mouseY){
+		public void drawGuiPostPost(ThingyDisplay handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 			if(inside(mouseX, mouseY))
 				drawTooltipWithBackground(Minecraft.getMinecraft().fontRenderer, mouseX, mouseY, false, true, human.name);
 		}
@@ -249,13 +249,13 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
 		@Override
 		protected void addElements(){
-			add(new ColoredRectangleGuiElement("Shadow", 0, 0, width, height, 0, 0, new RGBA(0, 0, 0, 200)));
-			add(new TexturedRectangleGuiElement("Texture", xPos + 64, yPos, 128, 128, 0, 0, icon));
+			add(new ColoredRectangleGuiElement<>("Shadow", 0, 0, width, height, 0, 0, new RGBA(0, 0, 0, 200)));
+			add(new TexturedRectangleGuiElement<>("Texture", xPos + 64, yPos, 128, 128, 0, 0, icon));
 			if(human.getCategory(data).glint)
-				add(new GlintRectangleGuiElement("Texture", xPos + 64, yPos, 128, 128, 0, 0, human.getCategory(data).color));
+				add(new GlintRectangleGuiElement<>("Texture", xPos + 64, yPos, 128, 128, 0, 0, human.getCategory(data).color));
 			nextY += 128 + 2;
 			for(ITextComponent bio : human.bio){
-				add(new CenteredStringGuiElement("Bio", xPos + 128, nextY, 2, 2, bio.getFormattedText(), fontRenderer, human.getCategory(data).color));
+				add(new CenteredStringGuiElement<>("Bio", xPos + 128, nextY, 2, 2, bio.getFormattedText(), fontRenderer, human.getCategory(data).color));
 				nextY += 2 + 8 + 2;
 			}
 			List<Link> links = human.links;
@@ -265,12 +265,12 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 					add(new ButtonGuiElement("Link", nextX, nextY, 64, 64, 2, 2, link.url.toString()){
 
 						@Override
-						public void drawGuiPost(IGuiElementsHandler handler, GuiScreen gui, int mouseX, int mouseY){
+						public void drawGuiPost(IGuiElementsHandler handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 
 						}
 
 						@Override
-						public void drawGuiPostPost(IGuiElementsHandler handler, GuiScreen gui, int mouseX, int mouseY){
+						public void drawGuiPostPost(IGuiElementsHandler handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 							if(inside(mouseX, mouseY))
 								drawTooltipWithBackground(fontRenderer, mouseX, mouseY, false, true, link.url.toString());
 						}
@@ -282,7 +282,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 						}
 
 					});
-					add(new TexturedRectangleGuiElement("Link Texture", nextX, nextY, 64, 64, 2, 2, getCachedIcon(link.getIcon(data))));
+					add(new TexturedRectangleGuiElement<>("Link Texture", nextX, nextY, 64, 64, 2, 2, getCachedIcon(link.getIcon(data))));
 					nextX += 68;
 				}
 			}
