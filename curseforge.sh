@@ -1,5 +1,4 @@
-NAME="EXCore"
-PROJECTID=233180
+#!/bin/bash
 
 MCV=$(grep "minecraft_version" gradle.properties)
 MCVS=(${MCV//=/ })
@@ -20,8 +19,9 @@ GAMEVERSIONS=$(groovy gameversions.groovy $MINECRAFTVERSION $JAVAVERSION)
 rm gameversions.json
 
 CHANGELOG=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
+CHANGELOG=$(sed 's/\\/\\\\/g' <<< "$CHANGELOG")
 CHANGELOG=$(sed ':a;N;$!ba;s/\n/\\n/g' <<< "$CHANGELOG")
 CHANGELOG=$(sed 's/\"/\\\"/g' <<< "$CHANGELOG")
 
 OBFFILE=$(ls build/libs/*-obf.jar)
-curl --header "X-Api-Token: $CURSEFORGEACCESSTOKEN" --form "file=@$OBFFILE;filename=$NAME-$TRAVIS_BRANCH.jar" --form metadata="{\"displayName\": \"$NAME-$TRAVIS_BRANCH\", \"changelog\":\"$CHANGELOG\", \"changelogType\": \"markdown\", \"gameVersions\": $GAMEVERSIONS, \"releaseType\": \"$VERSIONCHANNEL\"}" https://minecraft.curseforge.com/api/projects/$PROJECTID/upload-file
+curl --header "X-Api-Token: $CURSEFORGEACCESSTOKEN" --form "file=@$OBFFILE;filename=$CURSEFORGE_NAME-$TRAVIS_BRANCH.jar" --form metadata="{\"displayName\": \"$CURSEFORGE_NAME-$TRAVIS_BRANCH\", \"changelog\":\"$CHANGELOG\", \"changelogType\": \"markdown\", \"gameVersions\": $GAMEVERSIONS, \"releaseType\": \"$VERSIONCHANNEL\"}" https://minecraft.curseforge.com/api/projects/$CURSEFORGE_PROJECTID/upload-file

@@ -68,7 +68,7 @@ public class Vec3Utils {
 	public static double[] getAllX(Vec3d... vecs){
 		double[] xs = new double[vecs.length];
 		for(int i = 0; i < vecs.length; i++){
-			xs[i] = vecs[i].xCoord;
+			xs[i] = vecs[i].x;
 		}
 		return xs;
 	}
@@ -76,7 +76,7 @@ public class Vec3Utils {
 	public static double[] getAllY(Vec3d... vecs){
 		double[] ys = new double[vecs.length];
 		for(int i = 0; i < vecs.length; i++){
-			ys[i] = vecs[i].yCoord;
+			ys[i] = vecs[i].y;
 		}
 		return ys;
 	}
@@ -84,7 +84,7 @@ public class Vec3Utils {
 	public static double[] getAllZ(Vec3d... vecs){
 		double[] zs = new double[vecs.length];
 		for(int i = 0; i < vecs.length; i++){
-			zs[i] = vecs[i].zCoord;
+			zs[i] = vecs[i].z;
 		}
 		return zs;
 	}

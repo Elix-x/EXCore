@@ -158,7 +158,7 @@ public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	}
 
 	@Override
-	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPre(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 		if(prevClickTime != -1 && grab(mouseY)){
 			setScrollDistance(prevGrabScrollDistance - (mouseY - prevGrabY));
 		}
@@ -171,7 +171,7 @@ public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	}
 
 	@Override
-	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawBackground(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 		scissorsPre();
 		scisors(toRectangle());
 		for(int i = 0; i < elements.length; i++){
@@ -181,7 +181,7 @@ public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	}
 
 	@Override
-	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 		scissorsPre();
 		scisors(toRectangle());
 		fill(backgroundColor);
@@ -192,7 +192,7 @@ public class ListGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<
 	}
 
 	@Override
-	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY){
+	public void drawGuiPostPost(H handler, GuiScreen gui, int mouseX, int mouseY, float partialTicks){
 		scissorsPre();
 		scisors(toRectangle());
 		for(int i = 0; i < elements.length; i++){

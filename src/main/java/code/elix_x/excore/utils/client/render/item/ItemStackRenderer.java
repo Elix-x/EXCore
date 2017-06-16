@@ -19,6 +19,7 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
@@ -30,7 +31,7 @@ public class ItemStackRenderer {
 	}
 
 	public static List<String> getTooltip(Minecraft minecraft, ItemStack itemstack){
-		List<String> list = itemstack.getTooltip(minecraft.player, minecraft.gameSettings.advancedItemTooltips);
+		List<String> list = itemstack.getTooltip(minecraft.player, minecraft.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
 		for(int k = 0; k < list.size(); ++k){
 			if(k == 0){
 				list.set(k, itemstack.getRarity().rarityColor + list.get(k));
