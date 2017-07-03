@@ -191,7 +191,7 @@ public class LargeBlockAccessRenderer {
 		OpenGLHelper.disableClientState(DefaultVertexFormats.BLOCK);
 	}
 
-	protected void cleanUp(){
+	public void cleanUp(){
 		renderers.forEach(BlockAccessRenderer::cleanUp);
 	}
 

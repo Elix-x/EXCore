@@ -178,7 +178,7 @@ public class BlockAccessRenderer {
 		ForgeHooksClient.setRenderLayer(prev);
 	}
 
-	protected void cleanUp(){
+	public void cleanUp(){
 		for(IVertexBuffer buffer : vertexBuffers) if(buffer != null) buffer.cleanUp();
 	}
 
