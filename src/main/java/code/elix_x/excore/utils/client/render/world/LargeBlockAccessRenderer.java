@@ -119,7 +119,20 @@ public class LargeBlockAccessRenderer {
 	}
 
 	void renderLayerSetup(BlockRenderLayer layer){
-		//TODO Implement
+		switch(layer){
+			case SOLID:
+				GlStateManager.disableAlpha();
+				break;
+			case CUTOUT_MIPPED:
+				GlStateManager.enableAlpha();
+				break;
+			case CUTOUT:
+				GlStateManager.enableAlpha();
+				Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+			case TRANSLUCENT:
+				GlStateManager.enableAlpha();
+				GlStateManager.enableBlend();
+		}
 	}
 
 	void renderLayer(BlockRenderLayer layer){
@@ -127,7 +140,18 @@ public class LargeBlockAccessRenderer {
 	}
 
 	void renderLayerCleanup(BlockRenderLayer layer){
-		//TODO Implement
+		switch(layer){
+			case SOLID:
+				break;
+			case CUTOUT_MIPPED:
+				break;
+			case CUTOUT:
+				Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+				break;
+			case TRANSLUCENT:
+				GlStateManager.disableBlend();
+				break;
+		}
 	}
 
 	void renderPost(){

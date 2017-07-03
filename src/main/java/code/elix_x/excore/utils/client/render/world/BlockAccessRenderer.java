@@ -1,15 +1,11 @@
 package code.elix_x.excore.utils.client.render.world;
 
-import java.nio.FloatBuffer;
-
-import net.minecraft.client.renderer.*;
-import org.lwjgl.opengl.GL11;
-
 import code.elix_x.excore.utils.client.render.IVertexBuffer;
 import code.elix_x.excore.utils.client.render.OpenGLHelper;
 import code.elix_x.excore.utils.client.render.vbo.VertexBufferSingleVBO;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
@@ -19,6 +15,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
+import org.lwjgl.opengl.GL11;
 
 public class BlockAccessRenderer {
 
@@ -86,7 +83,20 @@ public class BlockAccessRenderer {
 	}
 
 	void renderLayerSetup(BlockRenderLayer layer){
-		//TODO Implement
+		switch(layer){
+			case SOLID:
+				GlStateManager.disableAlpha();
+				break;
+			case CUTOUT_MIPPED:
+				GlStateManager.enableAlpha();
+				break;
+			case CUTOUT:
+				GlStateManager.enableAlpha();
+				Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+			case TRANSLUCENT:
+				GlStateManager.enableAlpha();
+				GlStateManager.enableBlend();
+		}
 	}
 
 	void renderLayer(BlockRenderLayer layer){
@@ -94,7 +104,18 @@ public class BlockAccessRenderer {
 	}
 
 	void renderLayerCleanup(BlockRenderLayer layer){
-		//TODO Implement
+		switch(layer){
+			case SOLID:
+				break;
+			case CUTOUT_MIPPED:
+				break;
+			case CUTOUT:
+				Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+				break;
+			case TRANSLUCENT:
+				GlStateManager.disableBlend();
+				break;
+		}
 	}
 
 	void renderPost(){
