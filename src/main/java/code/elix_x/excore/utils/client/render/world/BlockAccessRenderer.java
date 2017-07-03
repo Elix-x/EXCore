@@ -22,11 +22,11 @@ import net.minecraftforge.client.MinecraftForgeClient;
 
 public class BlockAccessRenderer {
 
-	private final IBlockAccess world;
+	final IBlockAccess world;
 	// Shapes API has to be rewritten to support IBlockAccesses
 	// private final Shape3D shape;
-	private final AxisAlignedBB shape;
-	private final AxisAlignedBB shapeResult;
+	final AxisAlignedBB shape;
+	final AxisAlignedBB shapeResult;
 
 	private final IVertexBuffer[] vertexBuffers = new IVertexBuffer[BlockRenderLayer.values().length];
 	private boolean needsUpdate = true;
@@ -50,25 +50,58 @@ public class BlockAccessRenderer {
 	}
 
 	public void render(){
+		updateCheck();
+		renderSetup();
+		renderPre();
+		for(BlockRenderLayer layer : BlockRenderLayer.values()){
+			renderLayerSetup(layer);
+			renderLayer(layer);
+			renderLayerCleanup(layer);
+		}
+		renderPost();
+		renderCleanup();
+	}
+
+	void updateCheck(){
 		if(needsUpdate){
 			rebuildBuffers();
 			needsUpdate = false;
 		}
+	}
+
+	void renderSetup(){
 		OpenGLHelper.enableClientState(DefaultVertexFormats.BLOCK);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		RenderHelper.disableStandardItemLighting();
 		Minecraft.getMinecraft().entityRenderer.enableLightmap();
+	}
+
+	void renderPre(){
 		GlStateManager.pushMatrix();
 		double scaleX = (shapeResult.maxX - shapeResult.minX) / (shape.maxX - shape.minX);
 		double scaleY = (shapeResult.maxY - shapeResult.minY) / (shape.maxY - shape.minY);
 		double scaleZ = (shapeResult.maxZ - shapeResult.minZ) / (shape.maxZ - shape.minZ);
 		GlStateManager.scale(scaleX, scaleY, scaleZ);
 		GlStateManager.translate(shapeResult.getCenter().x / scaleX, shapeResult.getCenter().y / scaleY, shapeResult.getCenter().z / scaleZ);
-		for(BlockRenderLayer layer : BlockRenderLayer.values()){
-			// TODO layer specific GL setups
-			vertexBuffers[layer.ordinal()].draw();
-		}
+	}
+
+	void renderLayerSetup(BlockRenderLayer layer){
+		//TODO Implement
+	}
+
+	void renderLayer(BlockRenderLayer layer){
+		vertexBuffers[layer.ordinal()].draw();
+	}
+
+	void renderLayerCleanup(BlockRenderLayer layer){
+		//TODO Implement
+	}
+
+	void renderPost(){
 		GlStateManager.popMatrix();
+	}
+
+	void renderCleanup(){
 		Minecraft.getMinecraft().entityRenderer.disableLightmap();
 		RenderHelper.enableStandardItemLighting();
 		OpenGLHelper.disableClientState(DefaultVertexFormats.BLOCK);
