@@ -1,6 +1,7 @@
 package code.elix_x.excore.test;
 
 import code.elix_x.excore.utils.client.render.world.BlockAccessRenderer;
+import code.elix_x.excore.utils.registry.RegistrationQueue;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -12,7 +13,6 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,7 +36,7 @@ public class BlockAccessRendererTest {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
 		Block block;
-		GameRegistry.register(block = new Block(Material.ANVIL){
+		new RegistrationQueue().enqueue(block = new Block(Material.ANVIL){
 
 			public boolean hasTileEntity(IBlockState state){
 				return true;
@@ -59,8 +59,7 @@ public class BlockAccessRendererTest {
 
 			}
 
-		}.setRegistryName(MODID, "testblock"));
-		GameRegistry.register(new ItemBlock(block).setRegistryName(MODID, "testblock"));
+		}.setRegistryName(MODID, "testblock")).enqueue(new ItemBlock(block).setRegistryName(MODID, "testblock"));
 		GameRegistry.registerTileEntity(TestTileEntity.class, new ResourceLocation(MODID, "testblock").toString());
 		MinecraftForge.EVENT_BUS.register(this);
 	}
