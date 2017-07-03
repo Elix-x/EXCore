@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 public class PackerPipelineElement {
 
 	public static PipelineElement<SimpleBakedModel, UnpackedSimpleBakedModel> unpack(){
-		return PipelineElement.wrapper(model -> UnpackedSimpleBakedModel.unpack(model));
+		return PipelineElement.wrapper(UnpackedSimpleBakedModel::unpack);
 	}
 
 	public static PipelineElement<UnpackedSimpleBakedModel, SimpleBakedModel> pack(VertexFormat format){

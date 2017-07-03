@@ -17,8 +17,7 @@ public class BakedModelQuadsPipelineWrapper implements PipelineElement<UnpackedS
 	@Override
 	public UnpackedSimpleBakedModel pipe(UnpackedSimpleBakedModel in){
 		in.setGeneralQuads(pipeline.pipe(in.getGeneralQuads()));
-		for(EnumFacing facing : EnumFacing.values())
-			in.setFaceQuads(facing, pipeline.pipe(in.getFaceQuads(facing)));
+		for(EnumFacing facing : EnumFacing.values()) in.setFaceQuads(facing, pipeline.pipe(in.getFaceQuads(facing)));
 		return in;
 	}
 
