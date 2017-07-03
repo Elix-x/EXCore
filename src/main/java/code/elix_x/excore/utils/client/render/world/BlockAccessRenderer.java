@@ -61,8 +61,8 @@ public class BlockAccessRenderer {
 	}
 
 	public void render(){
+		updateCheck();
 		if(!isEmpty()){
-			updateCheck();
 			renderSetup();
 			renderPre();
 			for(BlockRenderLayer layer : BlockRenderLayer.values()){

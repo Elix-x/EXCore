@@ -98,8 +98,8 @@ public class LargeBlockAccessRenderer {
 	}
 
 	public void render(){
-		if(!isEmpty()){
-			updateCheck();
+		updateCheck();
+			if(!isEmpty()){
 			renderSetup();
 			renderPre();
 			for(BlockRenderLayer layer : BlockRenderLayer.values()){
