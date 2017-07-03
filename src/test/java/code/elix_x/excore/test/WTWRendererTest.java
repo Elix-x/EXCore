@@ -11,30 +11,40 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+@Mod.EventBusSubscriber
 @Mod(modid = WTWRendererTest.MODID)
 public class WTWRendererTest {
 
 	public static final String MODID = "wtwrenderertest";
 
+	static Block block;
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
-		Block block;
-		GameRegistry.register(block = new Block(Material.ANVIL){
+		GameRegistry.registerTileEntity(TestTileEntity.class, new ResourceLocation(MODID, "testblock").toString());
+	}
+
+	@SubscribeEvent
+	public static void regBlocks(RegistryEvent.Register<Block> event){
+		event.getRegistry().register(block = new Block(Material.ANVIL){
 
 			public boolean hasTileEntity(IBlockState state){
 				return true;
@@ -54,8 +64,11 @@ public class WTWRendererTest {
 			}
 
 		}.setRegistryName(MODID, "testblock"));
-		GameRegistry.register(new ItemBlock(block).setRegistryName(MODID, "testblock"));
-		GameRegistry.registerTileEntity(TestTileEntity.class, new ResourceLocation(MODID, "testblock").toString());
+	}
+
+	@SubscribeEvent
+	public static void regItems(RegistryEvent.Register<Item> event){
+		event.getRegistry().register(new ItemBlock(block).setRegistryName(MODID, "testblock"));
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -73,7 +86,7 @@ public class WTWRendererTest {
 	public static class TestTileEntityRenderer extends TileEntitySpecialRenderer {
 
 		@Override
-		public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
+		public void render(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
 			WTWRenderer.render(() -> {
 				
 				renderStencil(x, y, z);

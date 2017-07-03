@@ -6,7 +6,7 @@ env:
   global:
     - GITWEBPAGES_USER="Elix-x"
     - GITWEBPAGES_NAME="EXCore"
-    - GITWEBPAGES_GROUP="сode/elix_x/excore"
+    - GITWEBPAGES_GROUP="code/elix_x/excore"
     - CURSEFORGE_NAME="EXCore"
     - CURSEFORGE_PROJECTID="233180"
 
