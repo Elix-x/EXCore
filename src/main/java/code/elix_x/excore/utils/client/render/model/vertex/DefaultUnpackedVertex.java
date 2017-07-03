@@ -88,56 +88,63 @@ public class DefaultUnpackedVertex {
 		return pos;
 	}
 
-	public void setPos(Vector3f pos){
+	public DefaultUnpackedVertex setPos(Vector3f pos){
 		this.pos = pos;
+		return this;
 	}
 
 	public RGBA getColor(){
 		return color;
 	}
 
-	public void setColor(RGBA color){
+	public DefaultUnpackedVertex setColor(RGBA color){
 		this.color = color;
+		return this;
 	}
 
 	public Vector2f getTexture(){
 		return texture;
 	}
 
-	public void setTexture(Vector2f texture){
+	public DefaultUnpackedVertex setTexture(Vector2f texture){
 		this.texture = texture;
+		return this;
 	}
 
 	public Vec3i getLightmap(){
 		return lightmap;
 	}
 
-	public void setLightmap(Vec3i lightmap){
+	public DefaultUnpackedVertex setLightmap(Vec3i lightmap){
 		this.lightmap = lightmap;
+		return this;
 	}
 
 	public Vec3i getNormal(){
 		return normal;
 	}
 
-	public void setNormal(Vec3i normal){
+	public DefaultUnpackedVertex setNormal(Vec3i normal){
 		this.normal = normal;
+		return this;
 	}
 
 	public Map<VertexFormatElement, float[]> getUnknown(){
 		return unknown;
 	}
 
-	public void setUnknown(Map<VertexFormatElement, float[]> unknown){
+	public DefaultUnpackedVertex setUnknown(Map<VertexFormatElement, float[]> unknown){
 		this.unknown = unknown;
+		return this;
 	}
 
 	public float[] getUnknown(VertexFormatElement element){
 		return unknown.get(element);
 	}
 
-	public void setUnknown(VertexFormatElement element, float[] data){
+	public DefaultUnpackedVertex setUnknown(VertexFormatElement element, float[] data){
 		unknown.put(element, data);
+		return this;
 	}
 
 	public PackedVertex pack(VertexFormat format){
