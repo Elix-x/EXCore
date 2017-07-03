@@ -109,7 +109,7 @@ public class BlockAccessRendererTest {
 	public static class TestTileEntityRenderer extends TileEntitySpecialRenderer<TestTileEntity> {
 
 		@Override
-		public void renderTileEntityAt(TestTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
+		public void render(TestTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y, z);
 			if(te.bar == null){

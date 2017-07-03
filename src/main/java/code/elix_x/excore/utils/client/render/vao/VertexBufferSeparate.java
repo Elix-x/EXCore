@@ -2,6 +2,7 @@ package code.elix_x.excore.utils.client.render.vao;
 
 import java.nio.ByteBuffer;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
@@ -35,7 +36,7 @@ public class VertexBufferSeparate extends VertexBuffer {
 		}
 	}
 
-	public VertexBufferSeparate(net.minecraft.client.renderer.VertexBuffer vertexBuffer){
+	public VertexBufferSeparate(BufferBuilder vertexBuffer){
 		this(vertexBuffer.getVertexFormat(), vertexBuffer.getDrawMode(), vertexBuffer.getVertexCount());
 		ByteBuffer bytebuf = vertexBuffer.getByteBuffer();
 		ByteBuffer[] byteBuffers = new ByteBuffer[vbos.length];

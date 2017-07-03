@@ -2,6 +2,7 @@ package code.elix_x.excore.utils.client.render.world;
 
 import java.nio.FloatBuffer;
 
+import net.minecraft.client.renderer.*;
 import org.lwjgl.opengl.GL11;
 
 import code.elix_x.excore.utils.client.render.IVertexBuffer;
@@ -9,11 +10,6 @@ import code.elix_x.excore.utils.client.render.OpenGLHelper;
 import code.elix_x.excore.utils.client.render.vbo.VertexBufferSingleVBO;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
@@ -38,12 +34,12 @@ public class BlockAccessRenderer {
 
 	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult){
 		this.world = world;
-		this.shape = shape.expandXyz(0.5).offset(0.5, 0.5, 0.5);
+		this.shape = shape.expand(0.5, 0.5, 0.5).offset(0.5, 0.5, 0.5);
 		this.shapeResult = shapeResult;
 	}
 
 	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, Vec3d posResult){
-		this(world, shape, shape.move(posResult.subtract(shape.getCenter())));
+		this(world, shape, shape.offset(posResult.subtract(shape.getCenter())));
 	}
 
 	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape){
@@ -68,7 +64,7 @@ public class BlockAccessRenderer {
 		double scaleY = (shapeResult.maxY - shapeResult.minY) / (shape.maxY - shape.minY);
 		double scaleZ = (shapeResult.maxZ - shapeResult.minZ) / (shape.maxZ - shape.minZ);
 		GlStateManager.scale(scaleX, scaleY, scaleZ);
-		GlStateManager.translate(shapeResult.getCenter().xCoord / scaleX, shapeResult.getCenter().yCoord / scaleY, shapeResult.getCenter().zCoord / scaleZ);
+		GlStateManager.translate(shapeResult.getCenter().x / scaleX, shapeResult.getCenter().y / scaleY, shapeResult.getCenter().z / scaleZ);
 		for(BlockRenderLayer layer : BlockRenderLayer.values()){
 			// TODO layer specific GL setups
 			vertexBuffers[layer.ordinal()].draw();
@@ -84,9 +80,9 @@ public class BlockAccessRenderer {
 		BlockRenderLayer prev = MinecraftForgeClient.getRenderLayer();
 		for(BlockRenderLayer layer : BlockRenderLayer.values()){
 			ForgeHooksClient.setRenderLayer(layer);
-			net.minecraft.client.renderer.VertexBuffer buffer = Tessellator.getInstance().getBuffer();
+			BufferBuilder buffer = Tessellator.getInstance().getBuffer();
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-			buffer.setTranslation(-shape.getCenter().xCoord, -shape.getCenter().yCoord, -shape.getCenter().zCoord);
+			buffer.setTranslation(-shape.getCenter().x, -shape.getCenter().y, -shape.getCenter().z);
 			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			for(int x = (int) Math.floor(shape.minX); x < shape.maxX; x++){
 				for(int y = (int) Math.floor(shape.minY); y < shape.maxY; y++){

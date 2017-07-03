@@ -2,6 +2,7 @@ package code.elix_x.excore.utils.client.render.vbo;
 
 import java.nio.ByteBuffer;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -29,7 +30,7 @@ public class VertexBufferSingleVBO implements IVertexBuffer {
 		this.vbo = vbo;
 	}
 
-	public VertexBufferSingleVBO(net.minecraft.client.renderer.VertexBuffer vertexBuffer){
+	public VertexBufferSingleVBO(BufferBuilder vertexBuffer){
 		this(vertexBuffer.getVertexFormat(), vertexBuffer.getDrawMode(), vertexBuffer.getVertexCount(), new VBO());
 		ByteBuffer buffer = vertexBuffer.getByteBuffer();
 		vbo.bind();

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -32,7 +33,7 @@ public class VertexBufferSingle extends VertexBuffer {
 		}
 	}
 
-	public VertexBufferSingle(net.minecraft.client.renderer.VertexBuffer vertexBuffer){
+	public VertexBufferSingle(BufferBuilder vertexBuffer){
 		this(vertexBuffer.getVertexFormat(), vertexBuffer.getDrawMode(), vertexBuffer.getVertexCount());
 		int[] sizes = new int[vbos.length];
 		Arrays.fill(sizes, 0);

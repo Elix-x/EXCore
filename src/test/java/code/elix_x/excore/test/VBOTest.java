@@ -1,15 +1,12 @@
 package code.elix_x.excore.test;
 
-import org.lwjgl.opengl.GL11;
-
 import code.elix_x.excore.utils.client.render.IVertexBuffer;
 import code.elix_x.excore.utils.client.render.vbo.VertexBufferSingleVBO;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -26,6 +23,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 @Mod(modid = VBOTest.MODID)
 public class VBOTest {
@@ -75,12 +73,12 @@ public class VBOTest {
 		private IVertexBuffer buffer;
 
 		@Override
-		public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
+		public void render(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y, z);
 			GlStateManager.translate(0, 1, 0);
 			bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			VertexBuffer vbuffer = new VertexBuffer(16);
+			BufferBuilder vbuffer = new BufferBuilder(16);
 			vbuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 			vbuffer.pos(0, 0, 0).tex(0, 1).endVertex();
 			vbuffer.pos(1, 0, 0).tex(1, 1).endVertex();
