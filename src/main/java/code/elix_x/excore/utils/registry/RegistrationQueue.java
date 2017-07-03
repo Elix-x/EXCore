@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 /**
@@ -30,6 +31,7 @@ public class RegistrationQueue {
 		return this;
 	}
 
+	@SubscribeEvent
 	public void register(RegistryEvent.Register event){
 		if(queue.containsKey(event.getGenericType()))
 			queue.get((Class) event.getGenericType()).forEach(entry -> event.getRegistry().register(entry));
