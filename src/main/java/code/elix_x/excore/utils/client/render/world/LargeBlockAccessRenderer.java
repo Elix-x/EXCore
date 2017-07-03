@@ -30,6 +30,8 @@ public class LargeBlockAccessRenderer {
 	private final AxisAlignedBB shapeResult;
 	private final Vec3i renderBlock;
 
+	private boolean[] layers = new boolean[BlockRenderLayer.values().length];
+
 	private final List<BlockAccessRenderer> renderers = new ArrayList<>();
 
 	public LargeBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult, Vec3i renderBlock){
@@ -77,6 +79,16 @@ public class LargeBlockAccessRenderer {
 		}
 	}
 
+	public boolean doRenderLayer(BlockRenderLayer layer){
+		return layers[layer.ordinal()];
+	}
+
+	public boolean isEmpty(){
+		boolean notEmpty = false;
+		for(BlockRenderLayer layer : BlockRenderLayer.values()) notEmpty |= doRenderLayer(layer);
+		return !notEmpty;
+	}
+
 	public void markDirty(AxisAlignedBB region){
 		for(BlockAccessRenderer renderer : renderers) if(renderer.shape.intersects(region)) renderer.markDirty();
 	}
@@ -86,20 +98,35 @@ public class LargeBlockAccessRenderer {
 	}
 
 	public void render(){
-		updateCheck();
-		renderSetup();
-		renderPre();
-		for(BlockRenderLayer layer : BlockRenderLayer.values()){
-			renderLayerSetup(layer);
-			renderLayer(layer);
-			renderLayerCleanup(layer);
+		if(!isEmpty()){
+			updateCheck();
+			renderSetup();
+			renderPre();
+			for(BlockRenderLayer layer : BlockRenderLayer.values()){
+				if(doRenderLayer(layer)){
+					renderLayerSetup(layer);
+					renderLayer(layer);
+					renderLayerCleanup(layer);
+				}
+			}
+			renderPost();
+			renderCleanup();
 		}
-		renderPost();
-		renderCleanup();
 	}
 
 	void updateCheck(){
-
+		boolean updated = false;
+		for(BlockAccessRenderer renderer : renderers) updated |= renderer.updateCheck();
+		if(updated){
+			outer: for(BlockRenderLayer layer : BlockRenderLayer.values()){
+				for(BlockAccessRenderer renderer : renderers){
+					if(renderer.doRenderLayer(layer)){
+						layers[layer.ordinal()] = true;
+						continue outer;
+					}
+				}
+			}
+		}
 	}
 
 	void renderSetup(){

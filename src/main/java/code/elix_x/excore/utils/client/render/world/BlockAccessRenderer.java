@@ -3,12 +3,14 @@ package code.elix_x.excore.utils.client.render.world;
 import code.elix_x.excore.utils.client.render.IVertexBuffer;
 import code.elix_x.excore.utils.client.render.OpenGLHelper;
 import code.elix_x.excore.utils.client.render.vbo.VertexBufferSingleVBO;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -26,7 +28,9 @@ public class BlockAccessRenderer {
 	final AxisAlignedBB shapeResult;
 
 	private final IVertexBuffer[] vertexBuffers = new IVertexBuffer[BlockRenderLayer.values().length];
-	private boolean needsUpdate = true;
+	boolean needsUpdate = true;
+
+	private boolean[] layers = new boolean[BlockRenderLayer.values().length];
 
 	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult){
 		this.world = world;
@@ -42,28 +46,44 @@ public class BlockAccessRenderer {
 		this(world, shape, shape);
 	}
 
+	public boolean doRenderLayer(BlockRenderLayer layer){
+		return layers[layer.ordinal()];
+	}
+
+	public boolean isEmpty(){
+		boolean notEmpty = false;
+		for(BlockRenderLayer layer : BlockRenderLayer.values()) notEmpty |= doRenderLayer(layer);
+		return !notEmpty;
+	}
+
 	public void markDirty(){
 		needsUpdate = true;
 	}
 
 	public void render(){
-		updateCheck();
-		renderSetup();
-		renderPre();
-		for(BlockRenderLayer layer : BlockRenderLayer.values()){
-			renderLayerSetup(layer);
-			renderLayer(layer);
-			renderLayerCleanup(layer);
+		if(!isEmpty()){
+			updateCheck();
+			renderSetup();
+			renderPre();
+			for(BlockRenderLayer layer : BlockRenderLayer.values()){
+				if(doRenderLayer(layer)){
+					renderLayerSetup(layer);
+					renderLayer(layer);
+					renderLayerCleanup(layer);
+				}
+			}
+			renderPost();
+			renderCleanup();
 		}
-		renderPost();
-		renderCleanup();
 	}
 
-	void updateCheck(){
+	boolean updateCheck(){
 		if(needsUpdate){
 			rebuildBuffers();
 			needsUpdate = false;
+			return true;
 		}
+		return false;
 	}
 
 	void renderSetup(){
@@ -130,6 +150,7 @@ public class BlockAccessRenderer {
 
 	protected void rebuildBuffers(){
 		cleanUp();
+		layers = new boolean[BlockRenderLayer.values().length];
 		BlockRenderLayer prev = MinecraftForgeClient.getRenderLayer();
 		for(BlockRenderLayer layer : BlockRenderLayer.values()){
 			ForgeHooksClient.setRenderLayer(layer);
@@ -142,7 +163,8 @@ public class BlockAccessRenderer {
  					for(int z = (int) Math.floor(shape.minZ); z < shape.maxZ; z++){
 						BlockPos pos = new BlockPos(x, y, z);
 						IBlockState state = world.getBlockState(pos);
-						if(state.getBlock().canRenderInLayer(state, layer)){
+						if(state.getMaterial() != Material.AIR && state.getRenderType() != EnumBlockRenderType.INVISIBLE && state.getRenderType() != EnumBlockRenderType.ENTITYBLOCK_ANIMATED && state.getBlock().canRenderInLayer(state, layer)){
+							layers[layer.ordinal()] = true;
 							blockRenderer.renderBlock(state, pos, world, buffer);
 						}
 					}
@@ -150,15 +172,14 @@ public class BlockAccessRenderer {
 			}
 			buffer.finishDrawing();
 			buffer.setTranslation(0, 0, 0);
-			vertexBuffers[layer.ordinal()] = new VertexBufferSingleVBO(buffer).setModifyClientStates(false);
+			if(layers[layer.ordinal()]) vertexBuffers[layer.ordinal()] = new VertexBufferSingleVBO(buffer).setModifyClientStates(false);
+			else buffer.reset();
 		}
 		ForgeHooksClient.setRenderLayer(prev);
 	}
 
 	protected void cleanUp(){
-		for(IVertexBuffer buffer : vertexBuffers){
-			if(buffer != null) buffer.cleanUp();
-		}
+		for(IVertexBuffer buffer : vertexBuffers) if(buffer != null) buffer.cleanUp();
 	}
 
 }
