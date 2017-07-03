@@ -7,10 +7,15 @@ import code.elix_x.excomms.pipeline.list.ToListTransformersPipelineElement;
 import code.elix_x.excore.utils.client.render.model.UnpackedBakedQuad;
 import code.elix_x.excore.utils.client.render.model.vertex.DefaultUnpackedVertices;
 import code.elix_x.excore.utils.client.render.pipeline.vertex.VertexMatrixTransformer;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.model.TRSRTransformation;
 import org.lwjgl.util.vector.Matrix4f;
 
 public class QuadMatrixTransformer implements PipelineElement<UnpackedBakedQuad, UnpackedBakedQuad> {
+
+	public static QuadMatrixTransformer toFace(EnumFacing facing){
+		return new QuadMatrixTransformer(TRSRTransformation.getMatrix(facing));
+	}
 
 	private javax.vecmath.Matrix4f matrix;
 	private VertexMatrixTransformer vertexTransformer = new VertexMatrixTransformer(new Matrix4f());
@@ -20,12 +25,21 @@ public class QuadMatrixTransformer implements PipelineElement<UnpackedBakedQuad,
 		setMatrix(matrix);
 	}
 
+	public QuadMatrixTransformer(javax.vecmath.Matrix4f matrix){
+		setMatrix(matrix);
+	}
+
 	public Matrix4f getMatrix(){
 		return TRSRTransformation.toLwjgl(matrix);
 	}
 
 	public void setMatrix(Matrix4f matrix){
 		this.matrix = TRSRTransformation.toVecmath(matrix);
+		this.vertexTransformer.setMatrix(matrix);
+	}
+
+	public void setMatrix(javax.vecmath.Matrix4f matrix){
+		this.matrix = matrix;
 		this.vertexTransformer.setMatrix(matrix);
 	}
 
