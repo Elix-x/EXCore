@@ -4,8 +4,8 @@ import org.lwjgl.opengl.GL11;
 
 import code.elix_x.excomms.reflection.ReflectionHelper.AClass;
 import code.elix_x.excomms.reflection.ReflectionHelper.AField;
-import code.elix_x.excore.utils.client.render.vertex.DefaultUnpackedVertices;
-import code.elix_x.excore.utils.client.render.vertex.PackedVertices;
+import code.elix_x.excore.utils.client.render.model.vertex.DefaultUnpackedVertices;
+import code.elix_x.excore.utils.client.render.model.vertex.PackedVertices;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;

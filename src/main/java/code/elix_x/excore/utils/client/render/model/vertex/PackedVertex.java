@@ -1,4 +1,4 @@
-package code.elix_x.excore.utils.client.render.vertex;
+package code.elix_x.excore.utils.client.render.model.vertex;
 
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;

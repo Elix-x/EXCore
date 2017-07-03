@@ -2,7 +2,7 @@ package code.elix_x.excore.utils.client.render.pipeline;
 
 import code.elix_x.excomms.pipeline.PipelineElement;
 import code.elix_x.excore.utils.client.render.model.UnpackedBakedQuad;
-import code.elix_x.excore.utils.client.render.vertex.DefaultUnpackedVertices;
+import code.elix_x.excore.utils.client.render.model.vertex.DefaultUnpackedVertices;
 
 public class BakedQuadVerticesPipelineWrapper implements PipelineElement<UnpackedBakedQuad, UnpackedBakedQuad> {
 
