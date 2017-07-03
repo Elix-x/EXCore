@@ -28,7 +28,6 @@ public class BlockAccessRenderer {
 	private final AxisAlignedBB shape;
 	private final AxisAlignedBB shapeResult;
 
-	private final FloatBuffer modelviewMatrix = GLAllocation.createDirectFloatBuffer(16);
 	private final IVertexBuffer[] vertexBuffers = new IVertexBuffer[BlockRenderLayer.values().length];
 	private boolean needsUpdate = true;
 
