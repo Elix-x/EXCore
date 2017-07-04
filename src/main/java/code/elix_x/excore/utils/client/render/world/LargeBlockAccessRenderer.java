@@ -36,7 +36,7 @@ public class LargeBlockAccessRenderer {
 
 	public LargeBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult, Vec3i renderBlock){
 		this.world = world;
-		this.shape = shape.expand(0.5, 0.5, 0.5).offset(0.5, 0.5, 0.5);
+		this.shape = shape;
 		this.shapeResult = shapeResult;
 		this.renderBlock = renderBlock;
 
@@ -53,7 +53,7 @@ public class LargeBlockAccessRenderer {
 
 	public LargeBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult){
 		this.world = world;
-		this.shape = shape.expand(0.5, 0.5, 0.5).offset(0.5, 0.5, 0.5);
+		this.shape = shape;
 		this.shapeResult = shapeResult;
 		this.renderBlock = new Vec3i(findOptimalBlockDimension((int) (this.shape.maxX - this.shape.minX), 16, 4), findOptimalBlockDimension((int) (this.shape.maxY - this.shape.minY), 16, 4), findOptimalBlockDimension((int) (this.shape.maxZ - this.shape.minZ), 16, 4));
 
@@ -70,10 +70,10 @@ public class LargeBlockAccessRenderer {
 
 	void initRenderers(){
 		renderers.clear();
-		for(int x = 0; x < Math.ceil((shape.maxX - shape.minX) / renderBlock.getX()); x += renderBlock.getX()){
-			for(int y = 0; y < Math.ceil((shape.maxY - shape.minY) / renderBlock.getY()); y += renderBlock.getY()){
-				for(int z = 0; z < Math.ceil((shape.maxZ - shape.minZ) / renderBlock.getZ()); z += renderBlock.getZ()){
-					renderers.add(new BlockAccessRenderer(world, new AxisAlignedBB(shape.minX + x * renderBlock.getX(), shape.minY + y * renderBlock.getY(), shape.minZ + z * renderBlock.getZ(), Math.max(shape.minX + (x + 1) * renderBlock.getX(), shape.maxX), Math.max(shape.minY + (y + 1) * renderBlock.getY(), shape.maxY), Math.max(shape.minZ + (z + 1) * renderBlock.getZ(), shape.maxZ))));
+		for(int x = 0; x < Math.ceil((shape.maxX - shape.minX) / renderBlock.getX()); x++){
+			for(int y = 0; y < Math.ceil((shape.maxY - shape.minY) / renderBlock.getY()); y++){
+				for(int z = 0; z < Math.ceil((shape.maxZ - shape.minZ) / renderBlock.getZ()); z++){
+					renderers.add(new BlockAccessRenderer(world, new AxisAlignedBB(shape.minX + x * renderBlock.getX(), shape.minY + y * renderBlock.getY(), shape.minZ + z * renderBlock.getZ(), Math.min(shape.minX + (x + 1) * renderBlock.getX(), shape.maxX), Math.min(shape.minY + (y + 1) * renderBlock.getY(), shape.maxY), Math.min(shape.minZ + (z + 1) * renderBlock.getZ(), shape.maxZ))));
 				}
 			}
 		}
@@ -99,7 +99,7 @@ public class LargeBlockAccessRenderer {
 
 	public void render(){
 		updateCheck();
-			if(!isEmpty()){
+		if(!isEmpty()){
 			renderSetup();
 			renderPre();
 			for(BlockRenderLayer layer : BlockRenderLayer.values()){
@@ -142,7 +142,7 @@ public class LargeBlockAccessRenderer {
 		double scaleY = (shapeResult.maxY - shapeResult.minY) / (shape.maxY - shape.minY);
 		double scaleZ = (shapeResult.maxZ - shapeResult.minZ) / (shape.maxZ - shape.minZ);
 		GlStateManager.scale(scaleX, scaleY, scaleZ);
-		GlStateManager.translate(shapeResult.getCenter().x / scaleX, shapeResult.getCenter().y / scaleY, shapeResult.getCenter().z / scaleZ);
+		GlStateManager.translate(renderBlock.getX() / 2d, renderBlock.getY() / 2d, renderBlock.getZ() / 2d);
 	}
 
 	void renderLayerSetup(BlockRenderLayer layer){
@@ -163,7 +163,12 @@ public class LargeBlockAccessRenderer {
 	}
 
 	void renderLayer(BlockRenderLayer layer){
-		renderers.forEach(renderer -> renderer.renderLayer(layer));
+		for(BlockAccessRenderer renderer : renderers) if(renderer.doRenderLayer(layer)){
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(renderer.shape.minX - shape.minX, renderer.shape.minY - shape.minY, renderer.shape.minZ - shape.minZ);
+			renderer.renderLayer(layer);
+			GlStateManager.popMatrix();
+		}
 	}
 
 	void renderLayerCleanup(BlockRenderLayer layer){

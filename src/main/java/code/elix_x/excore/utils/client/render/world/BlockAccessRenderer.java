@@ -34,7 +34,7 @@ public class BlockAccessRenderer {
 
 	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult){
 		this.world = world;
-		this.shape = shape.expand(0.5, 0.5, 0.5).offset(0.5, 0.5, 0.5);
+		this.shape = shape;
 		this.shapeResult = shapeResult;
 	}
 
@@ -95,10 +95,11 @@ public class BlockAccessRenderer {
 
 	void renderPre(){
 		GlStateManager.pushMatrix();
-		double scaleX = (shapeResult.maxX - shapeResult.minX) / (shape.maxX - shape.minX);
-		double scaleY = (shapeResult.maxY - shapeResult.minY) / (shape.maxY - shape.minY);
-		double scaleZ = (shapeResult.maxZ - shapeResult.minZ) / (shape.maxZ - shape.minZ);
+		double scaleX = (shapeResult.maxX - shapeResult.minX) / (shape.maxX + 1 - shape.minX);
+		double scaleY = (shapeResult.maxY - shapeResult.minY) / (shape.maxY + 1 - shape.minY);
+		double scaleZ = (shapeResult.maxZ - shapeResult.minZ) / (shape.maxZ + 1 - shape.minZ);
 		GlStateManager.scale(scaleX, scaleY, scaleZ);
+		GlStateManager.translate(-0.5f, -0.5f, -0.5f);
 		GlStateManager.translate(shapeResult.getCenter().x / scaleX, shapeResult.getCenter().y / scaleY, shapeResult.getCenter().z / scaleZ);
 	}
 
@@ -158,9 +159,9 @@ public class BlockAccessRenderer {
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 			buffer.setTranslation(-shape.getCenter().x, -shape.getCenter().y, -shape.getCenter().z);
 			BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-			for(int x = (int) Math.floor(shape.minX); x < shape.maxX; x++){
-				for(int y = (int) Math.floor(shape.minY); y < shape.maxY; y++){
- 					for(int z = (int) Math.floor(shape.minZ); z < shape.maxZ; z++){
+			for(int x = (int) Math.floor(shape.minX); x <= shape.maxX; x++){
+				for(int y = (int) Math.floor(shape.minY); y <= shape.maxY; y++){
+ 					for(int z = (int) Math.floor(shape.minZ); z <= shape.maxZ; z++){
 						BlockPos pos = new BlockPos(x, y, z);
 						IBlockState state = world.getBlockState(pos);
 						if(state.getMaterial() != Material.AIR && state.getRenderType() != EnumBlockRenderType.INVISIBLE && state.getRenderType() != EnumBlockRenderType.ENTITYBLOCK_ANIMATED && state.getBlock().canRenderInLayer(state, layer)){

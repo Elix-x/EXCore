@@ -25,7 +25,7 @@ public class LimitedBlockAccess implements IBlockAccess {
 	}
 
 	public boolean contains(BlockPos pos){
-		return limits.contains(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+		return limits.intersects(new AxisAlignedBB(pos));
 	}
 
 	@Nullable
@@ -36,7 +36,7 @@ public class LimitedBlockAccess implements IBlockAccess {
 
 	@Override
 	public int getCombinedLight(BlockPos pos, int lightValue){
-		return contains(pos) ? delegate.getCombinedLight(pos, lightValue) : 0;
+		return contains(pos) ? delegate.getCombinedLight(pos, lightValue) : lightValue;
 	}
 
 	@Override
