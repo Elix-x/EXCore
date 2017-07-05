@@ -74,18 +74,39 @@ public class WTWRendererTest {
 
 		@Override
 		public void render(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
-			WTWRenderer.render(() -> {
+			WTWRenderer.pushInstance();
+			WTWRenderer.Phase.NORMAL.render(() ->{
+				GlStateManager.pushMatrix();
+				GlStateManager.translate(x, y, z);
+				GlStateManager.disableCull();
+				Tessellator tess = Tessellator.getInstance();
+				BufferBuilder buff = tess.getBuffer();
+				buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+				bindTexture(TextureMap.LOCATION_MISSING_TEXTURE);
+				buff.pos(0, 0, 0).tex(0.25, 0.75).endVertex();
+				buff.pos(0, 0, 1).tex(0.25, 0.25).endVertex();
+				buff.pos(1, 0, 1).tex(0.75, 0.25).endVertex();
+				buff.pos(1, 0, 0).tex(0.75, 0.75).endVertex();
+				tess.draw();
+				GlStateManager.enableCull();
+				GlStateManager.popMatrix();
+			});
+			WTWRenderer.Phase.STENCIL.render(() -> {
 				
-				renderStencil(x, y, z);
+				renderStencil(x, y, z, 1);
 				
 			}, () -> {
 				
 				render(x, y, z);
 				
 			});
+			WTWRenderer wtw = WTWRenderer.popInstance();
+			WTWRenderer.Phase.STENCILDEPTHREADWRITE.render(() ->{
+				renderStencil(x, y, z, 3);
+			}, wtw);
 		}
 		
-		void renderStencil(double x, double y, double z){
+		void renderStencil(double x, double y, double z, int opening){
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y, z);
 			GlStateManager.disableTexture2D();
@@ -94,9 +115,9 @@ public class WTWRendererTest {
 			BufferBuilder buff = tess.getBuffer();
 			buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 			buff.pos(0, 0, 0).endVertex();
-			buff.pos(0, 1, 0).endVertex();
-			buff.pos(1, 1, 0).endVertex();
-			buff.pos(1, 0, 0).endVertex();
+			buff.pos(0, opening, 0).endVertex();
+			buff.pos(opening, opening, 0).endVertex();
+			buff.pos(opening, 0, 0).endVertex();
 			tess.draw();
 			GlStateManager.disableBlend();
 			GlStateManager.enableTexture2D();
