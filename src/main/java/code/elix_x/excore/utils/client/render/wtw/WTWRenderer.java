@@ -15,9 +15,14 @@
  *******************************************************************************/
 package code.elix_x.excore.utils.client.render.wtw;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.nio.ByteBuffer;
+import java.util.*;
+import java.util.function.Consumer;
 
+import code.elix_x.excore.utils.client.render.FrameBufferSnapshot;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import net.minecraft.world.IBlockAccess;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
@@ -29,75 +34,204 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-/**
- * <h1>World Through World Renderer</h1><br>
- * Allows rendering of another world through the current world using stencils.<br>
- * It only has the basic functionality. What is outer world, what is inner and how they are rendered is up to users of this class.<br><br>
- * <b>I am irresponsible for any conflicts caused by incorrect usage of this class!</b>
- * @author Elix_x
- *
- */
-public class WTWRenderer {
+import javax.annotation.Nonnull;
 
-	private static Queue<Pair<Runnable, Runnable>> renderingQueue = new LinkedList<Pair<Runnable, Runnable>>();
+public class WTWRenderer implements Runnable {
 
-	static{
+	private static final WTWRenderer INSTANCE = new WTWRenderer();
+	private static Stack<WTWRenderer> current = new Stack<>();
+	private static int depth = 0;
+
+	static {
 		MinecraftForge.EVENT_BUS.register(WTWRenderer.class);
+		current.push(INSTANCE);
 	}
 
-	/**
-	 * <b>INTERNAL - DO NOT USE!</b>
-	 */
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void renderLast(RenderWorldLastEvent event){
-		while(!renderingQueue.isEmpty()){
-			renderNow(renderingQueue.peek().getLeft(), renderingQueue.poll().getRight());
+	@SubscribeEvent
+	public static void renderWorldLast(RenderWorldLastEvent event){
+		INSTANCE.run();
+	}
+
+	public static WTWRenderer instance(){
+		return current.peek();
+	}
+
+	public static void pushInstance(){
+		current.push(new WTWRenderer());
+	}
+
+	public static WTWRenderer popInstance(){
+		return current.pop();
+	}
+
+	private FrameBufferSnapshot SNAPSHOT;
+	private boolean depthReadFlag;
+	private boolean stencilReadFlag;
+	private boolean depthStencilReadFlag;
+
+	private Multimap<Phase, Consumer<WTWRenderer>> renderers = ArrayListMultimap.create();
+
+	private void render(@Nonnull Phase phase, Consumer<WTWRenderer> renderer){
+		renderers.put(phase, renderer);
+	}
+
+	private void render(@Nonnull Phase phase, Runnable renderer){
+		render(phase, wtw -> renderer.run());
+	}
+
+	public void run(){
+		//TODO user config
+		if(depth > 16) return;
+		depth++;
+		depthReadFlag = false;
+		stencilReadFlag = false;
+		depthStencilReadFlag = false;
+		for(Phase phase : Phase.values()){
+			if(renderers.containsKey(phase)){
+				phase.phasePre(this);
+				renderers.get(phase).forEach(renderer -> renderer.accept(this));
+				phase.phasePost(this);
+			}
 		}
+		if(SNAPSHOT != null) SNAPSHOT.delete();
+		renderers.clear();
+		depth--;
 	}
 
-	/**
-	 * Renders the world through another world, or more specifically, enqueues it for rendering. Everything will be rendered in last possible moment to avoid conflicts.<br>
-	 * How everything is drawn is completely up to users of this class.
-	 * 
-	 * @param tear
-	 *            Draw a tear in the world through which the other world can be seen. Only position vertex parameters are used, others are ignored (depth and color buffers stay unmodified).
-	 * @param world
-	 *            Draw the actual world on the other side of the tear. You can draw everything, only parts visible through the tear will stay.
-	 */
-	public static void render(Runnable tear, Runnable world){
-		renderingQueue.add(new ImmutablePair<Runnable, Runnable>(tear, world));
+	public enum Phase {
+
+		NORMAL{
+
+			public void render(Runnable... phaseSpecifics){
+				instance().render(this, phaseSpecifics[0]);
+			}
+
+		},
+		DEPTHREADONLY{
+			@Override
+			void phasePre(WTWRenderer wtw){
+				GlStateManager.depthMask(false);
+			}
+
+			public void render(Runnable... phaseSpecifics){
+				instance().render(this, phaseSpecifics[0]);
+			}
+
+			@Override
+			void phasePost(WTWRenderer wtw){
+				GlStateManager.depthMask(true);
+			}
+		}, STENCIL{
+			@Override
+			void phasePre(WTWRenderer wtw){
+				assert Minecraft.getMinecraft().getFramebuffer().isStencilEnabled() : "WTW Renderer can't work without stencils. Please enable them";
+
+				GL11.glEnable(GL11.GL_STENCIL_TEST);
+				if(wtw.SNAPSHOT == null) wtw.SNAPSHOT = new FrameBufferSnapshot();
+				if(!wtw.stencilReadFlag){
+					wtw.SNAPSHOT.readFrom(GL11.GL_STENCIL_BUFFER_BIT);
+					wtw.stencilReadFlag = true;
+				}
+			}
+
+			public void render(Runnable... phaseSpecifics){
+				instance().render(this, wtw -> {
+					wtw.SNAPSHOT.writeTo(GL11.GL_STENCIL_BUFFER_BIT);
+
+					GlStateManager.colorMask(false, false, false, false);
+					GlStateManager.depthMask(false);
+					GL11.glStencilFunc(GL11.GL_GEQUAL, depth - 1, 255);
+					GL11.glStencilMask(255);
+					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR);
+					phaseSpecifics[0].run();
+					GlStateManager.depthMask(true);
+					GlStateManager.colorMask(true, true, true, true);
+					GL11.glStencilMask(0);
+
+					GL11.glStencilFunc(GL11.GL_GEQUAL, depth, 255);
+					phaseSpecifics[1].run();
+				});
+			}
+
+			@Override
+			void phasePost(WTWRenderer wtw){
+				GL11.glDisable(GL11.GL_STENCIL_TEST);
+			}
+		}, DEPTHREADWRITE{
+
+			@Override
+			void phasePre(WTWRenderer wtw){
+				if(wtw.SNAPSHOT == null) wtw.SNAPSHOT = new FrameBufferSnapshot();
+				if(!wtw.depthReadFlag){
+					wtw.SNAPSHOT.readFrom(GL11.GL_DEPTH_BUFFER_BIT);
+					wtw.depthReadFlag = true;
+				}
+			}
+
+			public void render(Runnable... phaseSpecifics){
+				instance().render(this, wtw -> {
+					wtw.SNAPSHOT.writeTo(GL11.GL_DEPTH_BUFFER_BIT);
+					phaseSpecifics[0].run();
+				});
+			}
+
+			@Override
+			void phasePost(WTWRenderer wtw){
+				wtw.SNAPSHOT.writeTo(GL11.GL_DEPTH_BUFFER_BIT);
+			}
+
+		}, STENCILDEPTHREADWRITE{
+
+			@Override
+			void phasePre(WTWRenderer wtw){
+				assert Minecraft.getMinecraft().getFramebuffer().isStencilEnabled() : "WTW Renderer can't work without stencils. Please enable them";
+
+				GL11.glEnable(GL11.GL_STENCIL_TEST);
+				if(wtw.SNAPSHOT == null) wtw.SNAPSHOT = new FrameBufferSnapshot();
+				if(!wtw.depthStencilReadFlag){
+					wtw.SNAPSHOT.readFrom(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
+					wtw.depthStencilReadFlag = true;
+				}
+			}
+
+			public void render(Runnable... phaseSpecifics){
+				instance().render(this, wtw -> {
+					wtw.SNAPSHOT.writeTo(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
+
+					GlStateManager.colorMask(false, false, false, false);
+					GlStateManager.depthMask(false);
+					GL11.glStencilFunc(GL11.GL_GEQUAL, depth - 1, 255);
+					GL11.glStencilMask(255);
+					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR);
+					phaseSpecifics[0].run();
+					GlStateManager.depthMask(true);
+					GlStateManager.colorMask(true, true, true, true);
+					GL11.glStencilMask(0);
+
+					GL11.glStencilFunc(GL11.GL_GEQUAL, depth, 255);
+					phaseSpecifics[1].run();
+				});
+			}
+
+			@Override
+			void phasePost(WTWRenderer wtw){
+				GL11.glDisable(GL11.GL_STENCIL_TEST);
+				wtw.SNAPSHOT.writeTo(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
+			}
+
+		};
+
+		public abstract void render(Runnable... phaseSpecifics);
+
+		void phasePre(WTWRenderer wtw){
+
+		}
+
+		void phasePost(WTWRenderer wtw){
+
+		}
+
 	}
 
-	/**
-	 * Renders the world through another world <b>right now</b>. <b>I am irresponsible for all conflicts caused by usage in wrong time.</b>
-	 * 
-	 * @param tear
-	 *            Draw a tear in the world through which the other world can be seen. Only position vertex parameters are used, others are ignored (depth and color buffers stay unmodified).
-	 * @param world
-	 *            Draw the actual world on the other side of the tear. You can draw everything, only parts visible through the tear will stay.
-	 * @throws Exceptions
-	 *             if stencils aren't enabled.
-	 */
-	public static void renderNow(Runnable tear, Runnable world){
-		assert Minecraft.getMinecraft().getFramebuffer().isStencilEnabled() : "WTW Renderer can't work without stencils. Please enable them";
-
-		GlStateManager.pushMatrix();
-		GL11.glEnable(GL11.GL_STENCIL_TEST);
-		GlStateManager.colorMask(false, false, false, false);
-		GlStateManager.depthMask(false);
-		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 255);
-		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
-		GL11.glStencilMask(255);
-		GlStateManager.clear(GL11.GL_STENCIL_BUFFER_BIT);
-		tear.run();
-		GlStateManager.depthMask(true);
-		GlStateManager.colorMask(true, true, true, true);
-		GL11.glStencilMask(0);
-
-		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 255);
-		world.run();
-		GL11.glDisable(GL11.GL_STENCIL_TEST);
-		GlStateManager.popMatrix();
-	}
 
 }
