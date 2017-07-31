@@ -59,7 +59,7 @@ public class DefaultUnpackedVertex {
 					} else break;
 				case COLOR:
 					if(element.getType() == EnumType.UBYTE && element.getElementCount() == 4){
-						color = new RGBA((int) edata[0], (int) edata[0], (int) edata[0], (int) edata[0]);
+						color = new RGBA(edata[0], edata[1], edata[2], edata[3]);
 						continue elements;
 					} else break;
 				case UV:
@@ -162,10 +162,10 @@ public class DefaultUnpackedVertex {
 					} else break;
 				case COLOR:
 					if(element.getType() == EnumType.UBYTE && element.getElementCount() == 4){
-						edata[0] = color.getRI();
-						edata[1] = color.getGI();
-						edata[2] = color.getBI();
-						edata[3] = color.getAI();
+						edata[0] = color.getRF();
+						edata[1] = color.getGF();
+						edata[2] = color.getBF();
+						edata[3] = color.getAF();
 						continue elements;
 					} else break;
 				case UV:

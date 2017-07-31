@@ -120,7 +120,7 @@ task generatePom {
 
 task deobfJar(type: Jar, dependsOn: "jar"){
 	classifier = ""
-	from "build/classes/main", "build/resources/main"
+	from "build/classes/java/main", "build/resources/main"
 }
 
 task sourcesJar(type: Jar){
