@@ -135,7 +135,7 @@ public class WTWRenderer implements Runnable {
 			void phasePost(WTWRenderer wtw){
 				GL11.glDisable(GL11.GL_STENCIL_TEST);
 			}
-		}, DEPTHREADWRITE{
+		}/*, DEPTHREADWRITE{
 
 			@Override
 			void phasePre(WTWRenderer wtw){
@@ -153,7 +153,7 @@ public class WTWRenderer implements Runnable {
 
 			}
 
-		}, STENCILDEPTHREADWRITE{
+		}*/, STENCILDEPTHREADWRITE{
 
 			@Override
 			void phasePre(WTWRenderer wtw){
