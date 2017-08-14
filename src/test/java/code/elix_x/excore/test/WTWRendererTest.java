@@ -74,6 +74,10 @@ public class WTWRendererTest {
 
 		@Override
 		public void render(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
+			/*WTWRenderer.pushInstance();
+			WTWRenderer.Phase.STENCILDEPTHREADWRITE.render(() -> renderStencil(x, y, z + 1, 2), () -> render(x, y, z));
+			WTWRenderer.Phase.STENCILDEPTHREADWRITE.render(() -> renderStencil(x, y, z, 1), WTWRenderer.popInstance());*/
+
 			WTWRenderer.pushInstance();
 			WTWRenderer.Phase.NORMAL.render(() ->{
 				GlStateManager.pushMatrix();
@@ -91,45 +95,36 @@ public class WTWRendererTest {
 				GlStateManager.enableCull();
 				GlStateManager.popMatrix();
 			});
-			WTWRenderer.Phase.STENCIL.render(() -> {
-				
-				renderStencil(x, y, z, 1);
-				
-			}, () -> {
-				
-				render(x, y, z);
-				
-			});
+			WTWRenderer.Phase.STENCIL.render(() -> renderStencil(x + 0.5, y + 0.5, z + 1, 2), () -> render(x, y, z));
 			WTWRenderer wtw = WTWRenderer.popInstance();
-			WTWRenderer.Phase.STENCILDEPTHREADWRITE.render(() ->{
-				renderStencil(x, y, z, 3);
-			}, wtw);
+			WTWRenderer.Phase.STENCILDEPTHREADWRITE.render(() -> renderStencil(x + 0.5, y + 0.5, z, 1), wtw);
 		}
 		
-		void renderStencil(double x, double y, double z, int opening){
+		void renderStencil(double x, double y, double z, int open){
+			float opening = open;
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y, z);
 			GlStateManager.disableTexture2D();
 			GlStateManager.enableBlend();
 			Tessellator tess = Tessellator.getInstance();
 			BufferBuilder buff = tess.getBuffer();
-			buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-			buff.pos(0, 0, 0).endVertex();
-			buff.pos(0, opening, 0).endVertex();
-			buff.pos(opening, opening, 0).endVertex();
-			buff.pos(opening, 0, 0).endVertex();
+			buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+			buff.pos(-opening/2, -opening/2, 0).color(opening * 0.5f, 0, 1 - opening * 0.5f, 0.25f).endVertex();
+			buff.pos(-opening/2, +opening/2, 0).color(opening * 0.5f, 0, 1 - opening * 0.5f, 0.25f).endVertex();
+			buff.pos(+opening/2, +opening/2, 0).color(opening * 0.5f, 0, 1 - opening * 0.5f, 0.25f).endVertex();
+			buff.pos(+opening/2, -opening/2, 0).color(opening * 0.5f, 0, 1 - opening * 0.5f, 0.25f).endVertex();
 			tess.draw();
 			GlStateManager.disableBlend();
 			GlStateManager.enableTexture2D();
 			GlStateManager.popMatrix();
 		}
-		
+
 		void render(double x, double y, double z){
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y, z);
 			GlStateManager.pushMatrix();
 			GlStateManager.scale(10, 10, 1);
-			GlStateManager.translate(-0.5, -0.5, 10);
+			GlStateManager.translate(-0.5, -0.5, 7.5);
 			Tessellator tess = Tessellator.getInstance();
 			BufferBuilder buff = tess.getBuffer();
 			buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
