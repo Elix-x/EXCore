@@ -73,14 +73,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 		this.random = random;
 		this.chance = chance;
 
-		AdvancedDebugTools.registerGUI(Keyboard.KEY_E, new DebugTool(){
-
-			@Override
-			public void toggle(){
-				if(Minecraft.getMinecraft().currentScreen != null) regenHumans(Minecraft.getMinecraft().currentScreen);
-			}
-
-		});
+		AdvancedDebugTools.registerGUI(Keyboard.KEY_E, () -> { if(Minecraft.getMinecraft().currentScreen != null) regenHumans(Minecraft.getMinecraft().currentScreen); });
 	}
 
 	void cacheIcons(){

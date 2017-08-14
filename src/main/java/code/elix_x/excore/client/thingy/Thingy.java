@@ -26,14 +26,7 @@ public class Thingy extends Thread {
 		final ThingyDisplay display = new ThingyDisplay(data, new Random(Minecraft.getMinecraft().getSession().getUsername().hashCode()), 5000);
 		MinecraftForge.EVENT_BUS.register(display);
 
-		Minecraft.getMinecraft().addScheduledTask(new Runnable(){
-
-			@Override
-			public void run(){
-				display.cacheIcons();
-			}
-
-		});
+		Minecraft.getMinecraft().addScheduledTask(display::cacheIcons);
 	}
 
 }
