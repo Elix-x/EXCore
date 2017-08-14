@@ -1,17 +1,14 @@
 package code.elix_x.excore.utils.client.render;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
-import static org.lwjgl.opengl.GL11.GL_NORMAL_ARRAY;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
-import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
-import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
-
-import org.lwjgl.opengl.GL20;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.util.glu.Project;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 
 public class OpenGLHelper {
 
@@ -70,6 +67,11 @@ public class OpenGLHelper {
 					break;
 			}
 		}
+	}
+
+	public static void projectionMatrix(float fov, float aspectRatio, float zNear, float zFar){
+		GlStateManager.loadIdentity();
+		Project.gluPerspective(fov, aspectRatio, zNear, zFar);
 	}
 
 }
