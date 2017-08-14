@@ -37,9 +37,12 @@ public class AdvancedDebugTools {
 	static{
 		MinecraftForge.EVENT_BUS.register(AdvancedDebugTools.class);
 
-		register(Keyboard.KEY_P, new VanillaDebugTool("Path Finding", "pathfinding", "field_190080_f"));
-		register(Keyboard.KEY_W, new VanillaDebugTool("Water", "water", "field_190081_g"));
-		register(Keyboard.KEY_H, new VanillaDebugTool("Height Map", "heightMap", "field_190082_h"));
+		register(Keyboard.KEY_P, new VanillaDebugTool("Path Finding", "pathfindingEnabled", "field_190080_f"));
+		register(Keyboard.KEY_W, new VanillaDebugTool("Water", "waterEnabled", "field_190081_g"));
+		register(Keyboard.KEY_J, new VanillaDebugTool("Height Map", "heightMapEnabled", "field_190082_h"));
+		register(Keyboard.KEY_V, new VanillaDebugTool("Collision Box", "collisionBoxEnabled", "field_191326_j"));
+		register(Keyboard.KEY_M, new VanillaDebugTool("Neighbors Update", "neighborsUpdateEnabled", "field_191558_l"));
+		register(Keyboard.KEY_Z, new VanillaDebugTool("Solid Face", "solidFaceEnabled", "field_193853_n"));
 	}
 
 	public static void clinit(){
@@ -64,9 +67,9 @@ public class AdvancedDebugTools {
 		}
 	}
 
-	public static interface DebugTool {
+	public interface DebugTool {
 
-		public void toggle();
+		void toggle();
 
 	}
 

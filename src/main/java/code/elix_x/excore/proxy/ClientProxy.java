@@ -34,7 +34,7 @@ public class ClientProxy implements IProxy<EXCore> {
 
 	@Override
 	public void postInit(FMLPostInitializationEvent event){
-		if(OpenGlHelper.shadersSupported) AdvancedDebugTools.register(Keyboard.KEY_F, new ShadersDebug());
+		if(OpenGlHelper.shadersSupported) AdvancedDebugTools.register(Keyboard.KEY_K, new ShadersDebug());
 	}
 
 }
