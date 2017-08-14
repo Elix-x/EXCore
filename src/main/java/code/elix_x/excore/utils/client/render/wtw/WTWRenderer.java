@@ -15,10 +15,14 @@
  *******************************************************************************/
 package code.elix_x.excore.utils.client.render.wtw;
 
+import code.elix_x.excore.utils.client.render.IVertexBuffer;
+import code.elix_x.excore.utils.client.render.vbo.VertexBufferSingleVBO;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -34,13 +38,64 @@ public class WTWRenderer implements Runnable {
 	private static Stack<WTWRenderer> current = new Stack<>();
 	private static int depth = 0;
 
+	private static IVertexBuffer depthOverridePlane;
+	private static boolean rewriteGC = false;
+
 	static {
 		MinecraftForge.EVENT_BUS.register(WTWRenderer.class);
 		current.push(INSTANCE);
 	}
 
+	private static IVertexBuffer getDepthOverridePlane(){
+		if(rewriteGC && depthOverridePlane != null){
+			depthOverridePlane.cleanUp();
+			depthOverridePlane = null;
+			rewriteGC = false;
+		}
+		if(depthOverridePlane == null){
+			BufferBuilder buff = new BufferBuilder(8);
+			buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+			buff.pos(-1, -1, 1).color(0f, 1f, 0f, 1f).endVertex();
+			buff.pos(1, -1, 1).color(0f, 1f, 0f, 1f).endVertex();
+			buff.pos(1, 1, 1).color(0f, 1f, 0f, 1f).endVertex();
+			buff.pos(-1, 1, 1).color(0f, 1f, 0f, 1f).endVertex();
+			buff.finishDrawing();
+			depthOverridePlane = new VertexBufferSingleVBO(buff);
+		}
+		return depthOverridePlane;
+	}
+
+	public static void drawDepthOverridePlane(){
+		GlStateManager.depthFunc(GL11.GL_ALWAYS);
+		GlStateManager.disableCull();
+
+		GlStateManager.pushMatrix();
+		GlStateManager.loadIdentity();
+
+		GlStateManager.matrixMode(GL11.GL_PROJECTION);
+		GlStateManager.pushMatrix();
+		GlStateManager.loadIdentity();
+		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+		//WTH?
+		GlStateManager.disableTexture2D();
+		getDepthOverridePlane().draw();
+		GlStateManager.enableTexture2D();
+
+		GlStateManager.matrixMode(GL11.GL_PROJECTION);
+		GlStateManager.popMatrix();
+		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+		GlStateManager.popMatrix();
+
+		GlStateManager.enableCull();
+		GlStateManager.depthFunc(GL11.GL_LEQUAL);
+	}
+
 	@SubscribeEvent
 	public static void renderWorldLast(RenderWorldLastEvent event){
+		GL11.glClearStencil(0);
+		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
 		INSTANCE.run();
 	}
 
@@ -104,7 +159,8 @@ public class WTWRenderer implements Runnable {
 			void phasePost(WTWRenderer wtw){
 				GlStateManager.depthMask(true);
 			}
-		}, STENCIL{
+		},
+		STENCIL{
 			@Override
 			void phasePre(WTWRenderer wtw){
 				assert Minecraft.getMinecraft().getFramebuffer().isStencilEnabled() : "WTW Renderer can't work without stencils. Please enable them";
@@ -114,19 +170,22 @@ public class WTWRenderer implements Runnable {
 
 			public void render(Runnable... phaseSpecifics){
 				instance().render(this, wtw -> {
-
-
+					//Stencil setup
 					GlStateManager.colorMask(false, false, false, false);
 					GlStateManager.depthMask(false);
-					GL11.glStencilFunc(GL11.GL_GEQUAL, depth - 1, 255);
-					GL11.glStencilMask(255);
+					GL11.glStencilFunc(GL11.GL_EQUAL, depth - 1, 255);
 					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR);
+					GL11.glStencilMask(255);
 					phaseSpecifics[0].run();
+
+					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+
+					GL11.glStencilFunc(GL11.GL_EQUAL, depth, 255);
+
+					//Color write
+
 					GlStateManager.depthMask(true);
 					GlStateManager.colorMask(true, true, true, true);
-					GL11.glStencilMask(0);
-
-					GL11.glStencilFunc(GL11.GL_GEQUAL, depth, 255);
 					phaseSpecifics[1].run();
 				});
 			}
@@ -135,47 +194,38 @@ public class WTWRenderer implements Runnable {
 			void phasePost(WTWRenderer wtw){
 				GL11.glDisable(GL11.GL_STENCIL_TEST);
 			}
-		}/*, DEPTHREADWRITE{
-
-			@Override
-			void phasePre(WTWRenderer wtw){
-
-			}
-
-			public void render(Runnable... phaseSpecifics){
-				instance().render(this, wtw -> {
-					phaseSpecifics[0].run();
-				});
-			}
-
-			@Override
-			void phasePost(WTWRenderer wtw){
-
-			}
-
-		}*/, STENCILDEPTHREADWRITE{
+		},
+		STENCILDEPTHREADWRITE{
 
 			@Override
 			void phasePre(WTWRenderer wtw){
 				assert Minecraft.getMinecraft().getFramebuffer().isStencilEnabled() : "WTW Renderer can't work without stencils. Please enable them";
 
 				GL11.glEnable(GL11.GL_STENCIL_TEST);
-
 			}
 
 			public void render(Runnable... phaseSpecifics){
 				instance().render(this, wtw -> {
+					//Stencil setup
 					GlStateManager.colorMask(false, false, false, false);
 					GlStateManager.depthMask(false);
-					GL11.glStencilFunc(GL11.GL_GEQUAL, depth - 1, 255);
-					GL11.glStencilMask(255);
+					GL11.glStencilFunc(GL11.GL_EQUAL, depth - 1, 255);
 					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR);
+					GL11.glStencilMask(255);
 					phaseSpecifics[0].run();
-					GlStateManager.depthMask(true);
-					GlStateManager.colorMask(true, true, true, true);
-					GL11.glStencilMask(0);
 
-					GL11.glStencilFunc(GL11.GL_GEQUAL, depth, 255);
+					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+
+					GL11.glStencilFunc(GL11.GL_EQUAL, depth, 255);
+
+					//Depth clean
+
+					GlStateManager.depthMask(true);
+					WTWRenderer.drawDepthOverridePlane();
+
+					//Color write
+
+					GlStateManager.colorMask(true, true, true, true);
 					phaseSpecifics[1].run();
 				});
 			}
