@@ -15,26 +15,18 @@
  *******************************************************************************/
 package code.elix_x.excore.utils.client.render.wtw;
 
-import java.nio.ByteBuffer;
-import java.util.*;
-import java.util.function.Consumer;
-
-import code.elix_x.excore.utils.client.render.FrameBufferSnapshot;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.world.IBlockAccess;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import java.util.Stack;
+import java.util.function.Consumer;
 
 public class WTWRenderer implements Runnable {
 
@@ -64,11 +56,6 @@ public class WTWRenderer implements Runnable {
 		return current.pop();
 	}
 
-	private FrameBufferSnapshot SNAPSHOT;
-	private boolean depthReadFlag;
-	private boolean stencilReadFlag;
-	private boolean depthStencilReadFlag;
-
 	private Multimap<Phase, Consumer<WTWRenderer>> renderers = ArrayListMultimap.create();
 
 	private void render(@Nonnull Phase phase, Consumer<WTWRenderer> renderer){
@@ -83,9 +70,6 @@ public class WTWRenderer implements Runnable {
 		//TODO user config
 		if(depth > 16) return;
 		depth++;
-		depthReadFlag = false;
-		stencilReadFlag = false;
-		depthStencilReadFlag = false;
 		for(Phase phase : Phase.values()){
 			if(renderers.containsKey(phase)){
 				phase.phasePre(this);
@@ -93,7 +77,6 @@ public class WTWRenderer implements Runnable {
 				phase.phasePost(this);
 			}
 		}
-		if(SNAPSHOT != null) SNAPSHOT.delete();
 		renderers.clear();
 		depth--;
 	}
@@ -127,16 +110,11 @@ public class WTWRenderer implements Runnable {
 				assert Minecraft.getMinecraft().getFramebuffer().isStencilEnabled() : "WTW Renderer can't work without stencils. Please enable them";
 
 				GL11.glEnable(GL11.GL_STENCIL_TEST);
-				if(wtw.SNAPSHOT == null) wtw.SNAPSHOT = new FrameBufferSnapshot();
-				if(!wtw.stencilReadFlag){
-					wtw.SNAPSHOT.readFrom(GL11.GL_STENCIL_BUFFER_BIT);
-					wtw.stencilReadFlag = true;
-				}
 			}
 
 			public void render(Runnable... phaseSpecifics){
 				instance().render(this, wtw -> {
-					wtw.SNAPSHOT.writeTo(GL11.GL_STENCIL_BUFFER_BIT);
+
 
 					GlStateManager.colorMask(false, false, false, false);
 					GlStateManager.depthMask(false);
@@ -161,23 +139,18 @@ public class WTWRenderer implements Runnable {
 
 			@Override
 			void phasePre(WTWRenderer wtw){
-				if(wtw.SNAPSHOT == null) wtw.SNAPSHOT = new FrameBufferSnapshot();
-				if(!wtw.depthReadFlag){
-					wtw.SNAPSHOT.readFrom(GL11.GL_DEPTH_BUFFER_BIT);
-					wtw.depthReadFlag = true;
-				}
+
 			}
 
 			public void render(Runnable... phaseSpecifics){
 				instance().render(this, wtw -> {
-					wtw.SNAPSHOT.writeTo(GL11.GL_DEPTH_BUFFER_BIT);
 					phaseSpecifics[0].run();
 				});
 			}
 
 			@Override
 			void phasePost(WTWRenderer wtw){
-				wtw.SNAPSHOT.writeTo(GL11.GL_DEPTH_BUFFER_BIT);
+
 			}
 
 		}, STENCILDEPTHREADWRITE{
@@ -187,17 +160,11 @@ public class WTWRenderer implements Runnable {
 				assert Minecraft.getMinecraft().getFramebuffer().isStencilEnabled() : "WTW Renderer can't work without stencils. Please enable them";
 
 				GL11.glEnable(GL11.GL_STENCIL_TEST);
-				if(wtw.SNAPSHOT == null) wtw.SNAPSHOT = new FrameBufferSnapshot();
-				if(!wtw.depthStencilReadFlag){
-					wtw.SNAPSHOT.readFrom(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
-					wtw.depthStencilReadFlag = true;
-				}
+
 			}
 
 			public void render(Runnable... phaseSpecifics){
 				instance().render(this, wtw -> {
-					wtw.SNAPSHOT.writeTo(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
-
 					GlStateManager.colorMask(false, false, false, false);
 					GlStateManager.depthMask(false);
 					GL11.glStencilFunc(GL11.GL_GEQUAL, depth - 1, 255);
@@ -216,7 +183,6 @@ public class WTWRenderer implements Runnable {
 			@Override
 			void phasePost(WTWRenderer wtw){
 				GL11.glDisable(GL11.GL_STENCIL_TEST);
-				wtw.SNAPSHOT.writeTo(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 			}
 
 		};
