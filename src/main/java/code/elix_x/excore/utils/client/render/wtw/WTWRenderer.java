@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
@@ -92,7 +93,7 @@ public class WTWRenderer implements Runnable {
 		GlStateManager.depthFunc(GL11.GL_LEQUAL);
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void renderWorldLast(RenderWorldLastEvent event){
 		GL11.glClearStencil(0);
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
