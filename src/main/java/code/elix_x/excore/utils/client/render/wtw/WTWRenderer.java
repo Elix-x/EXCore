@@ -40,7 +40,7 @@ public class WTWRenderer implements Runnable {
 	private static int depth = 0;
 
 	private static IVertexBuffer depthOverridePlane;
-	private static boolean rewriteGC = false;
+	private static boolean reuploadDOP = false;
 
 	static {
 		MinecraftForge.EVENT_BUS.register(WTWRenderer.class);
@@ -48,10 +48,10 @@ public class WTWRenderer implements Runnable {
 	}
 
 	private static IVertexBuffer getDepthOverridePlane(){
-		if(rewriteGC && depthOverridePlane != null){
+		if(reuploadDOP && depthOverridePlane != null){
 			depthOverridePlane.cleanUp();
 			depthOverridePlane = null;
-			rewriteGC = false;
+			reuploadDOP = false;
 		}
 		if(depthOverridePlane == null){
 			BufferBuilder buff = new BufferBuilder(8);
