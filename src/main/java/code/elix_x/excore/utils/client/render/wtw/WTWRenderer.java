@@ -38,6 +38,7 @@ public class WTWRenderer implements Runnable {
 	private static final WTWRenderer INSTANCE = new WTWRenderer();
 	private static Stack<WTWRenderer> current = new Stack<>();
 	private static int depth = 0;
+	private static int stencilDepth = 0;
 
 	private static IVertexBuffer depthOverridePlane;
 	private static boolean reuploadDOP = false;
@@ -166,7 +167,8 @@ public class WTWRenderer implements Runnable {
 			void phasePre(WTWRenderer wtw){
 				assert Minecraft.getMinecraft().getFramebuffer().isStencilEnabled() : "WTW Renderer can't work without stencils. Please enable them";
 
-				GL11.glEnable(GL11.GL_STENCIL_TEST);
+				if(stencilDepth == 0) GL11.glEnable(GL11.GL_STENCIL_TEST);
+				stencilDepth++;
 			}
 
 			public void render(Runnable... phaseSpecifics){
@@ -174,14 +176,14 @@ public class WTWRenderer implements Runnable {
 					//Stencil setup
 					GlStateManager.colorMask(false, false, false, false);
 					GlStateManager.depthMask(false);
-					GL11.glStencilFunc(GL11.GL_EQUAL, depth - 1, 255);
+					GL11.glStencilFunc(GL11.GL_EQUAL, stencilDepth - 1, 255);
 					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR);
 					GL11.glStencilMask(255);
 					phaseSpecifics[0].run();
 
 					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 
-					GL11.glStencilFunc(GL11.GL_EQUAL, depth, 255);
+					GL11.glStencilFunc(GL11.GL_EQUAL, stencilDepth, 255);
 
 					//Color write
 
@@ -193,7 +195,8 @@ public class WTWRenderer implements Runnable {
 
 			@Override
 			void phasePost(WTWRenderer wtw){
-				GL11.glDisable(GL11.GL_STENCIL_TEST);
+				stencilDepth--;
+				if(stencilDepth == 0) GL11.glDisable(GL11.GL_STENCIL_TEST);
 			}
 		},
 		STENCILDEPTHREADWRITE{
@@ -202,7 +205,8 @@ public class WTWRenderer implements Runnable {
 			void phasePre(WTWRenderer wtw){
 				assert Minecraft.getMinecraft().getFramebuffer().isStencilEnabled() : "WTW Renderer can't work without stencils. Please enable them";
 
-				GL11.glEnable(GL11.GL_STENCIL_TEST);
+				if(stencilDepth == 0) GL11.glEnable(GL11.GL_STENCIL_TEST);
+				stencilDepth++;
 			}
 
 			public void render(Runnable... phaseSpecifics){
@@ -210,14 +214,14 @@ public class WTWRenderer implements Runnable {
 					//Stencil setup
 					GlStateManager.colorMask(false, false, false, false);
 					GlStateManager.depthMask(false);
-					GL11.glStencilFunc(GL11.GL_EQUAL, depth - 1, 255);
+					GL11.glStencilFunc(GL11.GL_EQUAL, stencilDepth - 1, 255);
 					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR);
 					GL11.glStencilMask(255);
 					phaseSpecifics[0].run();
 
 					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 
-					GL11.glStencilFunc(GL11.GL_EQUAL, depth, 255);
+					GL11.glStencilFunc(GL11.GL_EQUAL, stencilDepth, 255);
 
 					//Depth clean
 
@@ -233,7 +237,8 @@ public class WTWRenderer implements Runnable {
 
 			@Override
 			void phasePost(WTWRenderer wtw){
-				GL11.glDisable(GL11.GL_STENCIL_TEST);
+				stencilDepth--;
+				if(stencilDepth == 0) GL11.glDisable(GL11.GL_STENCIL_TEST);
 			}
 
 		};
