@@ -14,6 +14,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class MultiChunkBlockAccessRenderer {
@@ -29,6 +30,8 @@ public class MultiChunkBlockAccessRenderer {
 	protected final AxisAlignedBB shape;
 	protected final AxisAlignedBB shapeResult;
 	protected final Vec3i renderBlock;
+
+	protected int maxUpdatesPerFrame = -1;
 
 	protected boolean[] layers = new boolean[BlockRenderLayer.values().length];
 
@@ -66,6 +69,19 @@ public class MultiChunkBlockAccessRenderer {
 
 	public MultiChunkBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape){
 		this(world, shape, shape);
+	}
+
+	/**
+	 * Maximum number of single chunk (re)uploads to perform each frame.<br>
+	 * Special values:
+	 * <ul>
+	 *     <li><tt>-1</tt> for unlimited updates</li>
+	 *     <li><tt>0</tt> to disable updates</li>
+	 * </ul>
+	 * @param maxUpdatesPerFrame maximum number of single chunk (re)uploads to perform each frame
+	 */
+	public void setMaxUpdatesPerFrame(int maxUpdatesPerFrame){
+		this.maxUpdatesPerFrame = maxUpdatesPerFrame;
 	}
 
 	protected void initRenderers(){
@@ -115,9 +131,19 @@ public class MultiChunkBlockAccessRenderer {
 	}
 
 	protected void updateCheck(){
-		boolean updated = false;
-		for(SingleChunkBlockAccessRenderer renderer : renderers) updated |= renderer.updateCheck();
-		if(updated){
+		if(maxUpdatesPerFrame != 0) updateCheck(maxUpdatesPerFrame);
+	}
+
+	/**
+	 * Performs update checks and reuploads chunks (during the call!)
+	 * @param maxUpdates maximum number of updates to perform
+	 * @return number of updates performed
+	 */
+	public int updateCheck(int maxUpdates){
+		int updatesLeft = maxUpdates;
+		Iterator<SingleChunkBlockAccessRenderer> iterator = renderers.iterator();
+		while(updatesLeft != 0 && iterator.hasNext()) if(iterator.next().updateCheck()) updatesLeft--;
+		if(updatesLeft != maxUpdates){
 			outer: for(BlockRenderLayer layer : BlockRenderLayer.values()){
 				for(SingleChunkBlockAccessRenderer renderer : renderers){
 					if(renderer.doRenderLayer(layer)){
@@ -127,6 +153,7 @@ public class MultiChunkBlockAccessRenderer {
 				}
 			}
 		}
+		return maxUpdates - updatesLeft;
 	}
 
 	protected void renderSetup(){
