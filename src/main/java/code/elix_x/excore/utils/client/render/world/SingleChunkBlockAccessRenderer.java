@@ -19,30 +19,30 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 
-public class BlockAccessRenderer {
+public class SingleChunkBlockAccessRenderer {
 
-	final IBlockAccess world;
+	protected final IBlockAccess world;
 	// Shapes API has to be rewritten to support IBlockAccesses
 	// private final Shape3D shape;
-	final AxisAlignedBB shape;
-	final AxisAlignedBB shapeResult;
+	protected final AxisAlignedBB shape;
+	protected final AxisAlignedBB shapeResult;
 
-	private final IVertexBuffer[] vertexBuffers = new IVertexBuffer[BlockRenderLayer.values().length];
-	boolean needsUpdate = true;
+	protected final IVertexBuffer[] vertexBuffers = new IVertexBuffer[BlockRenderLayer.values().length];
+	protected boolean needsUpdate = true;
 
-	private boolean[] layers = new boolean[BlockRenderLayer.values().length];
+	protected boolean[] layers = new boolean[BlockRenderLayer.values().length];
 
-	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult){
+	public SingleChunkBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult){
 		this.world = world;
 		this.shape = shape;
 		this.shapeResult = shapeResult;
 	}
 
-	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, Vec3d posResult){
+	public SingleChunkBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, Vec3d posResult){
 		this(world, shape, shape.offset(posResult.subtract(shape.getCenter())));
 	}
 
-	public BlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape){
+	public SingleChunkBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape){
 		this(world, shape, shape);
 	}
 
@@ -77,7 +77,7 @@ public class BlockAccessRenderer {
 		}
 	}
 
-	boolean updateCheck(){
+	protected boolean updateCheck(){
 		if(needsUpdate){
 			rebuildBuffers();
 			needsUpdate = false;
@@ -86,14 +86,14 @@ public class BlockAccessRenderer {
 		return false;
 	}
 
-	void renderSetup(){
+	protected void renderSetup(){
 		OpenGLHelper.enableClientState(DefaultVertexFormats.BLOCK);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		RenderHelper.disableStandardItemLighting();
 		Minecraft.getMinecraft().entityRenderer.enableLightmap();
 	}
 
-	void renderPre(){
+	protected void renderPre(){
 		GlStateManager.pushMatrix();
 		double scaleX = (shapeResult.maxX - shapeResult.minX) / (shape.maxX + 1 - shape.minX);
 		double scaleY = (shapeResult.maxY - shapeResult.minY) / (shape.maxY + 1 - shape.minY);
@@ -103,7 +103,7 @@ public class BlockAccessRenderer {
 		GlStateManager.translate(shapeResult.getCenter().x / scaleX, shapeResult.getCenter().y / scaleY, shapeResult.getCenter().z / scaleZ);
 	}
 
-	void renderLayerSetup(BlockRenderLayer layer){
+	protected void renderLayerSetup(BlockRenderLayer layer){
 		switch(layer){
 			case SOLID:
 				GlStateManager.disableAlpha();
@@ -120,11 +120,11 @@ public class BlockAccessRenderer {
 		}
 	}
 
-	void renderLayer(BlockRenderLayer layer){
+	protected void renderLayer(BlockRenderLayer layer){
 		vertexBuffers[layer.ordinal()].draw();
 	}
 
-	void renderLayerCleanup(BlockRenderLayer layer){
+	protected void renderLayerCleanup(BlockRenderLayer layer){
 		switch(layer){
 			case SOLID:
 				break;
@@ -139,11 +139,11 @@ public class BlockAccessRenderer {
 		}
 	}
 
-	void renderPost(){
+	protected void renderPost(){
 		GlStateManager.popMatrix();
 	}
 
-	void renderCleanup(){
+	protected void renderCleanup(){
 		Minecraft.getMinecraft().entityRenderer.disableLightmap();
 		RenderHelper.enableStandardItemLighting();
 		OpenGLHelper.disableClientState(DefaultVertexFormats.BLOCK);

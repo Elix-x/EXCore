@@ -16,25 +16,25 @@ import net.minecraft.world.IBlockAccess;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LargeBlockAccessRenderer {
+public class MultiChunkBlockAccessRenderer {
 
 	public static int findOptimalBlockDimension(int size, int maxBlock, int minBlock){
 		for(int next = maxBlock; next >= minBlock; next--) if(size % next == 0) return next;
 		return maxBlock;
 	}
 
-	private final IBlockAccess world;
+	protected final IBlockAccess world;
 	// Shapes API has to be rewritten to support IBlockAccesses
 	// private final Shape3D shape;
-	private final AxisAlignedBB shape;
-	private final AxisAlignedBB shapeResult;
-	private final Vec3i renderBlock;
+	protected final AxisAlignedBB shape;
+	protected final AxisAlignedBB shapeResult;
+	protected final Vec3i renderBlock;
 
-	private boolean[] layers = new boolean[BlockRenderLayer.values().length];
+	protected boolean[] layers = new boolean[BlockRenderLayer.values().length];
 
-	private final List<BlockAccessRenderer> renderers = new ArrayList<>();
+	protected final List<SingleChunkBlockAccessRenderer> renderers = new ArrayList<>();
 
-	public LargeBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult, Vec3i renderBlock){
+	public MultiChunkBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult, Vec3i renderBlock){
 		this.world = world;
 		this.shape = shape;
 		this.shapeResult = shapeResult;
@@ -43,15 +43,15 @@ public class LargeBlockAccessRenderer {
 		initRenderers();
 	}
 
-	public LargeBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, Vec3d posResult, Vec3i renderBlock){
+	public MultiChunkBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, Vec3d posResult, Vec3i renderBlock){
 		this(world, shape, shape.offset(posResult.subtract(shape.getCenter())), renderBlock);
 	}
 
-	public LargeBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, Vec3i renderBlock){
+	public MultiChunkBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, Vec3i renderBlock){
 		this(world, shape, shape, renderBlock);
 	}
 
-	public LargeBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult){
+	public MultiChunkBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, AxisAlignedBB shapeResult){
 		this.world = world;
 		this.shape = shape;
 		this.shapeResult = shapeResult;
@@ -60,20 +60,20 @@ public class LargeBlockAccessRenderer {
 		initRenderers();
 	}
 
-	public LargeBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, Vec3d posResult){
+	public MultiChunkBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape, Vec3d posResult){
 		this(world, shape, shape.offset(posResult.subtract(shape.getCenter())));
 	}
 
-	public LargeBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape){
+	public MultiChunkBlockAccessRenderer(IBlockAccess world, AxisAlignedBB shape){
 		this(world, shape, shape);
 	}
 
-	void initRenderers(){
+	protected void initRenderers(){
 		renderers.clear();
 		for(int x = 0; x < Math.ceil((shape.maxX - shape.minX) / renderBlock.getX()); x++){
 			for(int y = 0; y < Math.ceil((shape.maxY - shape.minY) / renderBlock.getY()); y++){
 				for(int z = 0; z < Math.ceil((shape.maxZ - shape.minZ) / renderBlock.getZ()); z++){
-					renderers.add(new BlockAccessRenderer(world, new AxisAlignedBB(shape.minX + x * renderBlock.getX(), shape.minY + y * renderBlock.getY(), shape.minZ + z * renderBlock.getZ(), Math.min(shape.minX + (x + 1) * renderBlock.getX(), shape.maxX), Math.min(shape.minY + (y + 1) * renderBlock.getY(), shape.maxY), Math.min(shape.minZ + (z + 1) * renderBlock.getZ(), shape.maxZ))));
+					renderers.add(new SingleChunkBlockAccessRenderer(world, new AxisAlignedBB(shape.minX + x * renderBlock.getX(), shape.minY + y * renderBlock.getY(), shape.minZ + z * renderBlock.getZ(), Math.min(shape.minX + (x + 1) * renderBlock.getX(), shape.maxX), Math.min(shape.minY + (y + 1) * renderBlock.getY(), shape.maxY), Math.min(shape.minZ + (z + 1) * renderBlock.getZ(), shape.maxZ))));
 				}
 			}
 		}
@@ -90,7 +90,7 @@ public class LargeBlockAccessRenderer {
 	}
 
 	public void markDirty(AxisAlignedBB region){
-		for(BlockAccessRenderer renderer : renderers) if(renderer.shape.intersects(region)) renderer.markDirty();
+		for(SingleChunkBlockAccessRenderer renderer : renderers) if(renderer.shape.intersects(region)) renderer.markDirty();
 	}
 
 	public void markDirty(BlockPos region){
@@ -114,12 +114,12 @@ public class LargeBlockAccessRenderer {
 		}
 	}
 
-	void updateCheck(){
+	protected void updateCheck(){
 		boolean updated = false;
-		for(BlockAccessRenderer renderer : renderers) updated |= renderer.updateCheck();
+		for(SingleChunkBlockAccessRenderer renderer : renderers) updated |= renderer.updateCheck();
 		if(updated){
 			outer: for(BlockRenderLayer layer : BlockRenderLayer.values()){
-				for(BlockAccessRenderer renderer : renderers){
+				for(SingleChunkBlockAccessRenderer renderer : renderers){
 					if(renderer.doRenderLayer(layer)){
 						layers[layer.ordinal()] = true;
 						continue outer;
@@ -129,14 +129,14 @@ public class LargeBlockAccessRenderer {
 		}
 	}
 
-	void renderSetup(){
+	protected void renderSetup(){
 		OpenGLHelper.enableClientState(DefaultVertexFormats.BLOCK);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		RenderHelper.disableStandardItemLighting();
 		Minecraft.getMinecraft().entityRenderer.enableLightmap();
 	}
 
-	void renderPre(){
+	protected void renderPre(){
 		GlStateManager.pushMatrix();
 		double scaleX = (shapeResult.maxX - shapeResult.minX) / (shape.maxX - shape.minX);
 		double scaleY = (shapeResult.maxY - shapeResult.minY) / (shape.maxY - shape.minY);
@@ -145,7 +145,7 @@ public class LargeBlockAccessRenderer {
 		GlStateManager.translate(renderBlock.getX() / 2d, renderBlock.getY() / 2d, renderBlock.getZ() / 2d);
 	}
 
-	void renderLayerSetup(BlockRenderLayer layer){
+	protected void renderLayerSetup(BlockRenderLayer layer){
 		switch(layer){
 			case SOLID:
 				GlStateManager.disableAlpha();
@@ -162,8 +162,8 @@ public class LargeBlockAccessRenderer {
 		}
 	}
 
-	void renderLayer(BlockRenderLayer layer){
-		for(BlockAccessRenderer renderer : renderers) if(renderer.doRenderLayer(layer)){
+	protected void renderLayer(BlockRenderLayer layer){
+		for(SingleChunkBlockAccessRenderer renderer : renderers) if(renderer.doRenderLayer(layer)){
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(renderer.shape.minX - shape.minX, renderer.shape.minY - shape.minY, renderer.shape.minZ - shape.minZ);
 			renderer.renderLayer(layer);
@@ -171,7 +171,7 @@ public class LargeBlockAccessRenderer {
 		}
 	}
 
-	void renderLayerCleanup(BlockRenderLayer layer){
+	protected void renderLayerCleanup(BlockRenderLayer layer){
 		switch(layer){
 			case SOLID:
 				break;
@@ -186,18 +186,18 @@ public class LargeBlockAccessRenderer {
 		}
 	}
 
-	void renderPost(){
+	protected void renderPost(){
 		GlStateManager.popMatrix();
 	}
 
-	void renderCleanup(){
+	protected void renderCleanup(){
 		Minecraft.getMinecraft().entityRenderer.disableLightmap();
 		RenderHelper.enableStandardItemLighting();
 		OpenGLHelper.disableClientState(DefaultVertexFormats.BLOCK);
 	}
 
 	public void cleanUp(){
-		renderers.forEach(BlockAccessRenderer::cleanUp);
+		renderers.forEach(SingleChunkBlockAccessRenderer::cleanUp);
 	}
 
 }

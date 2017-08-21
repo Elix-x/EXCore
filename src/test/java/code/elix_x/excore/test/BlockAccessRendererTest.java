@@ -1,6 +1,6 @@
 package code.elix_x.excore.test;
 
-import code.elix_x.excore.utils.client.render.world.BlockAccessRenderer;
+import code.elix_x.excore.utils.client.render.world.SingleChunkBlockAccessRenderer;
 import code.elix_x.excore.utils.registry.RegistrationQueue;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -93,7 +93,7 @@ public class BlockAccessRendererTest {
 	public static class TestTileEntity extends TileEntity {
 
 		@SideOnly(Side.CLIENT)
-		BlockAccessRenderer bar;
+		SingleChunkBlockAccessRenderer bar;
 
 		@Override
 		public void markDirty(){
@@ -112,7 +112,7 @@ public class BlockAccessRendererTest {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y, z);
 			if(te.bar == null){
-				te.bar = new BlockAccessRenderer(te.getWorld(), new AxisAlignedBB(te.getPos().add(-6, -1, -1), te.getPos().add(-4, 1, 1)), new AxisAlignedBB(0, 0, 0, 1, 1, 1));
+				te.bar = new SingleChunkBlockAccessRenderer(te.getWorld(), new AxisAlignedBB(te.getPos().add(-6, -1, -1), te.getPos().add(-4, 1, 1)), new AxisAlignedBB(0, 0, 0, 1, 1, 1));
 			}
 			te.bar.render();
 			te.bar.markDirty();
