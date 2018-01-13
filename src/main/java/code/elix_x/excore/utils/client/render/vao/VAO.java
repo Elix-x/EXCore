@@ -25,7 +25,7 @@ public class VAO {
 	}
 
 	public void vboSingle(VBO vbo, int vboIndex, VertexFormat format, VertexFormatElement elementFormat){
-		GL20.glVertexAttribPointer(vboIndex, elementFormat.getElementCount(), elementFormat.getType().getGlConstant(), false, format.getNextOffset(), format.getOffset(format.getElements().indexOf(elementFormat)));
+		GL20.glVertexAttribPointer(vboIndex, elementFormat.getElementCount(), elementFormat.getType().getGlConstant(), false, format.getSize(), format.getOffset(format.getElements().indexOf(elementFormat)));
 	}
 
 	public void unbind(){

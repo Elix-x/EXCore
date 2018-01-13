@@ -61,23 +61,23 @@ public class VertexBufferSingleVBO implements IVertexBuffer {
 			VertexFormatElement element = format.getElement(i);
 			switch(element.getUsage()){
 				case POSITION:
-					GL11.glVertexPointer(element.getElementCount(), element.getType().getGlConstant(), format.getNextOffset(), format.getOffset(i));
+					GL11.glVertexPointer(element.getElementCount(), element.getType().getGlConstant(), format.getSize(), format.getOffset(i));
 					break;
 				case NORMAL:
-					GL11.glNormalPointer(element.getType().getGlConstant(), format.getNextOffset(), format.getOffset(i));
+					GL11.glNormalPointer(element.getType().getGlConstant(), format.getSize(), format.getOffset(i));
 					break;
 				case COLOR:
-					GL11.glColorPointer(element.getElementCount(), element.getType().getGlConstant(), format.getNextOffset(), format.getOffset(i));
+					GL11.glColorPointer(element.getElementCount(), element.getType().getGlConstant(), format.getSize(), format.getOffset(i));
 					break;
 				case UV:
 					OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + element.getIndex());
-					GL11.glTexCoordPointer(element.getElementCount(), element.getType().getGlConstant(), format.getNextOffset(), format.getOffset(i));
+					GL11.glTexCoordPointer(element.getElementCount(), element.getType().getGlConstant(), format.getSize(), format.getOffset(i));
 					break;
 				case PADDING:
 					break;
 				case GENERIC:
 					GL20.glEnableVertexAttribArray(element.getIndex());
-					GL20.glVertexAttribPointer(element.getIndex(), element.getElementCount(), element.getType().getGlConstant(), false, format.getNextOffset(), format.getOffset(i));
+					GL20.glVertexAttribPointer(element.getIndex(), element.getElementCount(), element.getType().getGlConstant(), false, format.getSize(), format.getOffset(i));
 					break;
 				default:
 					break;
