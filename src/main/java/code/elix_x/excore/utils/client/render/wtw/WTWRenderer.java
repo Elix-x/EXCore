@@ -182,14 +182,24 @@ public class WTWRenderer implements Runnable {
 					phaseSpecifics[0].run();
 
 					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-
 					GL11.glStencilFunc(GL11.GL_EQUAL, stencilDepth, 255);
 
 					//Color write
-
 					GlStateManager.depthMask(true);
 					GlStateManager.colorMask(true, true, true, true);
 					phaseSpecifics[1].run();
+
+					//Stencil cleanup
+					GlStateManager.colorMask(false, false, false, false);
+					GlStateManager.depthMask(false);
+
+					GL11.glStencilFunc(GL11.GL_EQUAL, stencilDepth, 255);
+					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_DECR);
+					GL11.glStencilMask(255);
+					phaseSpecifics[0].run();
+
+					GlStateManager.depthMask(true);
+					GlStateManager.colorMask(true, true, true, true);
 				});
 			}
 
@@ -220,18 +230,27 @@ public class WTWRenderer implements Runnable {
 					phaseSpecifics[0].run();
 
 					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-
 					GL11.glStencilFunc(GL11.GL_EQUAL, stencilDepth, 255);
 
 					//Depth clean
-
 					GlStateManager.depthMask(true);
 					WTWRenderer.drawDepthOverridePlane();
 
 					//Color write
-
 					GlStateManager.colorMask(true, true, true, true);
 					phaseSpecifics[1].run();
+
+					//Stencil cleanup
+					GlStateManager.colorMask(false, false, false, false);
+					GlStateManager.depthMask(false);
+
+					GL11.glStencilFunc(GL11.GL_EQUAL, stencilDepth, 255);
+					GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_DECR);
+					GL11.glStencilMask(255);
+					phaseSpecifics[0].run();
+
+					GlStateManager.depthMask(true);
+					GlStateManager.colorMask(true, true, true, true);
 				});
 			}
 
