@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import code.elix_x.excore.utils.client.resource.WebResourcePack;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -48,7 +49,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
-	private static final AField<ResourceLocation, String> resourcePath = new AClass<>(ResourceLocation.class).<String>getDeclaredField("resourcePath", "field_110625_b").orElseThrow(() -> new IllegalArgumentException("Failed to reflect fields necessary for the thingy")).setAccessible(true).setFinal(false);
+	private static final String DOMAIN = "excorethingy";
 
 	private final ThingyData data;
 
@@ -61,9 +62,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
 		@Override
 		public ResourceLocation load(URL url) throws Exception{
-			ResourceLocation loc = new ResourceLocation("http://www", url.toString());
-			resourcePath.set(loc, url.toString());
-			return loc;
+			return new ResourceLocation(DOMAIN, url.toString().replace(':', WebResourcePack.DEFCOLONCHAR));
 		}
 
 	});
@@ -77,6 +76,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 	}
 
 	void cacheIcons(){
+		new WebResourcePack(DOMAIN).registerAsDefault();
 		for(Human human : data.humans){
 			Minecraft.getMinecraft().getTextureManager().loadTexture(getCachedIcon(human.icon), new SimpleTexture(getCachedIcon(human.icon)));
 		}
