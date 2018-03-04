@@ -1,36 +1,19 @@
 package code.elix_x.excore.client.thingy;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+import code.elix_x.excomms.color.RGBA;
+import code.elix_x.excore.client.debug.AdvancedDebugTools;
+import code.elix_x.excore.client.thingy.ThingyData.Human;
+import code.elix_x.excore.client.thingy.ThingyData.Human.Link;
+import code.elix_x.excore.client.thingy.ThingyDisplay.MovingHuman;
+import code.elix_x.excore.utils.client.gui.ElementalGuiScreen;
+import code.elix_x.excore.utils.client.gui.elements.*;
+import code.elix_x.excore.utils.client.resource.PrecacheResourcePack;
 import code.elix_x.excore.utils.client.resource.WebResourcePack;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
-import code.elix_x.excomms.color.RGBA;
-import code.elix_x.excomms.reflection.ReflectionHelper.AClass;
-import code.elix_x.excomms.reflection.ReflectionHelper.AField;
-import code.elix_x.excore.client.debug.AdvancedDebugTools;
-import code.elix_x.excore.client.debug.AdvancedDebugTools.DebugTool;
-import code.elix_x.excore.client.thingy.ThingyData.Human;
-import code.elix_x.excore.client.thingy.ThingyData.Human.Link;
-import code.elix_x.excore.client.thingy.ThingyDisplay.MovingHuman;
-import code.elix_x.excore.utils.client.gui.ElementalGuiScreen;
-import code.elix_x.excore.utils.client.gui.elements.ButtonGuiElement;
-import code.elix_x.excore.utils.client.gui.elements.CenteredStringGuiElement;
-import code.elix_x.excore.utils.client.gui.elements.ColoredRectangleGuiElement;
-import code.elix_x.excore.utils.client.gui.elements.GlintRectangleGuiElement;
-import code.elix_x.excore.utils.client.gui.elements.GuiElement;
-import code.elix_x.excore.utils.client.gui.elements.IGuiElementsHandler;
-import code.elix_x.excore.utils.client.gui.elements.TexturedRectangleGuiElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -46,11 +29,20 @@ import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Stream;
 
 public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
 	private static final String DOMAIN = "excorethingy";
 
+	private final String loc;
 	private final ThingyData data;
 
 	private final Random random;
@@ -58,43 +50,58 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
 	private Multimap<GuiScreen, MovingHuman> guiHumansMultimap = HashMultimap.create();
 
-	private LoadingCache<URL, ResourceLocation> cachedIcons = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<URL, ResourceLocation>(){
+	private PrecacheResourcePack cacheRP;
+	private boolean failed = false;
+
+	private LoadingCache<String, ResourceLocation> cachedIcons = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<String, ResourceLocation>(){
 
 		@Override
-		public ResourceLocation load(URL url) throws Exception{
-			return new ResourceLocation(DOMAIN, url.toString().replace(':', WebResourcePack.DEFCOLONCHAR));
+		public ResourceLocation load(String icon){
+			icon = icon.replace(':', WebResourcePack.DEFCOLONCHAR);
+			return new ResourceLocation(DOMAIN, icon.startsWith("http") ? icon : loc + icon);
 		}
 
 	});
 
-	ThingyDisplay(ThingyData data, Random random, int chance){
+	ThingyDisplay(String loc, ThingyData data, Random random, int chance){
+		this.loc = loc;
 		this.data = data;
 		this.random = random;
 		this.chance = chance;
 
-		AdvancedDebugTools.registerGUI(Keyboard.KEY_E, () -> { if(Minecraft.getMinecraft().currentScreen != null) regenHumans(Minecraft.getMinecraft().currentScreen); });
+		cacheRP = new PrecacheResourcePack(new WebResourcePack(DOMAIN));
+		try{
+			cacheRP.precache(getAllIcons());
+		} catch(IOException e){
+			failed = true;
+		}
+
+		if(!failed) AdvancedDebugTools.registerGUI(Keyboard.KEY_E, () -> { if(Minecraft.getMinecraft().currentScreen != null) regenHumans(Minecraft.getMinecraft().currentScreen); });
 	}
 
 	void cacheIcons(){
-		new WebResourcePack(DOMAIN).registerAsDefault();
-		for(Human human : data.humans){
-			Minecraft.getMinecraft().getTextureManager().loadTexture(getCachedIcon(human.icon), new SimpleTexture(getCachedIcon(human.icon)));
-		}
+		if(failed) return;
+		cacheRP.registerAsDefault();
+		getAllIcons().forEach(icon -> Minecraft.getMinecraft().getTextureManager().loadTexture(icon, new SimpleTexture(icon)));
 	}
 
-	private ResourceLocation getCachedIcon(final URL url){
-		return cachedIcons.getUnchecked(url);
+	private ResourceLocation getCachedIcon(String icon){
+		return cachedIcons.getUnchecked(icon);
+	}
+
+	private Stream<ResourceLocation> getAllIcons(){
+		return Stream.concat(data.humans.stream().map(human -> human.icon), data.linkIcons.values().stream()).map(this::getCachedIcon);
 	}
 
 	private void regenHumans(GuiScreen gui){
+		if(failed) return;
 		guiHumansMultimap.removeAll(gui);
 		List<Human> all = data.humans;
 		List<Human> c = new ArrayList<>();
 		int cc = 1 + random.nextInt(all.size());
 		for(int i = 0; i < cc; i++){
 			Human h = all.get(random.nextInt(all.size()));
-			while(c.contains(h))
-				h = all.get(random.nextInt(all.size()));
+			while(c.contains(h)) h = all.get(random.nextInt(all.size()));
 			c.add(h);
 		}
 		ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
@@ -242,7 +249,7 @@ public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
 		@Override
 		protected void addElements(){
-			add(new ColoredRectangleGuiElement<>("Shadow", 0, 0, width, height, 0, 0, new RGBA(0, 0, 0, 200)));
+			add(new ColoredRectangleGuiElement<>("Shadow", 0, 0, width, height, 0, 0, new RGBA(0, 0, 0, 0.83f)));
 			add(new TexturedRectangleGuiElement<>("Texture", xPos + 64, yPos, 128, 128, 0, 0, icon));
 			if(human.getCategory(data).glint)
 				add(new GlintRectangleGuiElement<>("Texture", xPos + 64, yPos, 128, 128, 0, 0, human.getCategory(data).color));

@@ -22,7 +22,7 @@ public class ThingyData {
 
 	List<Human> humans;
 	Map<String, HumanCategory> humanCategories;
-	Map<String, URL> linkIcons;
+	Map<String, String> linkIcons;
 
 	@Override
 	public String toString(){
@@ -34,7 +34,7 @@ public class ThingyData {
 		String name;
 		String category;
 		List<ITextComponent> bio;
-		URL icon;
+		String icon;
 		List<Link> links;
 
 		HumanCategory getCategory(ThingyData data){
@@ -51,7 +51,7 @@ public class ThingyData {
 			URL url;
 			String icon;
 
-			URL getIcon(ThingyData data){
+			String getIcon(ThingyData data){
 				return data.linkIcons.get(icon);
 			}
 
