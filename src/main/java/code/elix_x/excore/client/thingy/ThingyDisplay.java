@@ -48,7 +48,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ThingyDisplay implements IGuiElementsHandler<MovingHuman> {
 
-	private static final AField<ResourceLocation, String> resourcePath = new AClass<>(ResourceLocation.class).<String>getDeclaredField("resourcePath", "field_110625_b").setAccessible(true).setFinal(false);
+	private static final AField<ResourceLocation, String> resourcePath = new AClass<>(ResourceLocation.class).<String>getDeclaredField("resourcePath", "field_110625_b").orElseThrow(() -> new IllegalArgumentException("Failed to reflect fields necessary for the thingy")).setAccessible(true).setFinal(false);
 
 	private final ThingyData data;
 

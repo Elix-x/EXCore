@@ -80,10 +80,10 @@ public class UnpackedBakedQuad {
 		return new net.minecraftforge.client.model.pipeline.UnpackedBakedQuad(vertices.pack(GL11.GL_QUADS, format).getData(), tintIndex, face, sprite, applyDiffuseLighting, format);
 	}
 
-	private static final AField<net.minecraftforge.client.model.pipeline.UnpackedBakedQuad, float[][][]> unpackedData = new AClass<>(net.minecraftforge.client.model.pipeline.UnpackedBakedQuad.class).<float[][][]> getDeclaredField("unpackedData").setAccessible(true);
+	private static final AField<net.minecraftforge.client.model.pipeline.UnpackedBakedQuad, float[][][]> unpackedData = new AClass<>(net.minecraftforge.client.model.pipeline.UnpackedBakedQuad.class).<float[][][]>getDeclaredField("unpackedData").orElseThrow(() -> new IllegalArgumentException("Failed to reflect forge.UnpackedBakedQuad#unpackedData necessary for excore.UnpackedBakedQuad")).setAccessible(true);
 
 	public static UnpackedBakedQuad unpack(net.minecraftforge.client.model.pipeline.UnpackedBakedQuad quad){
-		return new UnpackedBakedQuad(unpackedData.get(quad), quad.getFormat(), quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting());
+		return new UnpackedBakedQuad(unpackedData.get(quad).get(), quad.getFormat(), quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting());
 	}
 
 	// TODO - Move to functional models utils class once created.

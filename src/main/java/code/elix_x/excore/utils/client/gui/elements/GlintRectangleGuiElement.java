@@ -29,7 +29,7 @@ import org.lwjgl.util.Rectangle;
 public class GlintRectangleGuiElement<H extends IGuiElementsHandler<? extends IGuiElement<H>>> extends RectangularGuiElement<H> {
 
 	public static final ResourceLocation DEFAULTTEXTURE = new ResourceLocation("textures/misc/enchanted_item_glint.png");
-	public static final RGBA DEFAULTCOLOR = new RGBA(-8372020);
+	public static final RGBA DEFAULTCOLOR = RGBA.fromARGB(-8372020);
 
 	protected ResourceLocation glint;
 

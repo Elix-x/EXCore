@@ -23,7 +23,7 @@ public class ClientProxy implements IProxy<EXCore> {
 
 	@Override
 	public void preInit(FMLPreInitializationEvent event){
-		new AClass<>(Minecraft.class).<List<IResourcePack>>getDeclaredField("defaultResourcePacks", "field_110449_ao").setAccessible(true).get(Minecraft.getMinecraft()).add(new WebResourcePack());
+		new AClass<>(Minecraft.class).<List<IResourcePack>>getDeclaredField("defaultResourcePacks", "field_110449_ao").orElseThrow(() -> new IllegalArgumentException("Failed to reflect fields necessary for web RP")).setAccessible(true).get(Minecraft.getMinecraft()).get().add(new WebResourcePack());
 		AdvancedDebugTools.clinit();
 	}
 

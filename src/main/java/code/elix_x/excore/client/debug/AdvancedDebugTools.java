@@ -80,13 +80,13 @@ public class AdvancedDebugTools {
 
 		public VanillaDebugTool(String name, String... names){
 			this.name = name;
-			this.field = new AClass<>(DebugRenderer.class).<Boolean>getDeclaredField(names).setAccessible(true);
+			this.field = new AClass<>(DebugRenderer.class).<Boolean>getDeclaredField(names).orElseThrow(() -> new IllegalArgumentException(String.format("Failed to initialize vanilla debug tool for %s using following field names: %s", name, names))).setAccessible(true);
 		}
 
 		@Override
 		public void toggle(){
 			boolean b;
-			field.set(Minecraft.getMinecraft().debugRenderer, b = !field.get(Minecraft.getMinecraft().debugRenderer));
+			field.set(Minecraft.getMinecraft().debugRenderer, b = !field.get(Minecraft.getMinecraft().debugRenderer).get());
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage((new TextComponentString("")).appendSibling((new TextComponentString("[Advanced Debug]: ")).setStyle((new Style()).setColor(TextFormatting.GOLD).setBold(true))).appendText(String.format("%s: %s", this.name, (b ? "shown" : "hidden"))));
 		}
 

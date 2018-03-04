@@ -36,12 +36,12 @@ public class ColorSelectorGuiScreen extends ElementalGuiScreen {
 		nextY += 2 + 20 + 2;
 
 		add(new ColoredRectangleGuiElement("Red Gradient", xPos, nextY, guiWidth, 16, 0, 2, new RGBA(0, 0, 0, 0), new RGBA(255, 0, 0, 255), new RGBA(0, 0, 0, 0), new RGBA(255, 0, 0, 255)));
-		add(new IntegralSliderGuiElement("Red Slider", xPos, nextY, guiWidth, 16, 0, 2, 4, 0, 255, color.r, true){
+		add(new IntegralSliderGuiElement("Red Slider", xPos, nextY, guiWidth, 16, 0, 2, 4, 0, 255, color.getRI(), true){
 
 			@Override
 			protected void checkSliderValue(){
 				super.checkSliderValue();
-				color.r = getValue();
+				color = color.setRI(getValue());
 			}
 
 		});
@@ -49,12 +49,12 @@ public class ColorSelectorGuiScreen extends ElementalGuiScreen {
 		nextY += 2 + 16 + 2;
 
 		add(new ColoredRectangleGuiElement("Green Gradient", xPos, nextY, guiWidth, 16, 0, 2, new RGBA(0, 0, 0, 0), new RGBA(0, 255, 0, 255), new RGBA(0, 0, 0, 0), new RGBA(0, 255, 0, 255)));
-		add(new IntegralSliderGuiElement("Green Slider", xPos, nextY, guiWidth, 16, 0, 2, 4, 0, 255, color.g, true){
+		add(new IntegralSliderGuiElement("Green Slider", xPos, nextY, guiWidth, 16, 0, 2, 4, 0, 255, color.getGI(), true){
 
 			@Override
 			protected void checkSliderValue(){
 				super.checkSliderValue();
-				color.g = getValue();
+				color = color.setGI(getValue());
 			}
 
 		});
@@ -62,12 +62,12 @@ public class ColorSelectorGuiScreen extends ElementalGuiScreen {
 		nextY += 2 + 16 + 2;
 
 		add(new ColoredRectangleGuiElement("Blue Gradient", xPos, nextY, guiWidth, 16, 0, 2, new RGBA(0, 0, 0, 0), new RGBA(0, 0, 255, 255), new RGBA(0, 0, 0, 0), new RGBA(0, 0, 255, 255)));
-		add(new IntegralSliderGuiElement("Blue Slider", xPos, nextY, guiWidth, 16, 0, 2, 4, 0, 255, color.b, true){
+		add(new IntegralSliderGuiElement("Blue Slider", xPos, nextY, guiWidth, 16, 0, 2, 4, 0, 255, color.getBI(), true){
 
 			@Override
 			protected void checkSliderValue(){
 				super.checkSliderValue();
-				color.b = getValue();
+				color = color.setBI(getValue());
 			}
 
 		});
@@ -75,12 +75,12 @@ public class ColorSelectorGuiScreen extends ElementalGuiScreen {
 		nextY += 2 + 16 + 2;
 
 		add(new ColoredRectangleGuiElement("Alpha Gradient", xPos, nextY, guiWidth, 16, 0, 2, new RGBA(0, 0, 0, 0), new RGBA(0, 0, 0, 255), new RGBA(0, 0, 0, 0), new RGBA(0, 0, 0, 255)));
-		add(new IntegralSliderGuiElement("Alpha Slider", xPos, nextY, guiWidth, 16, 0, 2, 4, 0, 255, color.a, true){
+		add(new IntegralSliderGuiElement("Alpha Slider", xPos, nextY, guiWidth, 16, 0, 2, 4, 0, 255, color.getAI(), true){
 
 			@Override
 			protected void checkSliderValue(){
 				super.checkSliderValue();
-				color.a = getValue();
+				color = color.setAI(getValue());
 			}
 
 		});

@@ -10,15 +10,18 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
+import java.util.function.Supplier;
+
 public class ShadersDebug implements DebugTool {
 
-	private static final ResourceLocation[] SHADERS_TEXTURES = new AClass<>(EntityRenderer.class).<ResourceLocation[]> getDeclaredField("SHADERS_TEXTURES", "field_147712_ad").setAccessible(true).get(null);
-	private static final AField<EntityRenderer, Integer> shaderIndex = new AClass<>(EntityRenderer.class).<Integer> getDeclaredField("shaderIndex", "field_147713_ae").setAccessible(true);
+	private static final Supplier<IllegalArgumentException> EXC = () -> new IllegalArgumentException("Failed to reflect fields necessary for shaders debug");
+	private static final ResourceLocation[] SHADERS_TEXTURES = new AClass<>(EntityRenderer.class).<ResourceLocation[]>getDeclaredField("SHADERS_TEXTURES", "field_147712_ad").orElseThrow(EXC).setAccessible(true).get(null).orElseThrow(EXC);
+	private static final AField<EntityRenderer, Integer> shaderIndex = new AClass<>(EntityRenderer.class).<Integer>getDeclaredField("shaderIndex", "field_147713_ae").orElseThrow(EXC).setAccessible(true);
 
 	@Override
 	public void toggle(){
 		EntityRenderer renderer = Minecraft.getMinecraft().entityRenderer;
-		int shader = shaderIndex.get(renderer);
+		int shader = shaderIndex.get(renderer).get();
 		shader = (shader + 1) % (SHADERS_TEXTURES.length + 1);
 		shaderIndex.set(renderer, shader);
 		String sname;

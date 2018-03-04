@@ -1,6 +1,7 @@
 package code.elix_x.excore.utils.client.render.vbo;
 
 import java.nio.ByteBuffer;
+import java.util.function.Supplier;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import org.lwjgl.opengl.GL11;
@@ -38,13 +39,14 @@ public class VertexBufferSingleVBO implements IVertexBuffer {
 		vbo.unbind();
 	}
 
+	private static final Supplier<IllegalArgumentException> EXC = () -> new IllegalArgumentException("Failed ro reflect fields necessary for VertexBufferSingleVBO");
 	private static final AClass<net.minecraft.client.renderer.vertex.VertexBuffer> vertexBufferClass = new AClass<>(net.minecraft.client.renderer.vertex.VertexBuffer.class);
-	private static final AField<net.minecraft.client.renderer.vertex.VertexBuffer, Integer> glBufferId = vertexBufferClass.<Integer> getDeclaredField("glBufferId", "field_177365_a").setAccessible(true);
-	private static final AField<net.minecraft.client.renderer.vertex.VertexBuffer, VertexFormat> vertexFormat = vertexBufferClass.<VertexFormat> getDeclaredField("vertexFormat", "field_177363_b").setAccessible(true);
-	private static final AField<net.minecraft.client.renderer.vertex.VertexBuffer, Integer> count = vertexBufferClass.<Integer> getDeclaredField("count", "field_177363_b").setAccessible(true);
+	private static final AField<net.minecraft.client.renderer.vertex.VertexBuffer, Integer> glBufferId = vertexBufferClass.<Integer>getDeclaredField("glBufferId", "field_177365_a").orElseThrow(EXC).setAccessible(true);
+	private static final AField<net.minecraft.client.renderer.vertex.VertexBuffer, VertexFormat> vertexFormat = vertexBufferClass.<VertexFormat>getDeclaredField("vertexFormat", "field_177363_b").orElseThrow(EXC).setAccessible(true);
+	private static final AField<net.minecraft.client.renderer.vertex.VertexBuffer, Integer> count = vertexBufferClass.<Integer>getDeclaredField("count", "field_177363_b").orElseThrow(EXC).setAccessible(true);
 
 	public VertexBufferSingleVBO(net.minecraft.client.renderer.vertex.VertexBuffer vertexBuffer, int drawMode){
-		this(vertexFormat.get(vertexBuffer), drawMode, count.get(vertexBuffer), new VBO(glBufferId.get(vertexBuffer)));
+		this(vertexFormat.get(vertexBuffer).get(), drawMode, count.get(vertexBuffer).get(), new VBO(glBufferId.get(vertexBuffer).get()));
 	}
 
 	private boolean modifyClientStates = true;
